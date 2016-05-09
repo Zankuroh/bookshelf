@@ -11,7 +11,7 @@ Membres :
 
 Quel est l'objectif principal du projet ?
 
-Notre application permet de gérer sa bibliothèque papier en référençant les livres possédés ainsi que de vous aider dans le choix et l'achat de nouveaux livres. Elle se basera sur vos acquisitions précédentes grâce à un algorithme de degré d'affinité qui repose sur le genre littéraire, les auteurs, ...
+Notre application permet de gérer sa bibliothèque papier en référençant les livres possédés ainsi que de vous aider dans le choix et l'achat de nouveaux livres. Elle se basera sur vos acquisitions précédentes grâce à un algorithme de degré d'affinité qui repose sur le genre littéraire, les auteurs, et d'autres critères.
 L'utilisateur pourra découvrir de nouveaux livres grâce une section dédiée de l'application, se tenir au courant des dernières sorties de ses auteurs préférés grâce à des notifications personnalisées. Vous pourrez profiter des avis d'autres utilisateurs pouvant apporter leurs critiques sur les livres de leur bibliothèque. Elle permettra enfin de créer une sélection de livres qui pourra être transmise à une plateforme d'achat telle que Amazon ou la Fnac, ... Ou encore, de créer une liste de souhaits afin que vos amis sachent quoi vous offrir.
 
 Gérer sa bibliothèque papier et la mettre à jour : 
