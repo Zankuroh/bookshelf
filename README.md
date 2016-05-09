@@ -4,7 +4,7 @@ Votre libraire virtuel à portée de main.
 Membres :
 - Pierre SAILLARD
 - Maxime BONY
-- Nicolas BONY
+- Nicolas JOLY
 - Victorien RAMAGET
 - Geoffrey OLEJNICZAK
 - Sergen TANGUC
