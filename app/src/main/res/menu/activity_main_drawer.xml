@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_biblio"
+            android:icon="@mipmap/ic_biblio"
+            android:title="Ma bibliothèque"
+            android:checked="true"/>
+        <item
+            android:id="@+id/nav_search"
+            android:icon="@mipmap/ic_search"
+            android:title="Recherche" />
+        <item
+            android:id="@+id/nav_propo"
+            android:icon="@mipmap/ic_propo"
+            android:title="Suggestions" />
+        <item
+            android:id="@+id/nav_wish"
+            android:icon="@mipmap/ic_wish"
+            android:title="Ma liste de souhaits" />
+        <item
+            android:id="@+id/nav_autor"
+            android:icon="@mipmap/ic_autor"
+            android:title="Auteurs suivis" />
+    </group>
+
+    <item android:title="Options">
+        <menu>
+            <item
+                android:id="@+id/nav_co"
+                android:icon="@mipmap/ic_co"
+                android:title="Connexion" />
+            <item
+                android:id="@+id/nav_param"
+                android:icon="@mipmap/ic_param"
+                android:title="Paramètres" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@mipmap/ic_about"
+                android:title="À propos..."/>/>
+        </menu>
+    </item>
+
+</menu>
