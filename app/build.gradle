@@ -33,6 +33,9 @@ dependencies {
     compile 'com.google.zxing:core:3.2.1'
     compile 'com.android.support:appcompat-v7:23.1.0'
 
+    compile 'com.loopj.android:android-async-http:1.4.9'
+    compile group: 'cz.msebera.android' , name: 'httpclient', version: '4.4.1.1'
+
     compile (
             [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.4.1'],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.4.1'],

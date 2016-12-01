@@ -291,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         ViewFlipper vs = (ViewFlipper) findViewById(idFlipper);
         vs.setDisplayedChild(vs.indexOfChild(findViewById(idView)));
+        Log.i("App", Integer.toString(idView));
         _previousViewID = _currentViewID;
         _currentViewID = idView;
     }
@@ -382,7 +383,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void navCo()
     {
-        if (_itm.getTitle().toString() == "Déconnexion") {
+        if (_itm.getTitle().toString().equals("Déconnexion")) {
             Snackbar snackbar = Snackbar.make(_lmain, "À bientôt !", Snackbar.LENGTH_LONG);
             snackbar.show();
             _itm.setTitle("Connexion");
@@ -394,12 +395,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         EditText ETlogin = new EditText(MainActivity.this);
         EditText ETpwd = new EditText(MainActivity.this);
+
         ETpwd.setId(R.id.popupPasswd);
         ETlogin.setId(R.id.popupLogin);
+
         ETlogin.setHint("Nom d'utilisateur");
         ETlogin.setInputType(InputType.TYPE_CLASS_TEXT);
+
         ETpwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
         ETpwd.setHint("Mot de passe");
+
         _lp = new LinearLayout(MainActivity.this);
         _lp.setOrientation(LinearLayout.VERTICAL);
         _lp.addView(ETlogin);
@@ -421,11 +426,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     case DialogInterface.BUTTON_NEGATIVE:
                         //No button clicked
                         break;
+                    case DialogInterface.BUTTON_NEUTRAL:
+                        changeCurrentView(R.id.VFMain, R.id.RLSignUp, false);
+                        defineNameToolBar("Creation d'un compte");
+                        break;
                 }
             }
         };
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Veuillez vous connecter.").setPositiveButton("Connexion", dialogClickListener).setNegativeButton("Annuler", dialogClickListener);
+        builder.setMessage("Veuillez vous connecter.").setPositiveButton("Connexion", dialogClickListener).setNegativeButton("Annuler", dialogClickListener).setNeutralButton("Créer un compte", dialogClickListener);
         builder.setView(_lp);
         builder.show();
       }
@@ -445,6 +454,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             _lvAutor.setVisibility(View.GONE);
             tv.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void CreateAccount(View v) {
+        SignUp sign_up = new SignUp();
+        changeCurrentView(R.id.VFMain, R.id.RLBiblio, false);
+        Snackbar snackbar = Snackbar.make(_lmain, "Le compte a été créer", Snackbar.LENGTH_LONG);
+        snackbar.show();
+        _co = true;
+        _gvBiblio.setVisibility(View.VISIBLE);
+        _lvAutor.setVisibility(View.VISIBLE);
+        findViewById(R.id.TVCo).setVisibility(View.GONE);
+        _itm.setTitle("Déconnexion");
+    }
+
+    public void CancelAccount(View v) {
+        changeCurrentView(R.id.VFMain, R.id.RLBiblio, false);
     }
 
     private void prout()
