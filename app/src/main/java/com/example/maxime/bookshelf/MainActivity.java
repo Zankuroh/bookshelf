@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private List<Book> _infos;
     private boolean _co = false;
     private boolean _scan = false;
+    private SignIn _connect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -410,15 +412,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 EditText login = (EditText) _lp.findViewById(R.id.popupLogin);
+                EditText passwd = (EditText) _lp.findViewById(R.id.popupPasswd);
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
-                        Snackbar snackbar = Snackbar.make(_lmain, "Bonjour " + login.getText().toString() + " !", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        _co = true;
-                        _gvBiblio.setVisibility(View.VISIBLE);
-                        _lvAutor.setVisibility(View.VISIBLE);
-                        findViewById(R.id.TVCo).setVisibility(View.GONE);
-                        _itm.setTitle("Déconnexion");
+                        _connect = new SignIn(login.getText().toString(), passwd.getText().toString(), _lmain);
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            public void run()
+                            {
+                                _co = _connect.getStatus();
+                                if (_co == true) {
+                                    _gvBiblio.setVisibility(View.VISIBLE);
+                                    _lvAutor.setVisibility(View.VISIBLE);
+                                    findViewById(R.id.TVCo).setVisibility(View.GONE);
+                                    _itm.setTitle("Déconnexion");
+                                }
+                            }
+                        }, 3000);
+
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         //No button clicked
