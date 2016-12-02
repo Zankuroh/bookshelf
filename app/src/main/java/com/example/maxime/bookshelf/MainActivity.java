@@ -466,18 +466,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void CreateAccount(View v) {
-        EditText name = (EditText) _lp.findViewById(R.id.SignUpFirstName);
-        EditText password = (EditText) _lp.findViewById(R.id.SignUpPwd);
-        EditText email = (EditText) _lp.findViewById(R.id.SignUpMail);
-        SignUp sign_up = new SignUp(name.getText().toString(), email.getText().toString(), password.getText().toString(), (RelativeLayout) findViewById(R.id.RLMain));
-        String message = sign_up.getStatus();
-
-//        changeCurrentView(R.id.VFMain, R.id.RLBiblio, false);
-//        _co = true;
-//        _gvBiblio.setVisibility(View.VISIBLE);
-//        _lvAutor.setVisibility(View.VISIBLE);
-//        findViewById(R.id.TVCo).setVisibility(View.GONE);
-//        _itm.setTitle("Déconnexion");
+        EditText name = (EditText) findViewById(R.id.SignUpFirstName);
+        EditText password = (EditText) findViewById(R.id.SignUpPwd);
+        EditText email = (EditText) findViewById(R.id.SignUpMail);
+        final SignUp sign_up = new SignUp(name.getText().toString(), email.getText().toString(), password.getText().toString(), (RelativeLayout) findViewById(R.id.RLMain));
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run()
+            {
+                _co = sign_up.getStatus();
+                if (_co == true) {
+                    _gvBiblio.setVisibility(View.VISIBLE);
+                    _lvAutor.setVisibility(View.VISIBLE);
+                    findViewById(R.id.TVCo).setVisibility(View.GONE);
+                    _itm.setTitle("Déconnexion");
+                    changeCurrentView(R.id.VFMain, R.id.RLBiblio, false);
+                }
+            }
+        }, 3000);
     }
 
     public void CancelAccount(View v) {

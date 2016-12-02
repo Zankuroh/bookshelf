@@ -3,91 +3,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent" android:id="@+id/RLSignUp">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/SignUpLastName"
-        android:layout_below="@+id/SignUpFirstName"
-        android:layout_alignLeft="@+id/SignUpFirstName"
-        android:layout_alignStart="@+id/SignUpFirstName"
-        android:layout_marginTop="31dp"
-        android:hint="Nom"
-        android:layout_alignRight="@+id/SignUpOk"
-        android:layout_alignEnd="@+id/SignUpOk" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/SignUpMail"
-        android:layout_below="@+id/SignUpLastName"
-        android:layout_alignLeft="@+id/SignUpLastName"
-        android:layout_alignStart="@+id/SignUpLastName"
-        android:layout_marginTop="43dp"
-        android:hint="Adresse email"
-        android:layout_alignRight="@+id/SignUpOk"
-        android:layout_alignEnd="@+id/SignUpOk" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:layout_below="@+id/SignUpMail"
-        android:layout_alignLeft="@+id/SignUpMail"
-        android:layout_alignStart="@+id/SignUpMail"
-        android:layout_marginTop="33dp"
-        android:id="@+id/SignUpPwd"
-        android:hint="password"
-        android:selectAllOnFocus="true"
-        android:layout_alignRight="@+id/SignUpOk"
-        android:layout_alignEnd="@+id/SignUpOk" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:layout_marginTop="36dp"
-        android:id="@+id/editText6"
-        android:hint="Vérification password"
-        android:layout_below="@+id/SignUpPwd"
-        android:layout_alignLeft="@+id/SignUpPwd"
-        android:layout_alignStart="@+id/SignUpPwd"
-        android:layout_alignRight="@+id/SignUpOk"
-        android:layout_alignEnd="@+id/SignUpOk" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/SignUpFirstName"
-        android:layout_marginTop="48dp"
-        android:hint="Prénom"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/SignUpOk"
-        android:layout_alignEnd="@+id/SignUpOk"
-        android:layout_alignLeft="@+id/SignUpCancel"
-        android:layout_alignStart="@+id/SignUpCancel" />
-
-    <Button
-        android:text="Annuler"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="71dp"
-        android:layout_marginStart="71dp"
-        android:id="@+id/SignUpCancel"
-        android:elevation="0dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="19dp"
-        android:onClick="CancelAccount"/>
-
     <Button
         android:text="Créer"
         android:layout_width="wrap_content"
@@ -100,5 +15,67 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:onClick="CreateAccount"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/SignUpFirstName"
+        android:hint="Prénom"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/SignUpPwd"
+        android:layout_alignStart="@+id/SignUpPwd"
+        android:layout_marginTop="60dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/SignUpMail"
+        android:hint="Adresse email"
+        android:layout_below="@+id/SignUpFirstName"
+        android:layout_alignLeft="@+id/SignUpFirstName"
+        android:layout_alignStart="@+id/SignUpFirstName"
+        android:layout_marginTop="42dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/SignUpPwd"
+        android:hint="password"
+        android:selectAllOnFocus="true"
+        android:layout_below="@+id/SignUpMail"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/editText6"
+        android:hint="Vérification password"
+        android:layout_below="@+id/SignUpPwd"
+        android:layout_alignLeft="@+id/SignUpPwd"
+        android:layout_alignStart="@+id/SignUpPwd"
+        android:layout_marginTop="55dp" />
+
+    <Button
+        android:text="Annuler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="71dp"
+        android:layout_marginStart="71dp"
+        android:id="@+id/SignUpCancel"
+        android:elevation="0dp"
+        android:onClick="CancelAccount"
+        android:layout_below="@+id/editText6"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="68dp" />
 
 </RelativeLayout>
