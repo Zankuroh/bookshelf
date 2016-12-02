@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.text.InputType;
@@ -457,15 +454,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void CreateAccount(View v) {
-        SignUp sign_up = new SignUp();
-        changeCurrentView(R.id.VFMain, R.id.RLBiblio, false);
-        Snackbar snackbar = Snackbar.make(_lmain, "Le compte a été créer", Snackbar.LENGTH_LONG);
-        snackbar.show();
-        _co = true;
-        _gvBiblio.setVisibility(View.VISIBLE);
-        _lvAutor.setVisibility(View.VISIBLE);
-        findViewById(R.id.TVCo).setVisibility(View.GONE);
-        _itm.setTitle("Déconnexion");
+        EditText name = (EditText) _lp.findViewById(R.id.SignUpFirstName);
+        EditText password = (EditText) _lp.findViewById(R.id.SignUpPwd);
+        EditText email = (EditText) _lp.findViewById(R.id.SignUpMail);
+        SignUp sign_up = new SignUp(name.getText().toString(), email.getText().toString(), password.getText().toString(), (RelativeLayout) findViewById(R.id.RLMain));
+        String message = sign_up.getStatus();
+
+//        changeCurrentView(R.id.VFMain, R.id.RLBiblio, false);
+//        _co = true;
+//        _gvBiblio.setVisibility(View.VISIBLE);
+//        _lvAutor.setVisibility(View.VISIBLE);
+//        findViewById(R.id.TVCo).setVisibility(View.GONE);
+//        _itm.setTitle("Déconnexion");
     }
 
     public void CancelAccount(View v) {

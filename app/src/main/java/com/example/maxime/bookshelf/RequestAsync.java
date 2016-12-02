@@ -6,7 +6,7 @@ import com.loopj.android.http.*;
  * Created by joly_i on 27/01/16.
  */
 public class RequestAsync {
-    private static final String BASE_URL = "https://www.googleapis.com//books/v1/";
+    private static final String BASE_URL = "http://bookshelf.caolin.ovh:8000/api/";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
