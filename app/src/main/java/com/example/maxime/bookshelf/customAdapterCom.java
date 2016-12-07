@@ -14,12 +14,12 @@ import java.util.ArrayList;
  * Created by Maxime on 23/02/2016.
  */
 
-public class customAdapterCom extends BaseAdapter
+class customAdapterCom extends BaseAdapter
 {
     private Context _c;
     private ArrayList<ComAdapter> _als;
 
-    public customAdapterCom(Context context, ArrayList<ComAdapter> modelList) {
+    customAdapterCom(Context context, ArrayList<ComAdapter> modelList) {
         this._c = context;
         this._als = modelList;
     }
@@ -42,14 +42,12 @@ public class customAdapterCom extends BaseAdapter
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        convertView = null;
+        /*convertView = null;*/
 
         if (convertView == null)
         {
-
-            LayoutInflater mInflater = (LayoutInflater) _c
-                    .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.com_adapter, null);
+            LayoutInflater mInflater = (LayoutInflater) _c.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            convertView = mInflater.inflate(R.layout.com_adapter, parent, false);
 
             ComAdapter iadapt = _als.get(position);
             TextView tv1 = (TextView) convertView.findViewById(R.id.TVComWho);

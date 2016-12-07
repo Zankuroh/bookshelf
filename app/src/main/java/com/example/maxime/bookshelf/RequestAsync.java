@@ -5,24 +5,28 @@ import com.loopj.android.http.*;
 /**
  * Created by joly_i on 27/01/16.
  */
-public class RequestAsync {
-    private static final String BASE_URL = "http://bookshelf.caolin.ovh:8000/api/";
-
+public class RequestAsync
+{
     private static AsyncHttpClient client = new AsyncHttpClient();
 
-    public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+    static public void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler)
+    {
         client.get(getAbsoluteUrl(url), params, responseHandler);
     }
 
-    public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+    static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler)
+    {
         client.post(getAbsoluteUrl(url), params, responseHandler);
     }
 
-    public static void delete(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+    public static void delete(String url, RequestParams params, AsyncHttpResponseHandler responseHandler)
+    {
         client.delete(getAbsoluteUrl(url), params, responseHandler);
     }
 
-    private static String getAbsoluteUrl(String relativeUrl) {
-        return BASE_URL + relativeUrl;
+    private static String getAbsoluteUrl(String relativeUrl)
+    {
+        String baseUrl = "http://bookshelf.caolin.ovh:8000/api/";
+        return baseUrl + relativeUrl;
     }
 }

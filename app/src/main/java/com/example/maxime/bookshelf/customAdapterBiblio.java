@@ -15,11 +15,11 @@ import java.util.ArrayList;
  * Created by Maxime on 17/02/2016.
  */
 
-public class customAdapterBiblio extends BaseAdapter {
+class customAdapterBiblio extends BaseAdapter {
     private Context _c;
     private ArrayList<BiblioAdapter> _als;
 
-    public customAdapterBiblio(Context context, ArrayList<BiblioAdapter> modelList) {
+    customAdapterBiblio(Context context, ArrayList<BiblioAdapter> modelList) {
         this._c = context;
         this._als = modelList;
     }
@@ -42,13 +42,12 @@ public class customAdapterBiblio extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        convertView = null;
+/*        convertView = null;*/
 
         if (convertView == null)
         {
-
             LayoutInflater mInflater = (LayoutInflater) _c.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.biblio_adapter, null);
+            convertView = mInflater.inflate(R.layout.biblio_adapter, parent, false);
 
             BiblioAdapter iadapt = _als.get(position);
             TextView tv = (TextView) convertView.findViewById(R.id.TVAff);

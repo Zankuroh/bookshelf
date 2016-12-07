@@ -16,13 +16,15 @@ import cz.msebera.android.httpclient.Header;
  * Created by Maxime on 02/12/2016.
  */
 
-public class SignIn extends Activity {
-    private static RelativeLayout _lp;
-    private static Boolean status = false;
+public class SignIn extends Activity
+{
+    private RelativeLayout _lp;
+    private Boolean _status;
 
     public SignIn(String email, String pwd, RelativeLayout p)
     {
-        _lp = p;
+        this._status = false;
+        this._lp = p;
         RequestParams params = new RequestParams();
         params.put("password", pwd);
         params.put("email", email);
@@ -34,7 +36,7 @@ public class SignIn extends Activity {
                     String resp = response.getString("token");
                     if (resp != null) {
                         Snackbar snackbar = Snackbar.make(_lp, "Connexion réussie !", Snackbar.LENGTH_LONG);
-                        status = true;
+                        _status = true;
                         snackbar.show();
                     } else {
                         Snackbar snackbar = Snackbar.make(_lp, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
@@ -70,6 +72,6 @@ public class SignIn extends Activity {
 
     public Boolean getStatus()
     {
-        return status;
+        return _status;
     }
 }

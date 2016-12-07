@@ -42,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -54,9 +55,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private customAdapterCom _adapterCom;
     private customAdapterBiblio _adapterBiblio;
     private customAdapterAutor _adapterAutor;
-    private ArrayList<ComAdapter> _modelListCom = new ArrayList<ComAdapter>();
-    private ArrayList<String> _modelListAutor = new ArrayList<String>();
-    private ArrayList<BiblioAdapter> _modelListBiblio = new ArrayList<BiblioAdapter>();
+    private ArrayList<ComAdapter> _modelListCom = new ArrayList<>();
+    private ArrayList<String> _modelListAutor = new ArrayList<>();
+    private ArrayList<BiblioAdapter> _modelListBiblio = new ArrayList<>();
     private int _currentViewID;
     private int _previousViewID;
     private List<Book> _infos;
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (_currentViewID == R.id.SVBook) {
             changeCurrentView(R.id.VFMain, _previousViewID, false);
         } else {
-            //super.onBackPressed();
+            super.onBackPressed();
         }
     }
 
@@ -275,7 +276,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(tb);
-        getSupportActionBar().setTitle(title);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, tb, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -298,16 +301,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void sendCom(View v)
     {
         EditText et = (EditText) findViewById(R.id.ETCom);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH'h'mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH'h'mm", Locale.FRANCE);
         String currentDateandTime = sdf.format(new Date());
         Log.i("sendCom", currentDateandTime);
         _modelListCom.add(new ComAdapter("Nicolas", currentDateandTime, et.getText().toString()));
         et.setText("");
         InputMethodManager inputManager =
                 (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputManager.hideSoftInputFromWindow(
-                this.getCurrentFocus().getWindowToken(),
-                InputMethodManager.HIDE_NOT_ALWAYS);
+        if (this.getCurrentFocus() != null) {
+            inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
         getTotalHeightofListView();
     }
 
@@ -351,7 +354,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
         int i;
         for (i = 0; i < _infos.size(); i++) {
-            if (title.equals(_infos.get(i).getTitre()) == true) {
+            if (title.equals(_infos.get(i).getTitre())) {
                 Book b = _infos.get(i);
                 TextView tv = (TextView) findViewById(R.id.TVInfoBook);
                 TextView tvt = (TextView) findViewById(R.id.TVTitreBook);
@@ -399,9 +402,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ETlogin.setId(R.id.popupLogin);
 
         ETlogin.setHint("Nom d'utilisateur");
-        ETlogin.setInputType(InputType.TYPE_CLASS_TEXT);
+        ETlogin.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 
-        ETpwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        //ETpwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        ETpwd.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         ETpwd.setHint("Mot de passe");
 
         _lp = new LinearLayout(MainActivity.this);
@@ -422,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             public void run()
                             {
                                 _co = _connect.getStatus();
-                                if (_co == true) {
+                                if (_co) {
                                     _gvBiblio.setVisibility(View.VISIBLE);
                                     _lvAutor.setVisibility(View.VISIBLE);
                                     findViewById(R.id.TVCo).setVisibility(View.GONE);
@@ -475,7 +479,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void run()
             {
                 _co = sign_up.getStatus();
-                if (_co == true) {
+                if (_co) {
                     _gvBiblio.setVisibility(View.VISIBLE);
                     _lvAutor.setVisibility(View.VISIBLE);
                     findViewById(R.id.TVCo).setVisibility(View.GONE);
@@ -629,7 +633,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 "\"isbn\":2226249303\n" +
                 "}\n" +
                 "]");
-        editor.commit();
+        editor.apply();
         /**
          * récupération des donnée enregistré
          */

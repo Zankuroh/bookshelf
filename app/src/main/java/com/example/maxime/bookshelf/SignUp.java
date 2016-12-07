@@ -22,8 +22,8 @@ import cz.msebera.android.httpclient.Header;
 
 public class SignUp extends Activity {
 
-    private static RelativeLayout _lp;
-    public static Boolean status = false;
+    private RelativeLayout _lp;
+    public Boolean _status = false;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -32,15 +32,14 @@ public class SignUp extends Activity {
 
     public SignUp(String name, String email, String password, RelativeLayout p) {
         _lp = p;
-        status = false;
+        _status = false;
 
         RequestParams params = new RequestParams();
         params.put("name", name);
         params.put("password", password);
         params.put("email", email);
 
-        RequestAsync create = new RequestAsync();
-        create.post("register", params, new JsonHttpResponseHandler() {
+        RequestAsync.post("register", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
@@ -48,7 +47,7 @@ public class SignUp extends Activity {
                     if (ret.equals("User has been created")) {
                         Snackbar snackbar = Snackbar.make(_lp, ret, Snackbar.LENGTH_LONG);
                         snackbar.show();
-                        status = true;
+                        _status = true;
                     } else
                     {
                         Snackbar snackbar = Snackbar.make(_lp, "Une erreur est survenue", Snackbar.LENGTH_LONG);
@@ -70,7 +69,7 @@ public class SignUp extends Activity {
     }
 
     public Boolean getStatus() {
-        return this.status;
+        return this._status;
     }
 
     public Boolean verifyEmail() {
