@@ -6,14 +6,16 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.widget.RelativeLayout;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
+import com.bookshelf.api.BookshelfApi;
+import com.bookshelf.model.Register;
 
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import cz.msebera.android.httpclient.Header;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -25,45 +27,44 @@ public class SignUp extends Activity {
     private RelativeLayout _lp;
     public Boolean _status = false;
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-
     public SignUp(String name, String email, String password, RelativeLayout p) {
         _lp = p;
         _status = false;
 
-        RequestParams params = new RequestParams();
-        params.put("name", name);
-        params.put("password", password);
-        params.put("email", email);
-
-        RequestAsync.post("register", params, new JsonHttpResponseHandler() {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<Register> call = bookshelfApi.Register(name, password, email);
+        call.enqueue(new Callback<Register>() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    String ret  = response.getString("success");
-                    if (ret.equals("User has been created")) {
-                        Snackbar snackbar = Snackbar.make(_lp, ret, Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        _status = true;
-                    } else
-                    {
-                        Snackbar snackbar = Snackbar.make(_lp, "Une erreur est survenue", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    }
-                } catch (JSONException e) {
-                    Snackbar snackbar = Snackbar.make(_lp, "Echec de connexion :(", Snackbar.LENGTH_LONG);
+            public void onResponse(Call<Register> call, Response<Register> response) {
+                if (response.isSuccessful()) {
+                    Register auth = response.body();
+                    String success = auth.getSuccess();
+                    Snackbar snackbar = Snackbar.make(_lp, "Création réussie !", Snackbar.LENGTH_LONG);
+                    _status = true;
                     snackbar.show();
-                    e.printStackTrace();
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_lp, "Erreur : " + jObjError.getString("error"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_lp, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
                 }
             }
 
             @Override
-            public void onFailure(int code, Header[] headers, Throwable m, JSONObject response) {
-                Snackbar snackbar = Snackbar.make(_lp, "Echec de connexion :(", Snackbar.LENGTH_LONG);
+            public void onFailure(Call<Register> call, Throwable t) {
+                Snackbar snackbar = Snackbar.make(_lp, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
+                t.printStackTrace();
             }
         });
     }
@@ -72,13 +73,13 @@ public class SignUp extends Activity {
         return this._status;
     }
 
-    public Boolean verifyEmail() {
-        //TODO vérifier email
-        return null;
+    public static Boolean verifyEmail(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public Boolean addUser() {
-        //TODO ajouter à la base de donnée les inforamtions de l'utilisateur.
+    public static Boolean checkPassword(String pwd1,  String pwd2) {
+        if (pwd1.equals(pwd2))
+            return true;
         return false;
     }
 

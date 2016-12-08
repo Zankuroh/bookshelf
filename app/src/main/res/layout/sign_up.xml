@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:ems="10"
-        android:id="@+id/editText6"
+        android:id="@+id/SignUpPwd2"
         android:hint="Vérification password"
         android:layout_below="@+id/SignUpPwd"
         android:layout_alignLeft="@+id/SignUpPwd"
@@ -73,7 +73,7 @@
         android:id="@+id/SignUpCancel"
         android:elevation="0dp"
         android:onClick="CancelAccount"
-        android:layout_below="@+id/editText6"
+        android:layout_below="@+id/SignUpPwd2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="68dp" />

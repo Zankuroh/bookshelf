@@ -472,7 +472,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void CreateAccount(View v) {
         EditText name = (EditText) findViewById(R.id.SignUpFirstName);
         EditText password = (EditText) findViewById(R.id.SignUpPwd);
+        EditText password2 = (EditText) findViewById(R.id.SignUpPwd2);
         EditText email = (EditText) findViewById(R.id.SignUpMail);
+        if (!SignUp.verifyEmail(email.getText().toString()))
+        {
+            Snackbar snackbar = Snackbar.make(_lmain, "L'adresse mail n'est pas valide", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return ;
+        }
+        if (!SignUp.checkPassword(password.getText().toString(), password2.getText().toString()))
+        {
+            Snackbar snackbar = Snackbar.make(_lmain, "Les mots de passe ne sont pas identiques !", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return ;
+        }
         final SignUp sign_up = new SignUp(name.getText().toString(), email.getText().toString(), password.getText().toString(), (RelativeLayout) findViewById(R.id.RLMain));
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
