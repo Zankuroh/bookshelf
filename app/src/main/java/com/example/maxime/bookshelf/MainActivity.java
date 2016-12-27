@@ -404,7 +404,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ETlogin.setHint("Nom d'utilisateur");
         ETlogin.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 
-        //ETpwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
         ETpwd.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         ETpwd.setHint("Mot de passe");
 

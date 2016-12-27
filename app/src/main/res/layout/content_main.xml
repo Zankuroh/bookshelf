@@ -9,7 +9,7 @@
     tools:context="com.example.maxime.bookshelf.MainActivity"
     tools:showIn="@layout/app_bar_main"
     android:id="@+id/RLMain"
-    android:background="@drawable/background">
+    android:background="@color/background">
 
     <ViewFlipper
         android:layout_width="match_parent"
@@ -30,8 +30,8 @@
 
             <TextView
                 android:id="@+id/TVCo"
-                android:text="Vous n'êtes pas connecté !"
-                android:textSize="25dp"
+                android:text="@string/not_login"
+                android:textSize="30sp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"/>

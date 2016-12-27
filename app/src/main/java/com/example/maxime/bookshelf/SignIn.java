@@ -54,7 +54,6 @@ public class SignIn extends Activity
                         snackbar.show();
                         e.printStackTrace();
                     }
-
                 }
             }
 
