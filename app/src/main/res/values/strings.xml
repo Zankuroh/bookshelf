@@ -5,4 +5,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="picture_desc">No picture.</string>
+    <string name="not_login">Vous n'êtes pas connecté !</string>
 </resources>
