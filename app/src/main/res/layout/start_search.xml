@@ -7,7 +7,7 @@
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editText"
+        android:id="@+id/searchField"
         android:hint="Titre, auteur, genre..."
         android:layout_above="@+id/button"
         android:layout_alignParentLeft="true"
@@ -30,7 +30,8 @@
         android:layout_height="wrap_content"
         android:text="OK"
         android:id="@+id/okSearch"
-        android:layout_alignBottom="@+id/editText"
+        android:layout_alignBottom="@+id/searchField"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:onClick="startResearch" />
 </RelativeLayout>

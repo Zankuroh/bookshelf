@@ -4,7 +4,6 @@ import com.bookshelf.model.Auth;
 import com.bookshelf.model.Register;
 
 import retrofit2.Call;
-import retrofit2.http.Field;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -20,4 +19,5 @@ public interface BookshelfApi {
 
     @POST("register")
     Call<Register> Register(@Query("name") String name, @Query("password") String password, @Query("email") String email);
+
 }

@@ -326,6 +326,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         integrator.initiateScan();
     }
 
+    public void startResearch(View v) {
+        Search search = new Search();
+        EditText searcheField = (EditText)findViewById(R.id.searchField);
+        search.searchByISNB(searcheField.getText().toString(),_lmain);
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent intent)
     {
         if (requestCode == 0x0000c0de) {
