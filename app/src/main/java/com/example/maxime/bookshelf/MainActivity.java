@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -72,14 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
         setAdapters();
         _lmain = (RelativeLayout) findViewById(R.id.RLMain);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -89,6 +82,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         _currentViewID = R.id.RLBiblio;
         prout();
         drawBiblio();
+
+        TabHost host = (TabHost)findViewById(R.id.tabHostSign);
+        host.setup();
+
+        //Tab 1
+        TabHost.TabSpec spec = host.newTabSpec("Se connecter");
+        spec.setContent(R.id.signIn);
+        spec.setIndicator("Se connecter");
+        host.addTab(spec);
+
+        //Tab 2
+        spec = host.newTabSpec("S'enregistrer");
+        spec.setContent(R.id.signUp);
+        spec.setIndicator("S'enregistrer");
+        host.addTab(spec);
     }
 
     @Override
@@ -385,7 +393,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void navCo()
     {
-        if (_itm.getTitle().toString().equals("Déconnexion")) {
+        if (_co == false) {
+            changeCurrentView(R.id.VFMain, R.id.RLSign, false);
+            defineNameToolBar("Connexion");
+        } else {
             Snackbar snackbar = Snackbar.make(_lmain, "À bientôt !", Snackbar.LENGTH_LONG);
             snackbar.show();
             _itm.setTitle("Connexion");
@@ -393,63 +404,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             _gvBiblio.setVisibility(View.GONE);
             _lvAutor.setVisibility(View.GONE);
             findViewById(R.id.TVCo).setVisibility(View.VISIBLE);
-            return;
         }
-        EditText ETlogin = new EditText(MainActivity.this);
-        EditText ETpwd = new EditText(MainActivity.this);
+    }
 
-        ETpwd.setId(R.id.popupPasswd);
-        ETlogin.setId(R.id.popupLogin);
+    public void onClickSignIn(View v)
+    {
+        RelativeLayout rl = (RelativeLayout) _lmain.findViewById(R.id.RLsignIn);
+        EditText login = (EditText) rl.findViewById(R.id.ETsignInMail);
+        EditText passwd = (EditText) rl.findViewById(R.id.ETsignInMdp);
+        _connect = new SignIn(login.getText().toString(), passwd.getText().toString(), _lmain);
 
-        ETlogin.setHint("Nom d'utilisateur");
-        ETlogin.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run()
+            {
+                _co = _connect.getStatus();
+                if (_co) {
+                    _gvBiblio.setVisibility(View.VISIBLE);
+                    _lvAutor.setVisibility(View.VISIBLE);
+                    findViewById(R.id.TVCo).setVisibility(View.GONE);
+                    _itm.setTitle("Déconnexion");
 
-        ETpwd.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        ETpwd.setHint("Mot de passe");
-
-        _lp = new LinearLayout(MainActivity.this);
-        _lp.setOrientation(LinearLayout.VERTICAL);
-        _lp.addView(ETlogin);
-        _lp.addView(ETpwd);
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                EditText login = (EditText) _lp.findViewById(R.id.popupLogin);
-                EditText passwd = (EditText) _lp.findViewById(R.id.popupPasswd);
-                switch (which){
-                    case DialogInterface.BUTTON_POSITIVE:
-                        _connect = new SignIn(login.getText().toString(), passwd.getText().toString(), _lmain);
-
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            public void run()
-                            {
-                                _co = _connect.getStatus();
-                                if (_co) {
-                                    _gvBiblio.setVisibility(View.VISIBLE);
-                                    _lvAutor.setVisibility(View.VISIBLE);
-                                    findViewById(R.id.TVCo).setVisibility(View.GONE);
-                                    _itm.setTitle("Déconnexion");
-                                }
-                            }
-                        }, 3000);
-
-                        break;
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        //No button clicked
-                        break;
-                    case DialogInterface.BUTTON_NEUTRAL:
-                        changeCurrentView(R.id.VFMain, R.id.RLSignUp, false);
-                        defineNameToolBar("Creation d'un compte");
-                        break;
+                    defineNameToolBar("Bibliothèque");
+                    changeCurrentView(R.id.VFMain, R.id.RLBiblio, true);
+                    drawBiblio();
                 }
             }
-        };
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Veuillez vous connecter.").setPositiveButton("Connexion", dialogClickListener).setNegativeButton("Annuler", dialogClickListener).setNeutralButton("Créer un compte", dialogClickListener);
-        builder.setView(_lp);
-        builder.show();
-      }
+        }, 3000);
+    }
 
     private void verifyUser(int id)
     {
@@ -473,6 +455,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         EditText password = (EditText) findViewById(R.id.SignUpPwd);
         EditText password2 = (EditText) findViewById(R.id.SignUpPwd2);
         EditText email = (EditText) findViewById(R.id.SignUpMail);
+        Log.i("creation", email.getText().toString());
         if (!SignUp.verifyEmail(email.getText().toString()))
         {
             Snackbar snackbar = Snackbar.make(_lmain, "L'adresse mail n'est pas valide", Snackbar.LENGTH_LONG);
