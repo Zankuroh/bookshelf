@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Controller\Auth\;
+
+use App\Http\Controllers\Controller;
+use Tymon\JWTAuth\Exceptions\JWTExceptions;
+use Tymon\JWTAuth\Exceptions\JWTAuth;
+use Illuminate\Foundation\Auth\AuthenticateUsers;
+
+class ApiAuthController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('guest', ['except' => 'getLogout']);
+
+        
+    }
+
+    public function authenticate(Request $request)
+    {
+        $credentials = Request::only('email', 'password');
+    }
+
+}
