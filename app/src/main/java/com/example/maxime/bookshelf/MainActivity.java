@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.gms.common.SignInButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -97,6 +98,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         spec.setContent(R.id.signUp);
         spec.setIndicator("S'enregistrer");
         host.addTab(spec);
+
+        //TEST
+        SignInButton sib = (SignInButton)findViewById(R.id.gConnect);
+        TextView textView = (TextView)sib.getChildAt(0);
+        textView.setText("Se connecter avec Google");
     }
 
     @Override
@@ -439,6 +445,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }, 3000);
     }
 
+    public void onClickTest(View v)
+    {
+        Log.i("Button", "Call OK");
+    }
+
     private void verifyUser(int id)
     {
         TextView tv = (TextView) findViewById(R.id.TVCo);
@@ -456,7 +467,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void CreateAccount(View v) {
+    public void CreateAccount(View v)
+    {
         EditText name = (EditText) findViewById(R.id.SignUpFirstName);
         EditText password = (EditText) findViewById(R.id.SignUpPwd);
         EditText password2 = (EditText) findViewById(R.id.SignUpPwd2);
