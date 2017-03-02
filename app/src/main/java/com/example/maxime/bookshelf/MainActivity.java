@@ -2,14 +2,11 @@ package com.example.maxime.bookshelf;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
-import android.text.InputType;
-import android.text.method.PasswordTransformationMethod;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -26,7 +23,6 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -46,9 +42,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
-    private LinearLayout _lp;
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
+{
     private RelativeLayout _lmain;
     private MenuItem _itm;
     private GridView _gvBiblio;
@@ -67,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean _scan = false;
     private SignIn _connect;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,10 +79,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         _currentViewID = R.id.RLBiblio;
         prout();
         drawBiblio();
-
         TabHost host = (TabHost)findViewById(R.id.tabHostSign);
         host.setup();
-
         //Tab 1
         TabHost.TabSpec spec = host.newTabSpec("Se connecter");
         spec.setContent(R.id.signIn);
@@ -103,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SignInButton sib = (SignInButton)findViewById(R.id.gConnect);
         TextView textView = (TextView)sib.getChildAt(0);
         textView.setText("Se connecter avec Google");
+
     }
 
     @Override
@@ -142,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -162,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_search:
                 changeCurrentView(R.id.VFMain, R.id.RLSearch, true);
                 defineNameToolBar("Recherche");
+                Search s = new Search(findViewById(R.id.RLSearch), this);
                 break;
             case R.id.nav_propo:
                 defineNameToolBar("Suggestions");
@@ -299,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
     }
 
-    private void changeCurrentView(int idFlipper, int idView, boolean clear)
+    protected void changeCurrentView(int idFlipper, int idView, boolean clear)
     {
         if (clear) {
             _modelListBiblio.clear();
@@ -328,24 +323,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getTotalHeightofListView();
     }
 
-    public void openApn(View v)
-    {
-        IntentIntegrator integrator = new IntentIntegrator(this);
-
-        integrator.setCaptureActivity(DecodeBarcode.class);
-        integrator.setOrientationLocked(false);
-        integrator.setPrompt("Scanner le code ISBN au dos du livre");
-        integrator.setBeepEnabled(true);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
-        integrator.initiateScan();
-    }
-
-    public void startResearch(View v) {
-        Search search = new Search();
-        EditText searcheField = (EditText)findViewById(R.id.searchField);
-        search.searchByISNB(searcheField.getText().toString(),_lmain);
-    }
-
     public void onActivityResult(int requestCode, int resultCode, Intent intent)
     {
         if (requestCode == 0x0000c0de) {
@@ -370,7 +347,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void moreDataBook(String title)
+    protected void moreDataBook(String title)
     {
         int i;
         for (i = 0; i < _infos.size(); i++) {

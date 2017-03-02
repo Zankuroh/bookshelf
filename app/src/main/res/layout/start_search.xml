@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/searchField"
         android:hint="Titre, auteur, genre..."
-        android:layout_above="@+id/button"
+        android:layout_above="@+id/searchApn"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_toLeftOf="@+id/okSearch"
@@ -19,10 +19,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Scanner le livre"
-        android:id="@+id/button"
+        android:id="@+id/searchApn"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="openApn"/>
+        android:layout_centerHorizontal="true" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -32,6 +31,5 @@
         android:id="@+id/okSearch"
         android:layout_alignBottom="@+id/searchField"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:onClick="startResearch" />
+        android:layout_alignParentEnd="true"/>
 </RelativeLayout>

@@ -2,8 +2,6 @@ package com.example.maxime.bookshelf;
 
 import android.app.Activity;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.bookshelf.api.BookshelfApi;
