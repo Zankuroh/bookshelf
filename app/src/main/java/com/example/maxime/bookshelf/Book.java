@@ -3,15 +3,16 @@ package com.example.maxime.bookshelf;
 /**
  * Created by joly_i on 22/02/16.
  */
-public class Book {
+public class Book
+{
     private String  titre;
-    private int   image;
+    private int     image;
     private String  auteur;
     private String  date;
     private String  genre;
     private String  resum;
     private Double  note;
-    private Long isbn;
+    private Long    isbn;
 
     public String getTitre() {
         return titre;

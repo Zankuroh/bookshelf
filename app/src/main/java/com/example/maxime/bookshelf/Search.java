@@ -19,8 +19,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by jolyn on 08/12/2016.
  */
 
-public class Search {
-
+public class Search
+{
     private View _rl;
     private MainActivity _act;
 

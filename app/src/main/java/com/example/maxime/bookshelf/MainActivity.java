@@ -1,5 +1,6 @@
 package com.example.maxime.bookshelf;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -50,35 +51,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ListView _lvAutor;
     private ListView _lvCom;
     private customAdapterCom _adapterCom;
-    private customAdapterBiblio _adapterBiblio;
     private customAdapterAutor _adapterAutor;
     private ArrayList<ComAdapter> _modelListCom = new ArrayList<>();
     private ArrayList<String> _modelListAutor = new ArrayList<>();
-    private ArrayList<BiblioAdapter> _modelListBiblio = new ArrayList<>();
     private int _currentViewID;
     private int _previousViewID;
-    private List<Book> _infos;
     private boolean _co = false;
     private boolean _scan = false;
     private SignIn _connect;
+    private Shelf _shelf;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setAdapters();
+        /**/
+        _lvAutor = (ListView) findViewById(R.id.LVAutor);
+        _lvCom = (ListView) findViewById(R.id.LVCom);
+        _gvBiblio = (GridView) findViewById(R.id.GVBiblio);
         _lmain = (RelativeLayout) findViewById(R.id.RLMain);
+        /**/
+        setAdapters();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setItemIconTintList(null);
         defineNameToolBar("Bibliothèque");
         _currentViewID = R.id.RLBiblio;
-        prout();
-        drawBiblio();
+
         TabHost host = (TabHost)findViewById(R.id.tabHostSign);
         host.setup();
         //Tab 1
@@ -143,7 +147,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         _itm = item;
-        BiblioAdapter ba;
         verifyUser(id);
 
         switch (id)
@@ -151,26 +154,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_biblio:
                 defineNameToolBar("Bibliothèque");
                 changeCurrentView(R.id.VFMain, R.id.RLBiblio, true);
-                drawBiblio();
+                callShelf(Shelf.shelfType.MAINSHELF);
                 break;
             case R.id.nav_search:
-                changeCurrentView(R.id.VFMain, R.id.RLSearch, true);
+                changeCurrentView(R.id.VFMain, R.id.RLSearch, false);
                 defineNameToolBar("Recherche");
                 Search s = new Search(findViewById(R.id.RLSearch), this);
                 break;
             case R.id.nav_propo:
                 defineNameToolBar("Suggestions");
-                changeCurrentView(R.id.VFMain, R.id.RLBiblio, true);
-                drawPropo();
+                changeCurrentView(R.id.VFMain, R.id.RLBiblio, false);
+                callShelf(Shelf.shelfType.PROPOSHELF);
                 break;
             case R.id.nav_wish:
-                changeCurrentView(R.id.VFMain, R.id.RLBiblio, true);
-                ba = new BiblioAdapter("Les souhaits", R.drawable.test_book);
-                _modelListBiblio.add(ba);
+                changeCurrentView(R.id.VFMain, R.id.RLBiblio, false);
+                callShelf(Shelf.shelfType.WISHSHELF);
                 defineNameToolBar("Liste de souhaits");
                 break;
             case R.id.nav_autor:
-                changeCurrentView(R.id.VFMain, R.id.RLAutor, true);
+                changeCurrentView(R.id.VFMain, R.id.RLAutor, false);
                 defineNameToolBar("Auteurs suivis");
                 break;
             case R.id.nav_co:
@@ -190,48 +192,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    private void drawBiblio()
+    private void callShelf(Shelf.shelfType type)
     {
-        for (int i = 0; i < _infos.size(); i++) {
-            if (!_infos.get(i).getTitre().equals("Harry Potter et les reliques de la mort") &&
-                    !_infos.get(i).getTitre().equals("La damnation de Pythos") &&
-                    !_infos.get(i).getTitre().equals("Percy Jackson - Tome 1 : Le voleur de foudre") &&
-                    !_infos.get(i).getTitre().equals("Le trône de fer tome 5")) {
-                _modelListBiblio.add(new BiblioAdapter(_infos.get(i).getTitre(), _infos.get(i).getImage()));
-            } else if (_infos.get(i).getTitre().equals("La damnation de Pythos") && _scan) {
-                _modelListBiblio.add(new BiblioAdapter(_infos.get(i).getTitre(), _infos.get(i).getImage()));
+        if (_shelf == null) {
+            _shelf = new Shelf(this, type, _scan);
+        } else {
+            _shelf.dataUpdated();
+            switch (type)
+            {
+                case MAINSHELF:
+                    _shelf.mainShelf(_scan);
+                    break;
+                case PROPOSHELF:
+                    _shelf.propoShelf();
+                    break;
+                case WISHSHELF:
+                    _shelf.whishShelf();
+                    break;
+                default:
+                    break;
             }
         }
     }
 
-    private void drawPropo()
+    private void setAdapters()
     {
-        for (int i = 0; i < _infos.size(); i++) {
-            if (_infos.get(i).getTitre().equals("Harry Potter et les reliques de la mort") ||
-                    _infos.get(i).getTitre().equals("Le trône de fer tome 5") ||
-                    _infos.get(i).getTitre().equals("Percy Jackson - Tome 1 : Le voleur de foudre")) {
-                _modelListBiblio.add(new BiblioAdapter(_infos.get(i).getTitre(), _infos.get(i).getImage()));
-            }
-        }
-    }
-
-    private void setAdapters() {
-        _gvBiblio = (GridView) findViewById(R.id.GVBiblio);
-        _adapterBiblio = new customAdapterBiblio(this, _modelListBiblio);
-        _gvBiblio.setAdapter(_adapterBiblio);
-        _gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                //Snackbar snackbar = Snackbar.make(_lmain, ((TextView) view.findViewById(R.id.TVAff)).getText(), Snackbar.LENGTH_LONG);
-                //snackbar.show();
-                changeCurrentView(R.id.VFMain, R.id.SVBook, false);
-                moreDataBook(((TextView) view.findViewById(R.id.TVAff)).getText().toString());
-            }
-        });
-
-        _lvAutor = (ListView) findViewById(R.id.LVAutor);
         _adapterAutor = new customAdapterAutor(this, _modelListAutor);
         _lvAutor.setAdapter(_adapterAutor);
         _lvAutor.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -244,7 +229,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        _lvCom = (ListView) findViewById(R.id.LVCom);
         _adapterCom = new customAdapterCom(this, _modelListCom);
         _lvCom.setAdapter(_adapterCom);
 
@@ -252,7 +236,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         _modelListAutor.add("R. R. Martin");
         _modelListCom.add(new ComAdapter("Maxime", "23/02/2016 à 13h42", "Super livre !"));
 
-        _gvBiblio.setVisibility(View.GONE);
         _lvAutor.setVisibility(View.GONE);
 
         getTotalHeightofListView();
@@ -296,9 +279,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     protected void changeCurrentView(int idFlipper, int idView, boolean clear)
     {
-        if (clear) {
-            _modelListBiblio.clear();
-            _adapterBiblio.notifyDataSetChanged();
+        if (clear && _shelf != null) {
+            _shelf.dataUpdated();
         }
         ViewFlipper vs = (ViewFlipper) findViewById(idFlipper);
         vs.setDisplayedChild(vs.indexOfChild(findViewById(idView)));
@@ -334,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     //we have a result
                     Log.i("App", "Format: " + scanFormat + "\nRésultat: " + scanContent);
                     changeCurrentView(R.id.VFMain, R.id.SVBook, false);
-                    moreDataBook("La damnation de Pythos");
+                    moreDataBook("La damnation de Pythos", null);
                     // Ici appeler la fonction moredatabook avec le titre du livre scanné
                 }
                 else {
@@ -347,24 +329,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    protected void moreDataBook(String title)
+    protected void moreDataBook(String title, List<Book> infos)
     {
         int i;
-        for (i = 0; i < _infos.size(); i++) {
-            if (title.equals(_infos.get(i).getTitre())) {
-                Book b = _infos.get(i);
-                TextView tv = (TextView) findViewById(R.id.TVInfoBook);
-                TextView tvt = (TextView) findViewById(R.id.TVTitreBook);
-                TextView tvr = (TextView) findViewById(R.id.TVResum);
-                tvt.setText(b.getTitre());
-                tv.setText("Date de sortie : " + b.getDate());
-                tv.setText(tv.getText() + "\nAuteur : " + b.getAuteur());
-                tv.setText(tv.getText() + "\nGenre : " + b.getGenre());
-                tv.setText(tv.getText() + "\nNote : " + b.getNote().toString());
-                tvr.setText(b.getResum());
 
-                ImageView iv = (ImageView) findViewById(R.id.IVBook);
-                iv.setImageBitmap(OptimizeBitmap.decodeSampledBitmapFromResource(getResources(), b.getImage(), 200, 200));
+        if (infos == null) {
+            infos = tempHardTest();
+        }
+        if (infos != null) {
+            for (i = 0; i < infos.size(); i++) {
+                if (title.equals(infos.get(i).getTitre())) {
+                    Book b = infos.get(i);
+                    TextView tv = (TextView) findViewById(R.id.TVInfoBook);
+                    TextView tvt = (TextView) findViewById(R.id.TVTitreBook);
+                    TextView tvr = (TextView) findViewById(R.id.TVResum);
+                    tvt.setText(b.getTitre());
+                    tv.setText("Date de sortie : " + b.getDate());
+                    tv.setText(tv.getText() + "\nAuteur : " + b.getAuteur());
+                    tv.setText(tv.getText() + "\nGenre : " + b.getGenre());
+                    tv.setText(tv.getText() + "\nNote : " + b.getNote().toString());
+                    tvr.setText(b.getResum());
+
+                    ImageView iv = (ImageView) findViewById(R.id.IVBook);
+                    iv.setImageBitmap(OptimizeBitmap.decodeSampledBitmapFromResource(getResources(), b.getImage(), 200, 200));
+                }
             }
         }
     }
@@ -396,8 +384,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    public static void hideSoftKeyboard(Activity activity)
+    {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
     public void onClickSignIn(View v)
     {
+
+        MainActivity.hideSoftKeyboard(this);
         RelativeLayout rl = (RelativeLayout) _lmain.findViewById(R.id.RLsignIn);
         EditText login = (EditText) rl.findViewById(R.id.ETsignInMail);
         EditText passwd = (EditText) rl.findViewById(R.id.ETsignInMdp);
@@ -416,15 +412,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     defineNameToolBar("Bibliothèque");
                     changeCurrentView(R.id.VFMain, R.id.RLBiblio, true);
-                    drawBiblio();
+                    callShelf(Shelf.shelfType.MAINSHELF);
                 }
             }
         }, 3000);
-    }
-
-    public void onClickTest(View v)
-    {
-        Log.i("Button", "Call OK");
     }
 
     private void verifyUser(int id)
@@ -474,18 +465,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     _lvAutor.setVisibility(View.VISIBLE);
                     findViewById(R.id.TVCo).setVisibility(View.GONE);
                     _itm.setTitle("Déconnexion");
-                    changeCurrentView(R.id.VFMain, R.id.RLBiblio, false);
+                    changeCurrentView(R.id.VFMain, R.id.RLBiblio, true);
                 }
             }
         }, 3000);
     }
 
-    public void CancelAccount(View v) {
-        changeCurrentView(R.id.VFMain, R.id.RLBiblio, false);
-    }
-
-    private void prout()
+    private List<Book> tempHardTest()
     {
+        List<Book> infos = null;
         /**
          * ouverture + creation du fichier
          */
@@ -630,9 +618,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String ret = sp.getString("biblio", null);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            _infos = objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Book.class));
+            infos = objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Book.class));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return infos;
     }
 }
