@@ -4,16 +4,17 @@ package com.eip.bookshelf;
  * Created by Maxime on 17/02/2016.
  */
 
-public class BiblioAdapter {
+class BiblioAdapter
+{
     private String _name;
-    private int _id;
+    private String _id;
 
-    public BiblioAdapter(String name, int id) {
+    BiblioAdapter(String name, String id) {
         this._name = name;
         this._id = id;
     }
 
-    public String get_name() {
+    String get_name() {
         return _name;
     }
 
@@ -21,11 +22,11 @@ public class BiblioAdapter {
         this._name = _name;
     }
 
-    public int get_id() {
+    String get_id() {
         return _id;
     }
 
-    public void set_id(int id) {
+    public void set_id(String id) {
         this._id = id;
     }
 }

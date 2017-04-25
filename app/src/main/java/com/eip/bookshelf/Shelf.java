@@ -2,10 +2,12 @@ package com.eip.bookshelf;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -17,31 +19,34 @@ import java.util.List;
  * Created by Maxime on 02/03/2017.
  */
 
-public class Shelf
+public class Shelf extends Fragment
 {
     private List<Book> _infos;
-    private MainActivity _co;
     private ArrayList<BiblioAdapter> _modelListBiblio = new ArrayList<>();
     private customAdapterBiblio _adapterBiblio;
     private GridView _gvBiblio;
-    public enum shelfType {
-        MAINSHELF,
-        PROPOSHELF,
-        WISHSHELF
-    };
+    private View _v;
 
-    public Shelf(MainActivity context, shelfType type, boolean added)
+    public Shelf()
     {
-        _co = context;
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        _v = inflater.inflate(R.layout.shelf, container, false);
+
         setAdapters();
         hardTest();
-        if (type == shelfType.MAINSHELF) {
-            mainShelf(added);
-        } else if (type == shelfType.PROPOSHELF) {
+        if (MainActivity.currentShelf == MainActivity.shelfType.MAINSHELF) {
+            mainShelf(false);
+        } else if (MainActivity.currentShelf == MainActivity.shelfType.PROPOSHELF) {
             propoShelf();
-        } else if (type == shelfType.WISHSHELF) {
-            whishShelf();
+        } else if (MainActivity.currentShelf == MainActivity.shelfType.WISHSHELF) {
+            wishShelf();
         }
+        return _v;
     }
 
     public void mainShelf(boolean added)
@@ -69,25 +74,25 @@ public class Shelf
         }
     }
 
-    public void whishShelf()
+    public void wishShelf()
     {
-        BiblioAdapter ba = new BiblioAdapter("Les souhaits", R.drawable.test_book);
-        _modelListBiblio.add(ba);
+        /*BiblioAdapter ba = new BiblioAdapter("Les souhaits", R.drawable.test_book);
+        _modelListBiblio.add(ba);*/
     }
 
     private void setAdapters()
     {
-        _gvBiblio = (GridView) _co.findViewById(R.id.GVBiblio);
-        _adapterBiblio = new customAdapterBiblio(_co, _modelListBiblio);
+        _gvBiblio = (GridView) _v.findViewById(R.id.GVBiblio);
+        _adapterBiblio = new customAdapterBiblio(_v, _modelListBiblio);
         _gvBiblio.setAdapter(_adapterBiblio);
-        _gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                _co.changeCurrentView(R.id.VFMain, R.id.SVBook, false);
-                _co.moreDataBook(((TextView) view.findViewById(R.id.TVAff)).getText().toString(), _infos);
-            }
-        });
+//      _gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//          @Override
+//          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//              _co.changeCurrentView(R.id.VFMain, R.id.SVBook, false);
+//              _co.moreDataBook(((TextView) view.findViewById(R.id.TVAff)).getText().toString(), _infos);
+//          }
+//      });
     }
 
     public void dataUpdated()
@@ -101,14 +106,14 @@ public class Shelf
         /**
          * ouverture + creation du fichier
          */
-        SharedPreferences sp = _co.getSharedPreferences("Bibliothèque", Context.MODE_PRIVATE);
+        SharedPreferences sp = _v.getContext().getSharedPreferences("Bibliothèque", Context.MODE_PRIVATE);
         /**
          *  edition du fichier
          */
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("biblio", "[\n" +
                 "{\"titre\":\"Le trône de fer tome 5\",\n" +
-                "\"image\":2130837592,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837592
                 "\"auteur\":\"Georges R. R. Martin\",\n" +
                 "\"date\":\"08/04/2015\",\n" +
                 "\"genre\":\"fantastique\",\n" +
@@ -116,7 +121,7 @@ public class Shelf
                 "\"note\":4,\n" +
                 "\"isbn\":9782290107096},\n" +
                 "{\"titre\":\"Le trône de fer tome 1\",\n" +
-                "\"image\":2130837573,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837573
                 "\"auteur\":\"Georges R. R. Martin\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"fantastique\",\n" +
@@ -125,7 +130,7 @@ public class Shelf
                 "\"isbn\":0\n" +
                 "},\n" +
                 "{\"titre\":\"Le trône de fer tome 2\",\n" +
-                "\"image\":2130837574,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837574
                 "\"auteur\":\"Georges R. R. Martin\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"fantastique\",\n" +
@@ -134,7 +139,7 @@ public class Shelf
                 "\"isbn\":0\n" +
                 "},\n" +
                 "{\"titre\":\"Le trône de fer tome 3\",\n" +
-                "\"image\":2130837575,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837575
                 "\"auteur\":\"Georges R. R. Martin\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"fantastique\",\n" +
@@ -143,7 +148,7 @@ public class Shelf
                 "\"isbn\":0\n" +
                 "},\n" +
                 "{\"titre\":\"Le trône de fer tome 4\",\n" +
-                "\"image\":2130837576,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837576
                 "\"auteur\":\"Georges R. R. Martin\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"fantastique\",\n" +
@@ -152,7 +157,7 @@ public class Shelf
                 "\"isbn\":0\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter à l'école des sorciers\",\n" +
-                "\"image\":2130837577,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837577
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"16 novembre 1998\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -161,7 +166,7 @@ public class Shelf
                 "\"isbn\":2070518426\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter et la Chambre des secrets\",\n" +
-                "\"image\":2130837578,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837578
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -170,7 +175,7 @@ public class Shelf
                 "\"isbn\":0\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter et le Prisonnier d'Azkaban\",\n" +
-                "\"image\":2130837579,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837579
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -179,7 +184,7 @@ public class Shelf
                 "\"isbn\":0\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter et la Coupe de feu\",\n" +
-                "\"image\":2130837580,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837580
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -188,7 +193,7 @@ public class Shelf
                 "\"isbn\":0\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter et l'Ordre du phénix\",\n" +
-                "\"image\":2130837581,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837581
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -197,7 +202,7 @@ public class Shelf
                 "\"isbn\":0\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter et le Prince de sang-mêlé\",\n" +
-                "\"image\":2130837582,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837582
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -206,7 +211,7 @@ public class Shelf
                 "\"isbn\":0\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter et les reliques de la mort\",\n" +
-                "\"image\":2130837593,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837593
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -216,7 +221,7 @@ public class Shelf
                 "},\n" +
                 "{\n" +
                 "\"titre\":\"La damnation de Pythos\",\n" +
-                "\"image\":2130837595,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837595
                 "\"auteur\":\"David Annandale\",\n" +
                 "\"date\":\"16 novembre 2015\",\n" +
                 "\"genre\":\"Science-Fiction\",\n" +
@@ -226,7 +231,7 @@ public class Shelf
                 "},\n" +
                 "{\n" +
                 "\"titre\":\"Percy Jackson - Tome 1 : Le voleur de foudre\",\n" +
-                "\"image\":2130837594,\n" +
+                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837594
                 "\"auteur\":\" Rick Riordan\",\n" +
                 "\"date\":\" 3 juillet 2013\",\n" +
                 "\"genre\":\"Fantastique\",\n" +

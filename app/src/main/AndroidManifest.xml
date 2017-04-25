@@ -14,7 +14,7 @@
         <activity
             android:name="com.eip.bookshelf.MainActivity"
             android:configChanges="orientation|screenSize"
-            android:label="@string/app_name"
+            android:label="Bibliothèque"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,6 +28,9 @@
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name="com.eip.bookshelf.SignUp"
+            android:label="Créer un compte"/>
     </application>
 
 </manifest>

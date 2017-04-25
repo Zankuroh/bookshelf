@@ -2,7 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent" android:id="@+id/RLSignUp">
-
+    <include
+        layout="@layout/app_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -10,10 +13,9 @@
         android:ems="10"
         android:id="@+id/SignUpFirstName"
         android:hint="Prénom"
+        android:layout_marginTop="110dp"
         android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/SignUpPwd"
-        android:layout_alignStart="@+id/SignUpPwd"
-        android:layout_marginTop="60dp" />
+        android:layout_alignStart="@+id/SignUpPwd" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -55,8 +57,8 @@
         android:text="Créer son compte"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/SignUpOk"
-        android:onClick="CreateAccount"
+        android:id="@+id/btnSignUp"
+        android:onClick="onClickSignUp"
         android:layout_below="@+id/SignUpPwd2"
         android:layout_marginTop="63dp"
         android:layout_alignLeft="@+id/SignUpPwd2"

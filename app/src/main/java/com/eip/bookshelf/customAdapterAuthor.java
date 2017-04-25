@@ -13,11 +13,11 @@ import java.util.ArrayList;
 /**
  * Created by Maxime on 22/02/2016.
  */
-class customAdapterAutor extends BaseAdapter {
+class customAdapterAuthor extends BaseAdapter {
     private Context _c;
     private ArrayList<String> _als;
 
-    customAdapterAutor(Context context, ArrayList<String> modelList) {
+    customAdapterAuthor(Context context, ArrayList<String> modelList) {
         this._c = context;
         this._als = modelList;
     }
@@ -45,7 +45,7 @@ class customAdapterAutor extends BaseAdapter {
         if (convertView == null)
         {
             LayoutInflater mInflater = (LayoutInflater) _c.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.autor_adapter, parent, false);
+            convertView = mInflater.inflate(R.layout.author_adapter, parent, false);
 
             String iadapt = _als.get(position);
             TextView tv = (TextView) convertView.findViewById(R.id.TVAutor);

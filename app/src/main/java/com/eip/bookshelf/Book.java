@@ -3,10 +3,10 @@ package com.eip.bookshelf;
 /**
  * Created by joly_i on 22/02/16.
  */
-public class Book
+class Book
 {
     private String  titre;
-    private int     image;
+    private String  image;
     private String  auteur;
     private String  date;
     private String  genre;
@@ -14,7 +14,7 @@ public class Book
     private Double  note;
     private Long    isbn;
 
-    public String getTitre() {
+    String getTitre() {
         return titre;
     }
 
@@ -22,11 +22,11 @@ public class Book
         this.titre = titre;
     }
 
-    public int getImage() {
+    String getImage() {
         return image;
     }
 
-    public void setImage(int image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

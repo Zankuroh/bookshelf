@@ -1,9 +1,12 @@
 package com.eip.bookshelf;
 
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import com.eip.utilities.api.GoogleBooksApi;
 import com.eip.utilities.model.Books;
@@ -19,43 +22,56 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by jolyn on 08/12/2016.
  */
 
-public class Search
+public class Search extends Fragment implements View.OnClickListener
 {
-    private View _rl;
-    private MainActivity _act;
+    private View _v;
 
-    public Search(View rl, MainActivity a)
+    public Search()
     {
-        _rl = rl;
-        _act = a;
-        Button manualSearch = (Button)_rl.findViewById(R.id.okSearch);
-        manualSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditText searcheField = (EditText)_rl.findViewById(R.id.searchField);
-                searchByISNB(searcheField.getText().toString());
-            }
-        });
 
-        Button apnSearch = (Button)_rl.findViewById(R.id.searchApn);
-        apnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                IntentIntegrator integrator = new IntentIntegrator(_act);
-
-                integrator.setCaptureActivity(DecodeBarcode.class);
-                integrator.setOrientationLocked(false);
-                integrator.setPrompt("Scanner le code ISBN au dos du livre");
-                integrator.setBeepEnabled(true);
-                integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
-                integrator.initiateScan();
-            }
-        });
     }
 
-    public void searchByISNB(String isbn)
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        _v = inflater.inflate(R.layout.start_search, container, false);
+
+        _v.findViewById(R.id.okSearch).setOnClickListener(this);
+        _v.findViewById(R.id.searchApn).setOnClickListener(this);
+        return _v;
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        switch (v.getId()) {
+            case R.id.okSearch:
+                searchByISBN();
+                break;
+            case R.id.searchApn:
+                searchByCB();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void searchByCB()
+    {
+        IntentIntegrator integrator = new IntentIntegrator(getActivity());
+
+        integrator.setCaptureActivity(DecodeBarcode.class);
+        integrator.setOrientationLocked(false);
+        integrator.setPrompt("Scanner le code ISBN au dos du livre");
+        integrator.setBeepEnabled(true);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
+        integrator.initiateScan();
+    }
+
+    public void searchByISBN()
+    {
+        EditText isbn = (EditText)_v.findViewById(R.id.searchField);
+
         GoogleBooksApi googleBooksApi = new Retrofit.Builder()
                 .baseUrl(GoogleBooksApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -69,16 +85,21 @@ public class Search
                 if (response.isSuccessful()) {
                     Books book = response.body();
                     Log.d("RESEARCH", book.getTotalItems().toString());
-                    Item item = book.getItems().get(0);
-                    String titre = item.getVolumeInfo().getTitle();
-                    Snackbar snackbar = Snackbar.make(_rl, titre, Snackbar.LENGTH_LONG);
+                    Snackbar snackbar;
+                    if (book.getTotalItems() > 0) {
+                        Item item = book.getItems().get(0);
+                        String titre = item.getVolumeInfo().getTitle();
+                        snackbar = Snackbar.make(_v, titre, Snackbar.LENGTH_LONG);
+                    } else {
+                        snackbar = Snackbar.make(_v, "Aucun livre trouvé :(", Snackbar.LENGTH_LONG);
+                    }
                     snackbar.show();
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Erreur !!!", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Erreur !!!", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }
@@ -88,7 +109,7 @@ public class Search
 
             @Override
             public void onFailure(Call<Books> call, Throwable t) {
-                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
             }
