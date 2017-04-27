@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -70,7 +68,7 @@ public class SignIn extends Fragment implements View.OnClickListener
 
     public void clickSignIn(View v)
     {
-        hideSoftKeyboard();
+        MainActivity.hideSoftKeyboard(getActivity());
         EditText login = (EditText) _v.findViewById(R.id.ETsignInMail);
         EditText passwd = (EditText) _v.findViewById(R.id.ETsignInMdp);
         connect(login.getText().toString(), passwd.getText().toString());
@@ -81,16 +79,10 @@ public class SignIn extends Fragment implements View.OnClickListener
             {
                 if (MainActivity.co) {
                     MainActivity.MenuItemCo.setTitle("Déconnexion");
-                    // launch fragment shelf
+                    //Todo: launch fragment shelf
                 }
             }
         }, 3000);
-    }
-
-    public void hideSoftKeyboard()
-    {
-        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
     }
 
     public void connect(String email, String pwd)

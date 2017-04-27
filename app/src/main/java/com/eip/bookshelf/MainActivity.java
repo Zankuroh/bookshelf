@@ -1,5 +1,6 @@
 package com.eip.bookshelf;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -40,14 +42,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         PROPOSHELF,
         WISHSHELF
     }
-    public static shelfType currentShelf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         //Set the fragment initially
         Disconnected fragment = new Disconnected();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -56,8 +56,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        /**/
+     /**/
 //        _lvAutor = (ListView) findViewById(R.id.LVAutor);
 //        _lvCom = (ListView) findViewById(R.id.LVCom);
 //        _gvBiblio = (GridView) findViewById(R.id.GVBiblio);
@@ -125,8 +124,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_biblio:
                 defineNameToolBar("Bibliothèque");
                 if (MainActivity.co) {
-                    MainActivity.currentShelf = shelfType.MAINSHELF;
+                    Bundle arg = setArgs(shelfType.MAINSHELF);
                     Shelf shelfFrag = new Shelf();
+                    shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
                     fragmentTransaction.commit();
                 } else {
@@ -142,8 +142,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_propo:
                 defineNameToolBar("Propositions");
                 if (MainActivity.co) {
-                    MainActivity.currentShelf = shelfType.PROPOSHELF;
+                    Bundle arg = setArgs(shelfType.PROPOSHELF);
                     Shelf shelfFrag = new Shelf();
+                    shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
                     fragmentTransaction.commit();
                 } else {
@@ -153,8 +154,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_wish:
                 defineNameToolBar("Liste de souhaits");
                 if (MainActivity.co) {
-                    MainActivity.currentShelf = shelfType.WISHSHELF;
+                    Bundle arg = setArgs(shelfType.WISHSHELF);
                     Shelf shelfFrag = new Shelf();
+                    shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
                     fragmentTransaction.commit();
                 } else {
@@ -172,8 +174,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
             case R.id.nav_co:
-                MainActivity.MenuItemCo = item;
                 if (!MainActivity.co) {
+                    MenuItemCo = item;
                     defineNameToolBar("Connexion");
                     SignIn signFrag = new SignIn();
                     fragmentTransaction.replace(R.id.fragment_container, signFrag);
@@ -196,6 +198,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private Bundle setArgs(shelfType st)
+    {
+        Bundle args = new Bundle();
+        args.putSerializable("type", st);
+
+        return args;
     }
 
     private void accessDenied()
@@ -398,11 +408,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        }
 //    }
 //
-//    public static void hideSoftKeyboard(Activity activity)
-//    {
-//        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-//        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-//    }
+    public static void hideSoftKeyboard(Activity activity)
+    {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
 //
 //    private void verifyUser(int id)
 //    {

@@ -23,4 +23,9 @@
         android:gravity="center"
         android:id="@+id/TVAff"
         android:layout_below="@+id/IVAff"/>
+    <TextView
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:id="@+id/TVISBN"
+        android:visibility="gone"/>
 </RelativeLayout>

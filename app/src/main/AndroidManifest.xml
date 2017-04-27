@@ -31,6 +31,9 @@
         <activity
             android:name="com.eip.bookshelf.SignUp"
             android:label="Créer un compte"/>
+        <activity
+            android:name="com.eip.bookshelf.InfoBook"
+            android:label="Informations"/>
     </application>
 
 </manifest>
