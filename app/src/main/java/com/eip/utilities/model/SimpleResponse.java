@@ -1,10 +1,10 @@
 
-package com.eip.utilities.model;
+package com.bookshelf.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Register {
+public class SimpleResponse {
 
     @SerializedName("success")
     @Expose
@@ -28,7 +28,7 @@ public class Register {
         this.success = success;
     }
 
-    public Register withSuccess(String success) {
+    public SimpleResponse withSuccess(String success) {
         this.success = success;
         return this;
     }
