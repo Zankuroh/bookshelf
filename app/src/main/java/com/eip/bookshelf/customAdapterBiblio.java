@@ -62,9 +62,7 @@ class customAdapterBiblio extends BaseAdapter
             TextView tvIsbn = (TextView) convertView.findViewById(R.id.TVISBN);
             tv.setText(iadapt.get_name());
             tvIsbn.setText(iadapt.get_isbn());
-            //iv.setImageBitmap(OptimizeBitmap.decodeSampledBitmapFromResource(convertView.getResources(), iadapt.get_id(), 110, 110));
             Picasso.with(_c).load(iadapt.get_id()).into(iv);
-            //iv.setImageDrawable(iadapt.get_id());
         }
         return convertView;
     }

@@ -103,30 +103,32 @@ public class Shelf extends Fragment
                 HashMap<String, String> info = null;
                 Bundle b = null;
                 for (int i = 0; i < _infos.size(); i++) {
-                    Log.d("Prout", isbn + " - " + _infos.get(i).getIsbn().toString());
                     if (isbn.equals(_infos.get(i).getIsbn().toString())) {
-                        Log.d("Prout", "info IF !");
                         info = new HashMap<String, String>();
                         b = new Bundle();
-                        info.put("title", _infos.get(i).getTitre());
-                        info.put("title", _infos.get(i).getImage());
-                        info.put("title", _infos.get(i).getGenre());
-                        info.put("title", _infos.get(i).getAuteur());
-                        info.put("title", _infos.get(i).getDate());
-                        info.put("title", _infos.get(i).getNote().toString());
-                        info.put("title", _infos.get(i).getResum());
+                        info.put("title", getValueOrDefault(_infos.get(i).getTitre()));
+                        info.put("picture", _infos.get(i).getImage());
+                        info.put("genre", getValueOrDefault(_infos.get(i).getGenre()));
+                        info.put("author", getValueOrDefault(_infos.get(i).getAuteur()));
+                        info.put("date", getValueOrDefault(_infos.get(i).getDate()));
+                        info.put("note", getValueOrDefault(_infos.get(i).getNote().toString()));
+                        info.put("resume", getValueOrDefault(_infos.get(i).getResum()));
                         b.putSerializable("info", info);
                         break;
                     }
                 }
                 if (info != null) {
-                    Log.d("Prout", "info IF NOT NULL !");
                     Intent in = new Intent(getActivity(), InfoBook.class);
                     in.putExtras(b);
                     startActivity(in);
                 }
             }
         });
+    }
+
+    public String getValueOrDefault(String value)
+    {
+        return (value != null && value != "") ? value : "N/A";
     }
 
     private void hardTest()
@@ -141,7 +143,7 @@ public class Shelf extends Fragment
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("biblio", "[\n" +
                 "{\"titre\":\"Le trône de fer tome 5\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837592
+                "\"image\":\"https://kbimages1-a.akamaihd.net/58f4c6b5-c790-4716-8dcd-10ffb6065dc0/1200/1200/False/le-trone-de-fer-l-integrale-5-tomes-13-a-15-1.jpg\",\n" +
                 "\"auteur\":\"Georges R. R. Martin\",\n" +
                 "\"date\":\"08/04/2015\",\n" +
                 "\"genre\":\"fantastique\",\n" +
@@ -149,7 +151,7 @@ public class Shelf extends Fragment
                 "\"note\":4,\n" +
                 "\"isbn\":9782290107096},\n" +
                 "{\"titre\":\"Le trône de fer tome 1\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837573
+                "\"image\":\"https://www.images-booknode.com/book_cover/402/full/le-trone-de-fer---l-integrale,-tome-1-401890.jpg\",\n" +
                 "\"auteur\":\"Georges R. R. Martin\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"fantastique\",\n" +
@@ -158,7 +160,7 @@ public class Shelf extends Fragment
                 "\"isbn\":1\n" +
                 "},\n" +
                 "{\"titre\":\"Le trône de fer tome 2\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837574
+                "\"image\":\"https://singesdelespace.files.wordpress.com/2012/11/trone-de-fer-lintc3a9grale-2.jpg\",\n" +
                 "\"auteur\":\"Georges R. R. Martin\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"fantastique\",\n" +
@@ -167,7 +169,7 @@ public class Shelf extends Fragment
                 "\"isbn\":2\n" +
                 "},\n" +
                 "{\"titre\":\"Le trône de fer tome 3\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837575
+                "\"image\":\"http://images.gibertjoseph.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/i/408/9782756408408_1_75.jpg\",\n" +
                 "\"auteur\":\"Georges R. R. Martin\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"fantastique\",\n" +
@@ -176,7 +178,7 @@ public class Shelf extends Fragment
                 "\"isbn\":3\n" +
                 "},\n" +
                 "{\"titre\":\"Le trône de fer tome 4\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837576
+                "\"image\":\"http://www.georgerrmartin.fr/assets/integrales/Integrale4.jpg\",\n" +
                 "\"auteur\":\"Georges R. R. Martin\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"fantastique\",\n" +
@@ -185,7 +187,7 @@ public class Shelf extends Fragment
                 "\"isbn\":4\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter à l'école des sorciers\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837577
+                "\"image\":\"https://chacuneseschimeres.files.wordpress.com/2016/07/harry-potter-tome-1-harry-potter-a-l-ecole-des-sorciers-383225.jpg?w=636&h=913\",\n" +
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"16 novembre 1998\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -194,7 +196,7 @@ public class Shelf extends Fragment
                 "\"isbn\":2070518426\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter et la Chambre des secrets\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837578
+                "\"image\":\"https://media.senscritique.com/media/000006436455/source_big/Harry_Potter_et_la_Chambre_des_secrets_Harry_Potter_tome_2.jpg\",\n" +
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -203,7 +205,7 @@ public class Shelf extends Fragment
                 "\"isbn\":5\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter et le Prisonnier d'Azkaban\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837579
+                "\"image\":\"http://image3.archambault.ca/2/D/A/4/ACH002991198.1381439502.580x580.jpg\",\n" +
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -212,7 +214,7 @@ public class Shelf extends Fragment
                 "\"isbn\":6\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter et la Coupe de feu\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837580
+                "\"image\":\"http://media.paperblog.fr/i/745/7456211/harry-potter-coupe-feu-j-k-rowling-livre-vs-f-L-3UqSr3.jpeg\",\n" +
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -221,7 +223,7 @@ public class Shelf extends Fragment
                 "\"isbn\":7\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter et l'Ordre du phénix\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837581
+                "\"image\":\"https://www.club.be/image.action?code=9782070643066&w=800&h=800\",\n" +
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -230,7 +232,7 @@ public class Shelf extends Fragment
                 "\"isbn\":8\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter et le Prince de sang-mêlé\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837582
+                "\"image\":\"http://www.gallimard-jeunesse.fr/var/storage/images/product/43d/product_9782070643073_244x0.jpg\",\n" +
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -239,7 +241,7 @@ public class Shelf extends Fragment
                 "\"isbn\":9\n" +
                 "},\n" +
                 "{\"titre\":\"Harry Potter et les reliques de la mort\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837593
+                "\"image\":\"http://www.bdfi.info/couvs/f/folioj1479rr11.jpg\",\n" +
                 "\"auteur\":\"J. K. Rowling\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -249,7 +251,7 @@ public class Shelf extends Fragment
                 "},\n" +
                 "{\n" +
                 "\"titre\":\"La damnation de Pythos\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837595
+                "\"image\":\"https://images-na.ssl-images-amazon.com/images/I/51ev9F0yDeL.jpg\",\n" +
                 "\"auteur\":\"David Annandale\",\n" +
                 "\"date\":\"16 novembre 2015\",\n" +
                 "\"genre\":\"Science-Fiction\",\n" +
@@ -259,7 +261,7 @@ public class Shelf extends Fragment
                 "},\n" +
                 "{\n" +
                 "\"titre\":\"L' Arbre des Souhaits\",\n" +
-                "\"image\":\"http://www.scholastic.ca/hipoint/648/?src=9781443155434.jpg&w=260\",\n" +
+                "\"image\":\"http://images.amazon.com/images/P/1443155438.01.LZZZZZZZ.jpg\",\n" +
                 "\"auteur\":\" Kyo Maclear\",\n" +
                 "\"date\":\" 1 novembre 2016\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
@@ -269,7 +271,7 @@ public class Shelf extends Fragment
                 "},\n" +
                 "{\n" +
                 "\"titre\":\"Percy Jackson - Tome 1 : Le voleur de foudre\",\n" +
-                "\"image\":\"https://books.google.com/books/content?id=UubgCwAAQBAJ&printsec=frontcover&img=1&zoom=1&h=160&stbn=1\",\n" + //2130837594
+                "\"image\":\"https://images-eu.ssl-images-amazon.com/images/I/61q%2BUXymKHL.jpg\",\n" +
                 "\"auteur\":\" Rick Riordan\",\n" +
                 "\"date\":\" 3 juillet 2013\",\n" +
                 "\"genre\":\"Fantastique\",\n" +
