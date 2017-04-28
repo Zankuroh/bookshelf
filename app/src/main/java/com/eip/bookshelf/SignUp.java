@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.support.v7.app.AppCompatActivity;
 import com.eip.utilities.api.BookshelfApi;
-import com.eip.utilities.model.Register;
+import com.eip.utilities.model.SimpleResponse;
 
 import org.json.JSONObject;
 
@@ -21,6 +21,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import com.facebook.FacebookSdk;
 
 /**
  * Created by jolyn on 23/11/2016.
@@ -98,12 +99,12 @@ public class SignUp extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<Register> call = bookshelfApi.Register(name, password, email);
-        call.enqueue(new Callback<Register>() {
+        Call<SimpleResponse> call = bookshelfApi.Register(name, password, email);
+        call.enqueue(new Callback<SimpleResponse>() {
             @Override
-            public void onResponse(Call<Register> call, Response<Register> response) {
+            public void onResponse(Call<SimpleResponse> call, Response<SimpleResponse> response) {
                 if (response.isSuccessful()) {
-                    Register auth = response.body();
+                    SimpleResponse auth = response.body();
                     String success = auth.getSuccess();
                     Snackbar snackbar = Snackbar.make(_lp, "Création réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
@@ -123,7 +124,7 @@ public class SignUp extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Register> call, Throwable t)
+            public void onFailure(Call<SimpleResponse> call, Throwable t)
             {
                 Snackbar snackbar = Snackbar.make(_lp, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();

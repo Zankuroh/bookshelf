@@ -12,6 +12,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.os.Handler;
 
+import com.facebook.FacebookSdk;
+
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.Auth;
 

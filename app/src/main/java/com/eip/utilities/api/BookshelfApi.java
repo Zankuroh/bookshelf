@@ -1,13 +1,9 @@
 package com.eip.utilities.api;
 
-<<<<<<< HEAD:app/src/main/java/com/bookshelf/api/BookshelfApi.java
-import com.bookshelf.model.Auth;
-import com.bookshelf.model.LocalBook;
-import com.bookshelf.model.SimpleResponse;
-=======
+
 import com.eip.utilities.model.Auth;
-import com.eip.utilities.model.Register;
->>>>>>> dev:app/src/main/java/com/eip/utilities/api/BookshelfApi.java
+import com.eip.utilities.model.SimpleResponse;
+import com.eip.utilities.model.LocalBook;
 
 import retrofit2.Call;
 import retrofit2.http.DELETE;

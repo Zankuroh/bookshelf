@@ -1,5 +1,5 @@
 
-package com.bookshelf.model;
+package com.eip.utilities.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
