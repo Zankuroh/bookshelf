@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 
 public class Profil extends Fragment
 {
-    private View _v;
-
     public Profil()
     {
 
@@ -21,9 +19,7 @@ public class Profil extends Fragment
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        _v = inflater.inflate(R.layout.profil, container, false);
-
-        return _v;
+        return inflater.inflate(R.layout.profil, container, false);
     }
     //Todo: Récupérer les info user dans la BDD
     //Todo: Rechercher un user ?

@@ -3,6 +3,7 @@ package com.eip.bookshelf;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -41,7 +42,10 @@ public class SignUp extends AppCompatActivity
         _lp = (RelativeLayout)findViewById(R.id.RLSignUp);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -87,7 +91,7 @@ public class SignUp extends AppCompatActivity
         }, 3000);
     }
 
-    public void register(String name, String email, String password)
+    private void register(String name, String email, String password)
     {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
@@ -128,16 +132,14 @@ public class SignUp extends AppCompatActivity
         });
     }
 
-    public static Boolean verifyEmail(String email)
+    private static Boolean verifyEmail(String email)
     {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public static Boolean checkPassword(String pwd1,  String pwd2)
+    private static Boolean checkPassword(String pwd1,  String pwd2)
     {
-        if (pwd1.equals(pwd2))
-            return true;
-        return false;
+        return pwd1.equals(pwd2);
     }
 
 }

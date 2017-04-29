@@ -2,7 +2,9 @@ package com.eip.bookshelf;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -10,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item)
+    public boolean onNavigationItemSelected(@NonNull MenuItem item)
     {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -189,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, tb, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
     }
 
@@ -198,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Changelog:\n-V0.45: Refonte de l'app. Nouvelles fonctionnalités !\n\n" +
                 "L'application BookShelf vous permet de gérer votre bibliothèque !\n" +
-                "Développée par Maxime, Geoffrey, Nicolas, Pierre, Victorien et Sergen.\n" +
+                "Développée par Nicolas et Maxime.\n" +
                 "D'après l'idée originale de Pierre.");
         builder.setPositiveButton("Merci !", null);
         builder.show();
@@ -207,6 +210,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static void hideSoftKeyboard(Activity activity)
     {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        View current_focus = activity.getCurrentFocus();
+        if (current_focus != null) {
+            inputMethodManager.hideSoftInputFromWindow(current_focus.getWindowToken(), 0);
+        }
     }
 }

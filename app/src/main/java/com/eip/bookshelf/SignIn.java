@@ -89,7 +89,7 @@ public class SignIn extends Fragment implements View.OnClickListener
     {
         switch (v.getId()) {
             case R.id.btnCo:
-                clickSignIn(v);
+                clickSignIn();
                 break;
             case R.id.btnForgetPass:
                 Snackbar snackbar = Snackbar.make(_v, "Non implémenté.", Snackbar.LENGTH_LONG);
@@ -103,7 +103,7 @@ public class SignIn extends Fragment implements View.OnClickListener
         }
     }
 
-    public void clickSignIn(View v)
+    private void clickSignIn()
     {
         MainActivity.hideSoftKeyboard(getActivity());
         EditText login = (EditText) _v.findViewById(R.id.ETsignInMail);
@@ -122,7 +122,7 @@ public class SignIn extends Fragment implements View.OnClickListener
         }, 3000);
     }
 
-    public void connect(String email, String pwd)
+    private void connect(String email, String pwd)
     {
 //        BookshelfApi bookshelfApi = new Retrofit.Builder()
 //                .baseUrl(BookshelfApi.APIPath)

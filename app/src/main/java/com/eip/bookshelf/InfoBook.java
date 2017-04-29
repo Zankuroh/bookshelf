@@ -3,6 +3,7 @@ package com.eip.bookshelf;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -44,12 +45,16 @@ public class InfoBook extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
 
         _lvCom = (ListView) findViewById(R.id.LVCom);
         Intent i = getIntent();
         Bundle b = i.getBundleExtra("book");
         _type = (MainActivity.shelfType)i.getSerializableExtra("shelf");
+        @SuppressWarnings("unchecked")
         HashMap<String, String> info = (HashMap<String, String>)b.getSerializable("info");
 
         setAdapters();
@@ -99,7 +104,7 @@ public class InfoBook extends AppCompatActivity
         getTotalHeightofListView();
     }
 
-    protected void moreDataBook(HashMap<String, String> info)
+    private void moreDataBook(HashMap<String, String> info)
     {
         TextView tv = (TextView) findViewById(R.id.TVInfoBook);
         TextView tvt = (TextView) findViewById(R.id.TVTitreBook);
@@ -110,14 +115,14 @@ public class InfoBook extends AppCompatActivity
         tv.setText("Date de sortie : " + info.get("date"));
         tv.setText(tv.getText() + "\nAuteur : " + info.get("author"));
         tv.setText(tv.getText() + "\nGenre : " + info.get("genre"));
-        tv.setText(tv.getText() + "\nNote : " + info.get("note").toString());
+        tv.setText(tv.getText() + "\nNote : " + info.get("note"));
         tvr.setText(info.get("resume"));
-        if (info.get("picture") != null && info.get("picture") != "") {
+        if (info.get("picture") != null && !info.get("picture").equals("")) {
             Picasso.with(this).load(info.get("picture")).fit().into(iv);
         }
     }
 
-    public void getTotalHeightofListView()
+    private void getTotalHeightofListView()
     {
         ListAdapter mAdapter = _lvCom.getAdapter();
         int totalHeight = 0;

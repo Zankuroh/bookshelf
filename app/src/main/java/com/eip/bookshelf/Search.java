@@ -56,7 +56,7 @@ public class Search extends Fragment implements View.OnClickListener
         }
     }
 
-    public void searchByCB()
+    private void searchByCB()
     {
         IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
@@ -68,7 +68,7 @@ public class Search extends Fragment implements View.OnClickListener
         integrator.initiateScan();
     }
 
-    public void searchByISBN()
+    private void searchByISBN()
     {
         EditText isbn = (EditText)_v.findViewById(R.id.searchField);
 

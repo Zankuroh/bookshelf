@@ -4,7 +4,7 @@ package com.eip.bookshelf;
  * Created by Maxime on 23/02/2016.
  */
 
-public class ComAdapter
+class ComAdapter
 {
     private String _who;
     private String _date;
@@ -17,7 +17,7 @@ public class ComAdapter
         _content = c;
     }
 
-    public String get_who() {
+    String get_who() {
         return _who;
     }
 
@@ -25,7 +25,7 @@ public class ComAdapter
         this._who = _who;
     }
 
-    public String get_content() {
+    String get_content() {
         return _content;
     }
 
@@ -33,7 +33,7 @@ public class ComAdapter
         this._content = _content;
     }
 
-    public String get_date() {
+    String get_date() {
         return _date;
     }
 
