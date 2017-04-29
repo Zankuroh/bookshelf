@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         PROPOSHELF,
         WISHSHELF
     }
+    private SignIn _signFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -47,6 +48,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setItemIconTintList(null);
 
         defineNameToolBar("Bibliothèque");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        _signFrag.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -134,8 +141,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (!MainActivity.co) {
                     MenuItemCo = item;
                     defineNameToolBar("Connexion");
-                    SignIn signFrag = new SignIn();
-                    fragmentTransaction.replace(R.id.fragment_container, signFrag);
+                    _signFrag = new SignIn();
+                    fragmentTransaction.replace(R.id.fragment_container, _signFrag);
                     fragmentTransaction.commit();
                 } else {
                     MainActivity.co = false;
