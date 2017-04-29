@@ -23,6 +23,10 @@
             android:id="@+id/nav_author"
             android:icon="@mipmap/ic_autor"
             android:title="Auteurs suivis" />
+        <item
+            android:id="@+id/nav_profil"
+            android:icon="@mipmap/ic_user"
+            android:title="Mon profil" />
     </group>
 
     <item android:title="Options">

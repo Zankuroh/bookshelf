@@ -18,7 +18,8 @@ class customAdapterCom extends BaseAdapter
     private Context _c;
     private ArrayList<ComAdapter> _als;
 
-    customAdapterCom(Context context, ArrayList<ComAdapter> modelList) {
+    customAdapterCom(Context context, ArrayList<ComAdapter> modelList)
+    {
         this._c = context;
         this._als = modelList;
     }
@@ -39,12 +40,9 @@ class customAdapterCom extends BaseAdapter
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-
-        /*convertView = null;*/
-
-        if (convertView == null)
-        {
+    public View getView(final int position, View convertView, ViewGroup parent)
+    {
+        if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) _c.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             convertView = mInflater.inflate(R.layout.com_adapter, parent, false);
 

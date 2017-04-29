@@ -4,8 +4,8 @@ package com.eip.utilities.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SaleInfo {
-
+public class SaleInfo
+{
     @SerializedName("country")
     @Expose
     private String country;
@@ -69,5 +69,4 @@ public class SaleInfo {
     public void setIsEbook(Boolean isEbook) {
         this.isEbook = isEbook;
     }
-
 }

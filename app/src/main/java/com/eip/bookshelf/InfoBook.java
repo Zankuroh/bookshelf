@@ -1,8 +1,11 @@
 package com.eip.bookshelf;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +14,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +29,7 @@ public class InfoBook extends AppCompatActivity
 {
     private ListView _lvCom;
     private ArrayList<ComAdapter> _modelListCom = new ArrayList<>();
+    private MainActivity.shelfType _type;
 
     public InfoBook()
     {
@@ -45,7 +47,9 @@ public class InfoBook extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         _lvCom = (ListView) findViewById(R.id.LVCom);
-        Bundle b = getIntent().getExtras();
+        Intent i = getIntent();
+        Bundle b = i.getBundleExtra("book");
+        _type = (MainActivity.shelfType)i.getSerializableExtra("shelf");
         HashMap<String, String> info = (HashMap<String, String>)b.getSerializable("info");
 
         setAdapters();
@@ -55,14 +59,36 @@ public class InfoBook extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        Snackbar snackbar;
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.IAddBook:
+                snackbar = Snackbar.make(findViewById(R.id.RLBookInfo), "Le livre a été ajouté à votre bibliothèque", Snackbar.LENGTH_LONG);
+                snackbar.show();
+                break;
+            case R.id.IRemoveBook:
+                snackbar = Snackbar.make(findViewById(R.id.RLBookInfo), "Le livre a été supprimé de votre bibliothèque", Snackbar.LENGTH_LONG);
+                snackbar.show();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.main, menu);
+        if (_type == MainActivity.shelfType.MAINSHELF) {
+            menu.findItem(R.id.IAddBook).setVisible(false);
+        } else {
+            menu.findItem(R.id.IRemoveBook).setVisible(false);
+        }
+        return true;
+    }
+
 
     private void setAdapters()
     {
@@ -93,9 +119,7 @@ public class InfoBook extends AppCompatActivity
 
     public void getTotalHeightofListView()
     {
-
         ListAdapter mAdapter = _lvCom.getAdapter();
-
         int totalHeight = 0;
 
         for (int i = 0; i < mAdapter.getCount(); i++)
@@ -111,7 +135,6 @@ public class InfoBook extends AppCompatActivity
         params.height = totalHeight + (_lvCom.getDividerHeight() * (mAdapter.getCount() - 1));
         _lvCom.setLayoutParams(params);
         _lvCom.requestLayout();
-
     }
 
     public void onClickSendCom(View v)

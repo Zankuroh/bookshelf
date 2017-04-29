@@ -4,8 +4,8 @@ package com.eip.utilities.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AccessInfo {
-
+public class AccessInfo
+{
     @SerializedName("country")
     @Expose
     private String country;
@@ -216,5 +216,4 @@ public class AccessInfo {
     public void setQuoteSharingAllowed(Boolean quoteSharingAllowed) {
         this.quoteSharingAllowed = quoteSharingAllowed;
     }
-
 }

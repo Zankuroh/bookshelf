@@ -10,7 +10,8 @@ import retrofit2.http.Query;
  * Created by jolyn on 08/12/2016.
  */
 
-public interface GoogleBooksApi {
+public interface GoogleBooksApi
+{
     public static final String APIPath = "https://www.googleapis.com/books/v1/";
 
     @GET("volumes")

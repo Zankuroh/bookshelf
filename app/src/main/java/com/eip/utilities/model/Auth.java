@@ -5,8 +5,8 @@ package com.eip.utilities.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Auth {
-
+public class Auth
+{
     @SerializedName("token")
     @Expose
     private String token;

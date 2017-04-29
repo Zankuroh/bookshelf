@@ -4,8 +4,8 @@ package com.eip.utilities.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SimpleResponse {
-
+public class SimpleResponse
+{
     @SerializedName("success")
     @Expose
     private String success;
@@ -32,5 +32,4 @@ public class SimpleResponse {
         this.success = success;
         return this;
     }
-
 }

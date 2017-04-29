@@ -4,8 +4,8 @@ package com.eip.utilities.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ImageLinks {
-
+public class ImageLinks
+{
     @SerializedName("smallThumbnail")
     @Expose
     private String smallThumbnail;
@@ -48,5 +48,4 @@ public class ImageLinks {
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }
-
 }

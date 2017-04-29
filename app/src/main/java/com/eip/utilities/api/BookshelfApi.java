@@ -15,7 +15,8 @@ import retrofit2.http.Query;
  * Created by jolyn on 08/12/2016.
  */
 
-public interface BookshelfApi {
+public interface BookshelfApi
+{
     public static final String APIPath = "http://bookshelf.caolin.ovh:8000/api/";
 
     @POST("auth")

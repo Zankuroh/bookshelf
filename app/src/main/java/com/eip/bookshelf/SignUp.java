@@ -12,23 +12,20 @@ import android.widget.RelativeLayout;
 import android.support.v7.app.AppCompatActivity;
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.SimpleResponse;
-
 import org.json.JSONObject;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 import com.facebook.FacebookSdk;
 
 /**
  * Created by jolyn on 23/11/2016.
  */
 
-public class SignUp extends AppCompatActivity {
-
+public class SignUp extends AppCompatActivity
+{
     private RelativeLayout _lp;
 
     public SignUp()
@@ -66,14 +63,12 @@ public class SignUp extends AppCompatActivity {
         EditText password2 = (EditText) findViewById(R.id.SignUpPwd2);
         EditText email = (EditText) findViewById(R.id.SignUpMail);
         Log.i("creation", email.getText().toString());
-        if (!SignUp.verifyEmail(email.getText().toString()))
-        {
-            Snackbar snackbar = Snackbar.make(_lp, "L'adresse mail n'est pas valide", Snackbar.LENGTH_LONG);
+        if (!SignUp.verifyEmail(email.getText().toString())) {
+            Snackbar snackbar = Snackbar.make(_lp, "L'adresse mail n'est pas valide !", Snackbar.LENGTH_LONG);
             snackbar.show();
             return ;
         }
-        if (!SignUp.checkPassword(password.getText().toString(), password2.getText().toString()))
-        {
+        if (!SignUp.checkPassword(password.getText().toString(), password2.getText().toString())) {
             Snackbar snackbar = Snackbar.make(_lp, "Les mots de passe ne sont pas identiques !", Snackbar.LENGTH_LONG);
             snackbar.show();
             return ;
@@ -86,7 +81,7 @@ public class SignUp extends AppCompatActivity {
                 if (MainActivity.co) {
                     MenuItem  mi = (MenuItem)_lp.findViewById(R.id.nav_co);
                     mi.setTitle("Déconnexion");
-                    //Call fragment shelf
+                    //Todo: Call fragment shelf
                 }
             }
         }, 3000);

@@ -5,22 +5,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.ArrayMap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Maxime on 02/03/2017.
@@ -33,6 +28,7 @@ public class Shelf extends Fragment
     private customAdapterBiblio _adapterBiblio;
     private GridView _gvBiblio;
     private View _v;
+    private MainActivity.shelfType _type;
 
     public Shelf()
     {
@@ -43,14 +39,15 @@ public class Shelf extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         _v = inflater.inflate(R.layout.shelf, container, false);
-        MainActivity.shelfType type = (MainActivity.shelfType)getArguments().getSerializable("type");
+        _type = (MainActivity.shelfType)getArguments().getSerializable("type");
+
         hardTest();
         setAdapters();
-        if (type == MainActivity.shelfType.MAINSHELF) {
+        if (_type == MainActivity.shelfType.MAINSHELF) {
             mainShelf(false);
-        } else if (type == MainActivity.shelfType.PROPOSHELF) {
+        } else if (_type == MainActivity.shelfType.PROPOSHELF) {
             propoShelf();
-        } else if (type == MainActivity.shelfType.WISHSHELF) {
+        } else if (_type == MainActivity.shelfType.WISHSHELF) {
             wishShelf();
         }
         return _v;
@@ -119,7 +116,8 @@ public class Shelf extends Fragment
                 }
                 if (info != null) {
                     Intent in = new Intent(getActivity(), InfoBook.class);
-                    in.putExtras(b);
+                    in.putExtra("book", b);
+                    in.putExtra("shelf", _type);
                     startActivity(in);
                 }
             }

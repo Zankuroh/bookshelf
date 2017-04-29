@@ -4,8 +4,8 @@ package com.eip.utilities.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class LocalBook {
-
+public class LocalBook
+{
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -83,5 +83,4 @@ public class LocalBook {
     public void setUpdatedAt(Object updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 }

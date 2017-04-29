@@ -1,6 +1,5 @@
 package com.eip.bookshelf;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -8,17 +7,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.os.Handler;
-
 import com.facebook.FacebookSdk;
-
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.Auth;
-
 import org.json.JSONObject;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -42,7 +36,6 @@ public class SignIn extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         _v = inflater.inflate(R.layout.sign_in, container, false);
-
         _v.findViewById(R.id.btnCo).setOnClickListener(this);
         _v.findViewById(R.id.btnForgetPass).setOnClickListener(this);
         _v.findViewById(R.id.btnCreateAccount).setOnClickListener(this);
@@ -89,41 +82,41 @@ public class SignIn extends Fragment implements View.OnClickListener
 
     public void connect(String email, String pwd)
     {
-       /* BookshelfApi bookshelfApi = new Retrofit.Builder()
-                .baseUrl(BookshelfApi.APIPath)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(BookshelfApi.class);
-        Call<Auth> call = bookshelfApi.Connexion(email,pwd);
-        call.enqueue(new Callback<Auth>() {
-            @Override
-            public void onResponse(Call<Auth> call, Response<Auth> response) {
-                if (response.isSuccessful()) {
-                    Auth auth = response.body();
-                    String token = auth.getToken();
-                    Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
-                    MainActivity.co = true;
-                    snackbar.show();
-                } else {
-                    try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("error"), Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Auth> call, Throwable t) {
-                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
-                t.printStackTrace();
-            }
-        });*/
+//        BookshelfApi bookshelfApi = new Retrofit.Builder()
+//                .baseUrl(BookshelfApi.APIPath)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build()
+//                .create(BookshelfApi.class);
+//        Call<Auth> call = bookshelfApi.Connexion(email,pwd);
+//        call.enqueue(new Callback<Auth>() {
+//            @Override
+//            public void onResponse(Call<Auth> call, Response<Auth> response) {
+//                if (response.isSuccessful()) {
+//                    Auth auth = response.body();
+//                    String token = auth.getToken();
+//                    Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
+//                    MainActivity.co = true;
+//                    snackbar.show();
+//                } else {
+//                    try {
+//                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+//                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("error"), Snackbar.LENGTH_LONG);
+//                        snackbar.show();
+//                    } catch (Exception e) {
+//                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+//                        snackbar.show();
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Auth> call, Throwable t) {
+//                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+//                snackbar.show();
+//                t.printStackTrace();
+//            }
+//        });
         MainActivity.co = true;
     }
 }

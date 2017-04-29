@@ -6,4 +6,10 @@
         android:orderInCategory="100"
         android:title="Ajouter dans ma bibliothèque"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/IRemoveBook"
+        android:orderInCategory="100"
+        android:title="Retirer de ma bibliothèque"
+        app:showAsAction="never" />
 </menu>

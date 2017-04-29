@@ -5,8 +5,8 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Books {
-
+public class Books
+{
     @SerializedName("kind")
     @Expose
     private String kind;
@@ -70,5 +70,4 @@ public class Books {
     public void setItems(List<Item> items) {
         this.items = items;
     }
-
 }

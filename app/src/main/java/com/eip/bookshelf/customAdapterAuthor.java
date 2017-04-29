@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
 /**
@@ -17,7 +16,8 @@ class customAdapterAuthor extends BaseAdapter {
     private Context _c;
     private ArrayList<String> _als;
 
-    customAdapterAuthor(Context context, ArrayList<String> modelList) {
+    customAdapterAuthor(Context context, ArrayList<String> modelList)
+    {
         this._c = context;
         this._als = modelList;
     }
@@ -38,12 +38,9 @@ class customAdapterAuthor extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-
-        /*convertView = null;*/
-
-        if (convertView == null)
-        {
+    public View getView(final int position, View convertView, ViewGroup parent)
+    {
+        if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) _c.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             convertView = mInflater.inflate(R.layout.author_adapter, parent, false);
 

@@ -5,8 +5,8 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class VolumeInfo {
-
+public class VolumeInfo
+{
     @SerializedName("title")
     @Expose
     private String title;
@@ -448,5 +448,4 @@ public class VolumeInfo {
     public void setCanonicalVolumeLink(String canonicalVolumeLink) {
         this.canonicalVolumeLink = canonicalVolumeLink;
     }
-
 }
