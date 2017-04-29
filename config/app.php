@@ -184,9 +184,14 @@ return [
         Laravel\Passport\PassportServiceProvider::class,
 
         /*
-         * Jason Token Web JWTAuth
+         * Json Token Web JWTAuth
          */
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+
+        /*
+         * Api Response Service Provider
+         */
+        App\Providers\ApiResponseServiceProvider::class
 
     ],
 

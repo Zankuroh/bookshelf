@@ -7,32 +7,59 @@ use Tymon\JWTAuth\Exceptions\JWTExceptions;
 use JWTAuth;
 use Illuminate\Foundation\Auth\AuthenticateUsers;
 
-class ApiAuthController extends Controller
+use \Illuminate\Support\Facades\Log as Log;
+
+class ApiAuthController extends \App\Http\Controllers\ApiController
 {
     public function __construct()
     {
-        $this->middleware('guest', ['except' => 'getLogout']);    
+        $this->middleware('guest', ['except' => 'getLogout']);
+        parent::__construct();
     }
 
     public function authenticate(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $response = $this->getDefaultJsonResponse();
+        $authenticated = true;
+        $failureAuthenticationReasons = null;
 
-        try
+        if ($this->_ARV->validate($request, 
+            ['email' => 'required|email',
+            'password' => 'required|string']
+            ))
+        {
+            $credentials = $request->only('email', 'password');
+            try
             {
                 $token = JWTAuth::attempt($credentials);
                 if (!$token)
-                    {
-                        return response()->json(['error' => 'User credentials are wrong'], 401);
-                        
-                    }
+                {
+                    $authenticated = false;
+                    $failureAuthenticationReasons = ['title' => 'Bad credentials.'];
+                }
             }
-        catch (JWTException $ex)
+            catch (JWTException $ex)
             {
-                return response()->json(['error' => 'Something went wrong !'], 500);
+                $authenticated = false;
+                $failureAuthenticationReasons = ['title' => 'Something went wrong.'];
             }
 
-        return response()->json(compact('token'));
+            if ($authenticated)
+            {
+                $response->setData(['token' => $token]);
+            }
+            else
+            {
+                $response = $this->_ARV->getFailureJson();
+            }
+        }
+        else
+        {
+            $response = $this->_ARV->getFailureJson();
+        }
+        $response->setOptionnalFields($failureAuthenticationReasons);
+
+        return $response->getJson();
     }
 
 }

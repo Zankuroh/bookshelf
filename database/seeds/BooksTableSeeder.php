@@ -17,6 +17,8 @@ class BooksTableSeeder extends Seeder
             {
                 DB::table('books')->insert([
                     'user_id' => $faker->randomDigit,
+                    //'user_id' => 17,
+
                     'isbn' => $faker->isbn13,
                     'category_id' => $faker->randomDigit,
                     'status_id' => $faker->randomDigit

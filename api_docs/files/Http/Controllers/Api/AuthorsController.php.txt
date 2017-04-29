@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use Illuminate\Http\Request;
+use App\Models\author;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
+use Tymon\JWTAuth\Exceptions\JWTExceptions;
+
+/**
+ * Authors controller, able to handle every callback belongs to authors management
+ * This api will be in the near future mostly used by admins or qualified employees
+ * 
+ * @author Sergen TANGUC
+ **/
+class AuthorsController extends \App\Http\Controllers\Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $token = $request->input('token');
+        $user = JWTAuth::toUser($token);
+        $authors = \App\Models\author::all();
+        $authors = $authors->all();
+
+        return $authors;
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $token = $request->input('token');
+        $user = JWTAuth::toUser($token);
+        $jsonResult = ["error" => "Book is already set for this user."];
+
+        if (count(author::where(['isbn' => $request->isbn, 'user_id' => $user->id])->get()->toArray()) == 0)
+        {
+            $book = new book;
+            $book->isbn = $request->isbn;
+            $book->user_id = $user->id;
+            $book->category_id = 1;
+            $book->status_id = 1;
+            $book->save();
+            $jsonResult = ['success' => 'Book has been created for the user'];
+        }
+
+        return response()->json($jsonResult);
+    }
+
+
+    /**
+     *   Destroy the specified author by id 
+     */
+    public function destroy(Request $request)
+    {
+        $authorId = $request->input('id');
+        $authorIdExist = authors::where('id', $authorId);
+        $jsonResult = ["error" => "Author has not been destroyed, it does not exist."];
+
+        if ($authorIdExist)
+        {
+            $jsonResult = ["success" => "Author has been destroyed"];
+            authors::destroy($authorId);
+        }
+
+        return response()->json($jsonResult);
+    }
+}
+

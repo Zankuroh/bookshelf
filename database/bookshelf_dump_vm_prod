@@ -1,0 +1,278 @@
+-- MySQL dump 10.13  Distrib 5.7.17, for Linux (x86_64)
+--
+-- Host: localhost    Database: bookshelf
+-- ------------------------------------------------------
+-- Server version	5.7.12-0ubuntu1.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `books`
+--
+
+DROP TABLE IF EXISTS `books`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `books` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `isbn` varchar(13) COLLATE utf8_unicode_ci NOT NULL,
+  `category_id` int(10) unsigned NOT NULL,
+  `status_id` int(10) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `books`
+--
+
+LOCK TABLES `books` WRITE;
+/*!40000 ALTER TABLE `books` DISABLE KEYS */;
+INSERT INTO `books` VALUES (1,1,'9795751296994',6,9,NULL,NULL),(2,1,'9784588332326',0,5,NULL,NULL),(3,0,'9789301439597',5,3,NULL,NULL),(4,8,'9792321722600',6,7,NULL,NULL),(5,1,'9780944869666',7,9,NULL,NULL),(6,2,'9787316447675',9,7,NULL,NULL),(7,8,'9784522151150',7,2,NULL,NULL),(8,1,'9787594136582',1,3,NULL,NULL),(9,5,'9796058564632',9,3,NULL,NULL),(10,6,'9798865102724',5,4,NULL,NULL),(11,1,'9746666662222',1,1,'2016-12-02 20:41:45','2016-12-02 20:41:45'),(12,1,'9746666662222',1,1,'2016-12-02 20:42:36','2016-12-02 20:42:36'),(13,1,'9746666662222',1,1,'2016-12-02 20:51:55','2016-12-02 20:51:55'),(17,1,'9746666662221',1,1,'2016-12-09 11:16:12','2016-12-09 11:16:12'),(18,1,'97466666113',1,1,'2016-12-09 11:29:57','2016-12-09 11:29:57');
+/*!40000 ALTER TABLE `books` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `migrations`
+--
+
+DROP TABLE IF EXISTS `migrations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `migrations` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `migrations`
+--
+
+LOCK TABLES `migrations` WRITE;
+/*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
+INSERT INTO `migrations` VALUES (8,'2014_10_12_000000_create_users_table',1),(9,'2014_10_12_100000_create_password_resets_table',1),(10,'2016_06_01_000001_create_oauth_auth_codes_table',1),(11,'2016_06_01_000002_create_oauth_access_tokens_table',1),(12,'2016_06_01_000003_create_oauth_refresh_tokens_table',1),(13,'2016_06_01_000004_create_oauth_clients_table',1),(14,'2016_06_01_000005_create_oauth_personal_access_clients_table',1),(15,'2016_12_02_113533_create_books_table',1);
+/*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `oauth_access_tokens`
+--
+
+DROP TABLE IF EXISTS `oauth_access_tokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `oauth_access_tokens` (
+  `id` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `client_id` int(11) NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `scopes` text COLLATE utf8_unicode_ci,
+  `revoked` tinyint(1) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `expires_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `oauth_access_tokens_user_id_index` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `oauth_access_tokens`
+--
+
+LOCK TABLES `oauth_access_tokens` WRITE;
+/*!40000 ALTER TABLE `oauth_access_tokens` DISABLE KEYS */;
+/*!40000 ALTER TABLE `oauth_access_tokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `oauth_auth_codes`
+--
+
+DROP TABLE IF EXISTS `oauth_auth_codes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `oauth_auth_codes` (
+  `id` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL,
+  `scopes` text COLLATE utf8_unicode_ci,
+  `revoked` tinyint(1) NOT NULL,
+  `expires_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `oauth_auth_codes`
+--
+
+LOCK TABLES `oauth_auth_codes` WRITE;
+/*!40000 ALTER TABLE `oauth_auth_codes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `oauth_auth_codes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `oauth_clients`
+--
+
+DROP TABLE IF EXISTS `oauth_clients`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `oauth_clients` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `secret` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `redirect` text COLLATE utf8_unicode_ci NOT NULL,
+  `personal_access_client` tinyint(1) NOT NULL,
+  `password_client` tinyint(1) NOT NULL,
+  `revoked` tinyint(1) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `oauth_clients_user_id_index` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `oauth_clients`
+--
+
+LOCK TABLES `oauth_clients` WRITE;
+/*!40000 ALTER TABLE `oauth_clients` DISABLE KEYS */;
+/*!40000 ALTER TABLE `oauth_clients` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `oauth_personal_access_clients`
+--
+
+DROP TABLE IF EXISTS `oauth_personal_access_clients`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `oauth_personal_access_clients` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `oauth_personal_access_clients_client_id_index` (`client_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `oauth_personal_access_clients`
+--
+
+LOCK TABLES `oauth_personal_access_clients` WRITE;
+/*!40000 ALTER TABLE `oauth_personal_access_clients` DISABLE KEYS */;
+/*!40000 ALTER TABLE `oauth_personal_access_clients` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `oauth_refresh_tokens`
+--
+
+DROP TABLE IF EXISTS `oauth_refresh_tokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `oauth_refresh_tokens` (
+  `id` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `access_token_id` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `revoked` tinyint(1) NOT NULL,
+  `expires_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `oauth_refresh_tokens_access_token_id_index` (`access_token_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `oauth_refresh_tokens`
+--
+
+LOCK TABLES `oauth_refresh_tokens` WRITE;
+/*!40000 ALTER TABLE `oauth_refresh_tokens` DISABLE KEYS */;
+/*!40000 ALTER TABLE `oauth_refresh_tokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `password_resets`
+--
+
+DROP TABLE IF EXISTS `password_resets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `password_resets` (
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  KEY `password_resets_email_index` (`email`),
+  KEY `password_resets_token_index` (`token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `password_resets`
+--
+
+LOCK TABLES `password_resets` WRITE;
+/*!40000 ALTER TABLE `password_resets` DISABLE KEYS */;
+/*!40000 ALTER TABLE `password_resets` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_email_unique` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'toto21245','toto458@gmail.com','$2y$10$.hvRCCW9amS9odVzpamHseRARPRKHYwLGDzvku7dubCR2HNckIEEm',NULL,'2016-12-02 20:00:52','2016-12-02 20:00:52'),(2,'nicoals','nicoals@prout.fr','$2y$10$ho83qg0Z.WLx5fg0tfGjUu4sUN4ENVAc6EUhjBot5wRUG5oZnzigq',NULL,'2016-12-02 20:13:50','2016-12-02 20:13:50'),(3,'nicolas','test1337@1337.fr','$2y$10$T6RkVAZrnBn9XLpWQ5zFhOS3mMVX2mpH0rnbUzICEDiHEvsKSuQf6',NULL,'2016-12-02 21:25:25','2016-12-02 21:25:25'),(4,'blblbl','blbllb@blblb.fr','$2y$10$Q7G5vbMykqWciplmbUA5YuC0WJoXYrnbQYmMa0X2PaaEtni4Et35a',NULL,'2016-12-02 21:33:45','2016-12-02 21:33:45'),(5,'toto','nicolas@prout.fr','$2y$10$ybrNCSIL0ppKbcOvuFHQIelMSKP3uZdYmsHtxWi3X3FdvAS9bSN6C',NULL,'2016-12-02 22:57:40','2016-12-02 22:57:40'),(6,'plop','plop@plop.fr','$2y$10$Jcb3Y2InjJdP40pU.TdEPeCiyGvxO7C1qUw.d5JA0B239MqxHBnIq',NULL,'2016-12-02 22:59:59','2016-12-02 22:59:59'),(7,'nicoals','nicoals12@prout.fr','$2y$10$2SubHKW/A4dsQ4otRjVSge.8WQD4tbmj2Kl/zGbKxlZBYt/r/aIg6',NULL,'2016-12-02 23:01:00','2016-12-02 23:01:00'),(8,'poijg','pmop@pmop.pmop','$2y$10$eSo8eom5QlNu2KmvtvzKtu.8LOq0Q03N4GHQxYWNsvuZL3P6X5JhC',NULL,'2016-12-02 23:02:29','2016-12-02 23:02:29'),(9,'test','test','$2y$10$8kyWTdVME4d9gXZPwgifiuLhdy/6Msh0qtJ5h/2jJG5TtLGSUjCj.',NULL,'2016-12-03 06:06:48','2016-12-03 06:06:48'),(10,'Test','test1@test.fr','$2y$10$NcjJ2TYrz/H5zx9Q64BOOuCpm4F8N6oyIABIJkOSMpqu/L.5eL1PO',NULL,'2016-12-03 10:52:42','2016-12-03 10:52:42'),(11,'toto','toto','$2y$10$zbdjcThYt55QkGtsKwTdzOL63mAkMILV16nL0P3zM8tvKuJO.7zYm',NULL,'2016-12-03 10:57:14','2016-12-03 10:57:14'),(12,'Maxime','toto@test.fr','$2y$10$mbgsCZmx9h4Iqqiy8xDQx..4rlkgiehtenGO4UMGDHrBBiv4hLAHm',NULL,'2016-12-07 17:16:47','2016-12-07 17:16:47'),(13,'nicoals','nicoals13@prout.fr','$2y$10$o3YgUXhsaBUbbI27jDPuKuFj1Cou4AMRtVQNI6r6SMul0/Rzlk/2i',NULL,'2016-12-08 10:04:50','2016-12-08 10:04:50'),(14,'nicoulas','nicoulas@test.fr','$2y$10$/WlIYEx9mmY8qJ6nMb2ONeebCbk2nN/JmxCSFZsb2k.1PPwgf7IeG',NULL,'2016-12-08 17:23:21','2016-12-08 17:23:21'),(15,'nicolas','nicoals@epitech.eu','$2y$10$xVZgrtCdfFJcA9AB0XWKoOGCbopDHPWQb.W2ZE7FqzE4nZ9E.BHlu',NULL,'2016-12-09 11:46:40','2016-12-09 11:46:40'),(16,'user','user@gmail.com','$2y$10$3/awBUB8nycdrcl6tkH5kuEL7Y8fMKQ1Mig/cCHf0yhFSgXFly7wy',NULL,'2017-02-04 02:03:21','2017-02-04 02:03:21');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2017-02-08 17:52:42

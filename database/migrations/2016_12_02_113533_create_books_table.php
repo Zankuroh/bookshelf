@@ -17,9 +17,9 @@ class CreateBooksTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->string('isbn', 13);
-            $table->unsignedInteger('category_id');
-            $table->unsignedInteger('status_id');
-            $table->timestamps();
+            $table->unsignedInteger('category_id')->default(0);
+            $table->unsignedInteger('status_id')->default(0);
+            $table->timestampsTz();
         });
     }
 
