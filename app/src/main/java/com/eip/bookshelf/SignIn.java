@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -20,11 +21,19 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 
 import com.eip.utilities.api.BookshelfApi;
-import com.eip.utilities.model.Auth;
-import com.facebook.login.LoginManager;
+import com.facebook.GraphRequest;
+import com.facebook.GraphRequestAsyncTask;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
@@ -43,6 +52,7 @@ public class SignIn extends Fragment implements View.OnClickListener
 {
     private View _v;
     private CallbackManager _callbackManager;
+    private GoogleApiClient mGoogleApiClient;
 
     public SignIn()
     {
@@ -69,9 +79,18 @@ public class SignIn extends Fragment implements View.OnClickListener
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.i("FACEBOOK", "YEAHHHH");
+                AccessToken accessToken = loginResult.getAccessToken();
+                GraphRequestAsyncTask request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject user, GraphResponse graphResponse) {
+                        Log.i("FACEBOOK EMAIL",user.optString("email"));
+                        Log.i("FACEBOOK NAME",user.optString("name"));
+                        Log.i("FACEBOOK ID",user.optString("id"));
+                    }
+                }).executeAsync();
+
                 //TODO gérer la création de compte
                 connect("","");
-                //_v.findViewById(R.id.nav_biblio).performClick();
             }
 
             @Override
@@ -83,14 +102,58 @@ public class SignIn extends Fragment implements View.OnClickListener
             public void onError(FacebookException exception) {
             }
         });
-        // Other app specific specialization
+
+        SignInButton mGoogleSignInButton = (SignInButton)_v.findViewById(R.id.gConnect);
+        mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signInWithGoogle();
+            }
+        });
 
         return _v;
     }
 
+    private static final int RC_SIGN_IN = 9001;
+
+    private void signInWithGoogle() {
+        if(mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(_v.getContext())
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        _callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+
+            if(result.isSuccess()) {
+                final GoogleApiClient client = mGoogleApiClient;
+                Log.i("GOOGLE", "YEAHHHH");
+                GoogleSignInAccount acct = result.getSignInAccount();
+                String personName = acct.getDisplayName();
+                String personGivenName = acct.getGivenName();
+                String personFamilyName = acct.getFamilyName();
+                String personEmail = acct.getEmail();
+                String personId = acct.getId();
+
+            } else {
+                //handleSignInResult(...);
+            }
+        } else {
+            _callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
