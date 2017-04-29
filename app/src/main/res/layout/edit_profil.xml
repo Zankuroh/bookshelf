@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:id="@+id/RLEditProfil">
+    <include
+        layout="@layout/app_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <TextView
+        android:id="@+id/TVTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="110dp"
+        android:text="Éditer vos informations"
+        android:textSize="25sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/ETPasswordVerif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Vérification mot de passe"
+        android:layout_below="@+id/ETPassword"
+        android:layout_alignStart="@+id/ETPassword" />
+
+    <EditText
+        android:id="@+id/ETPrefBook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Livre préféré"
+        android:layout_below="@+id/ETPrefGenre"
+        android:layout_alignStart="@+id/ETPrefGenre"
+        android:layout_marginTop="10dp" />
+
+    <EditText
+        android:id="@+id/ETPrefGenre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Genre préféré"
+        android:layout_below="@+id/ETBirth"
+        android:layout_alignStart="@+id/ETBirth" />
+
+    <EditText
+        android:id="@+id/ETBirth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Anniversaire"
+        android:layout_below="@+id/ETPseudo"
+        android:layout_alignStart="@+id/ETPseudo"
+        android:layout_marginTop="10dp" />
+
+    <EditText
+        android:id="@+id/ETPseudo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Pseudo"
+        android:layout_below="@+id/TVTitle"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/ETPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Mot de passe"
+        android:layout_below="@+id/ETPrefBook"
+        android:layout_alignStart="@+id/ETPrefBook"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:id="@+id/BValid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="Valider"
+        android:layout_below="@+id/ETPasswordVerif"
+        android:layout_alignStart="@+id/ETPasswordVerif"
+        android:onClick="onClickValidate" />
+
+    <Button
+        android:id="@+id/BCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/ETPasswordVerif"
+        android:layout_alignTop="@+id/BValid"
+        android:text="Annuler"
+        android:onClick="onClickCancel" />
+
+
+</RelativeLayout>

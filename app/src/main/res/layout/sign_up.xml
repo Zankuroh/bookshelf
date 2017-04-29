@@ -23,11 +23,11 @@
         android:inputType="textEmailAddress"
         android:ems="10"
         android:id="@+id/SignUpMail"
-        android:hint="Adresse email"
+        android:hint="E-mail"
         android:layout_below="@+id/SignUpFirstName"
         android:layout_alignLeft="@+id/SignUpFirstName"
         android:layout_alignStart="@+id/SignUpFirstName"
-        android:layout_marginTop="42dp" />
+        android:layout_marginTop="50dp" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -35,7 +35,7 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/SignUpPwd"
-        android:hint="password"
+        android:hint="Mot de passe"
         android:selectAllOnFocus="true"
         android:layout_below="@+id/SignUpMail"
         android:layout_centerHorizontal="true"
@@ -47,11 +47,12 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/SignUpPwd2"
-        android:hint="Vérification password"
+        android:hint="Vérification mot de passe"
         android:layout_below="@+id/SignUpPwd"
         android:layout_alignLeft="@+id/SignUpPwd"
         android:layout_alignStart="@+id/SignUpPwd"
-        android:layout_marginTop="55dp" />
+        android:layout_marginTop="50dp"
+        android:layout_alignEnd="@+id/SignUpPwd" />
 
     <Button
         android:text="Créer son compte"
