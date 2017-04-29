@@ -4,8 +4,8 @@ package com.eip.utilities.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class IndustryIdentifier {
-
+public class IndustryIdentifier
+{
     @SerializedName("type")
     @Expose
     private String type;
@@ -48,5 +48,4 @@ public class IndustryIdentifier {
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
-
 }

@@ -4,8 +4,8 @@ package com.eip.utilities.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SearchInfo {
-
+public class SearchInfo
+{
     @SerializedName("textSnippet")
     @Expose
     private String textSnippet;
@@ -27,5 +27,4 @@ public class SearchInfo {
     public void setTextSnippet(String textSnippet) {
         this.textSnippet = textSnippet;
     }
-
 }

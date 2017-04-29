@@ -1,5 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="popupLogin" type="id"/>
-    <item name="popupPasswd" type="id"/>
 </resources>

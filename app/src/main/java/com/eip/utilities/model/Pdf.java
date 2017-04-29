@@ -4,8 +4,8 @@ package com.eip.utilities.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Pdf {
-
+public class Pdf
+{
     @SerializedName("isAvailable")
     @Expose
     private Boolean isAvailable;
@@ -27,5 +27,4 @@ public class Pdf {
     public void setIsAvailable(Boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
-
 }

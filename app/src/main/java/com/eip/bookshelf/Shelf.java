@@ -5,22 +5,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.ArrayMap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Maxime on 02/03/2017.
@@ -30,9 +25,8 @@ public class Shelf extends Fragment
 {
     private List<Book> _infos;
     private ArrayList<BiblioAdapter> _modelListBiblio = new ArrayList<>();
-    private customAdapterBiblio _adapterBiblio;
-    private GridView _gvBiblio;
     private View _v;
+    private MainActivity.shelfType _type;
 
     public Shelf()
     {
@@ -43,20 +37,21 @@ public class Shelf extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         _v = inflater.inflate(R.layout.shelf, container, false);
-        MainActivity.shelfType type = (MainActivity.shelfType)getArguments().getSerializable("type");
+        _type = (MainActivity.shelfType)getArguments().getSerializable("type");
+
         hardTest();
         setAdapters();
-        if (type == MainActivity.shelfType.MAINSHELF) {
+        if (_type == MainActivity.shelfType.MAINSHELF) {
             mainShelf(false);
-        } else if (type == MainActivity.shelfType.PROPOSHELF) {
+        } else if (_type == MainActivity.shelfType.PROPOSHELF) {
             propoShelf();
-        } else if (type == MainActivity.shelfType.WISHSHELF) {
+        } else if (_type == MainActivity.shelfType.WISHSHELF) {
             wishShelf();
         }
         return _v;
     }
 
-    public void mainShelf(boolean added)
+    private void mainShelf(boolean added)
     {
         //Todo: Appel à la BDD pour recup la vraie biblio
         for (int i = 0; i < _infos.size(); i++) {
@@ -72,7 +67,7 @@ public class Shelf extends Fragment
         }
     }
 
-    public void propoShelf()
+    private void propoShelf()
     {
         //Todo: Appel à la BDD pour recup les vrais PROPOS
         for (int i = 0; i < _infos.size(); i++) {
@@ -84,7 +79,7 @@ public class Shelf extends Fragment
         }
     }
 
-    public void wishShelf()
+    private void wishShelf()
     {
         //Todo: Appel à la BDD pour recup les vrais WISH
         BiblioAdapter ba = new BiblioAdapter("L' Arbre des Souhaits", "http://www.scholastic.ca/hipoint/648/?src=9781443155434.jpg&w=260", "1443155438");
@@ -93,10 +88,10 @@ public class Shelf extends Fragment
 
     private void setAdapters()
     {
-        _gvBiblio = (GridView) _v.findViewById(R.id.GVBiblio);
-        _adapterBiblio = new customAdapterBiblio(_v, _modelListBiblio);
-        _gvBiblio.setAdapter(_adapterBiblio);
-        _gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        GridView gvBiblio = (GridView) _v.findViewById(R.id.GVBiblio);
+        customAdapterBiblio adapterBiblio = new customAdapterBiblio(_v, _modelListBiblio);
+        gvBiblio.setAdapter(adapterBiblio);
+        gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String isbn = ((TextView) view.findViewById(R.id.TVISBN)).getText().toString();
@@ -104,7 +99,7 @@ public class Shelf extends Fragment
                 Bundle b = null;
                 for (int i = 0; i < _infos.size(); i++) {
                     if (isbn.equals(_infos.get(i).getIsbn().toString())) {
-                        info = new HashMap<String, String>();
+                        info = new HashMap<>();
                         b = new Bundle();
                         info.put("title", getValueOrDefault(_infos.get(i).getTitre()));
                         info.put("picture", _infos.get(i).getImage());
@@ -119,27 +114,24 @@ public class Shelf extends Fragment
                 }
                 if (info != null) {
                     Intent in = new Intent(getActivity(), InfoBook.class);
-                    in.putExtras(b);
+                    in.putExtra("book", b);
+                    in.putExtra("shelf", _type);
                     startActivity(in);
                 }
             }
         });
     }
 
-    public String getValueOrDefault(String value)
+    private String getValueOrDefault(String value)
     {
-        return (value != null && value != "") ? value : "N/A";
+        return (value != null && !value.equals("")) ? value : "N/A";
     }
 
     private void hardTest()
     {
-        /**
-         * ouverture + creation du fichier
-         */
+         //ouverture + creation du fichier
         SharedPreferences sp = _v.getContext().getSharedPreferences("Bibliothèque", Context.MODE_PRIVATE);
-        /**
-         *  edition du fichier
-         */
+         //edition du fichier
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("biblio", "[\n" +
                 "{\"titre\":\"Le trône de fer tome 5\",\n" +
@@ -281,9 +273,7 @@ public class Shelf extends Fragment
                 "}\n" +
                 "]");
         editor.apply();
-        /**
-         * récupération des données enregistrées
-         */
+        // récupération des données enregistrées
         String ret = sp.getString("biblio", null);
         ObjectMapper objectMapper = new ObjectMapper();
         try {

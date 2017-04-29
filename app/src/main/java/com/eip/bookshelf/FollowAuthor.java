@@ -20,7 +20,6 @@ public class FollowAuthor extends Fragment
 {
     private View _v;
     private ListView _lvAuthor;
-    private customAdapterAuthor _adapterAuthor;
     private ArrayList<String> _modelListAuthor = new ArrayList<>();
 
     public FollowAuthor()
@@ -40,8 +39,8 @@ public class FollowAuthor extends Fragment
 
     private void setAdapter()
     {
-        _adapterAuthor = new customAdapterAuthor(_v.getContext(), _modelListAuthor);
-        _lvAuthor.setAdapter(_adapterAuthor);
+        customAdapterAuthor adapterAuthor = new customAdapterAuthor(_v.getContext(), _modelListAuthor);
+        _lvAuthor.setAdapter(adapterAuthor);
         _lvAuthor.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override

@@ -4,8 +4,8 @@ package com.eip.utilities.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Item {
-
+public class Item
+{
     @SerializedName("kind")
     @Expose
     private String kind;
@@ -174,5 +174,4 @@ public class Item {
     public void setSearchInfo(SearchInfo searchInfo) {
         this.searchInfo = searchInfo;
     }
-
 }

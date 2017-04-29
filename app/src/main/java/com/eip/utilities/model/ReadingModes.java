@@ -4,8 +4,8 @@ package com.eip.utilities.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ReadingModes {
-
+public class ReadingModes
+{
     @SerializedName("text")
     @Expose
     private Boolean text;
@@ -48,5 +48,4 @@ public class ReadingModes {
     public void setImage(Boolean image) {
         this.image = image;
     }
-
 }
