@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,21 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.os.Handler;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.Auth;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 import org.json.JSONObject;
+
+import java.util.Arrays;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,11 +42,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class SignIn extends Fragment implements View.OnClickListener
 {
     private View _v;
+    private CallbackManager _callbackManager;
 
     public SignIn()
     {
 
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -46,7 +58,39 @@ public class SignIn extends Fragment implements View.OnClickListener
         _v.findViewById(R.id.btnCo).setOnClickListener(this);
         _v.findViewById(R.id.btnForgetPass).setOnClickListener(this);
         _v.findViewById(R.id.btnCreateAccount).setOnClickListener(this);
+
+
+        _callbackManager = CallbackManager.Factory.create();
+        LoginButton loginButton = (LoginButton) _v.findViewById(R.id.fConnect);
+        loginButton.setReadPermissions("public_profile email");
+        // If using in a fragment
+        loginButton.setFragment(this);
+        loginButton.registerCallback(_callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.i("FACEBOOK", "YEAHHHH");
+                //TODO gérer la création de compte
+                connect("","");
+                //_v.findViewById(R.id.nav_biblio).performClick();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+            }
+        });
+        // Other app specific specialization
+
         return _v;
+    }
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        _callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

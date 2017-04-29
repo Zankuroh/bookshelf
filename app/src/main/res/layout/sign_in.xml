@@ -32,12 +32,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnCo"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="28dp"
         android:layout_below="@+id/ETsignInMdp"
-        android:layout_alignLeft="@+id/ETsignInMdp"
-        android:layout_alignStart="@+id/ETsignInMdp"
-        android:layout_alignRight="@+id/ETsignInMdp"
-        android:layout_alignEnd="@+id/ETsignInMdp" />
+        android:layout_alignEnd="@+id/ETsignInMdp"
+        android:layout_alignStart="@+id/ETsignInMdp" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -58,6 +56,16 @@
         android:layout_marginBottom="20dp"
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/btnCreateAccount"
+        android:layout_alignEnd="@+id/btnCreateAccount" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/fConnect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/btnCreateAccount"
+        android:layout_alignStart="@+id/gConnect"
+        android:layout_marginTop="19dp"
         android:layout_alignEnd="@+id/btnCreateAccount" />
 
     <Button
