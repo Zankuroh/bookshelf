@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 defineNameToolBar("Bibliothèque");
                 if (MainActivity.co) {
                     Bundle arg = setArgs(shelfType.MAINSHELF);
-                    Shelf shelfFrag = new Shelf();
+                    ShelfTab shelfFrag = new ShelfTab();
                     shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
                     fragmentTransaction.commit();
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 defineNameToolBar("Propositions");
                 if (MainActivity.co) {
                     Bundle arg = setArgs(shelfType.PROPOSHELF);
-                    Shelf shelfFrag = new Shelf();
+                    ShelfContainer shelfFrag = new ShelfContainer();
                     shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
                     fragmentTransaction.commit();
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 defineNameToolBar("Liste de souhaits");
                 if (MainActivity.co) {
                     Bundle arg = setArgs(shelfType.WISHSHELF);
-                    Shelf shelfFrag = new Shelf();
+                    ShelfContainer shelfFrag = new ShelfContainer();
                     shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
                     fragmentTransaction.commit();
