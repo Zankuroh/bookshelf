@@ -21,14 +21,14 @@ import java.util.List;
  * Created by Maxime on 02/03/2017.
  */
 
-public class Shelf extends Fragment
+public class ShelfContainer extends Fragment
 {
     private List<Book> _infos;
     private ArrayList<BiblioAdapter> _modelListBiblio = new ArrayList<>();
     private View _v;
     private MainActivity.shelfType _type;
 
-    public Shelf()
+    public ShelfContainer()
     {
 
     }
@@ -36,16 +36,27 @@ public class Shelf extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        _v = inflater.inflate(R.layout.shelf, container, false);
-        _type = (MainActivity.shelfType)getArguments().getSerializable("type");
+        Bundle b = getArguments();
+        if (b != null) {
+            _type = (MainActivity.shelfType)b.getSerializable("type");
+        } else {
+            _type = null;
+        }
 
-        hardTest();
-        setAdapters();
         if (_type == MainActivity.shelfType.MAINSHELF) {
+            _v = inflater.inflate(R.layout.shelf_container, container, false);
+            hardTest();
+            setAdapters();
             mainShelf(false);
         } else if (_type == MainActivity.shelfType.PROPOSHELF) {
+            _v = inflater.inflate(R.layout.shelf_simple, container, false);
+            hardTest();
+            setAdapters();
             propoShelf();
         } else if (_type == MainActivity.shelfType.WISHSHELF) {
+            _v = inflater.inflate(R.layout.shelf_simple, container, false);
+            hardTest();
+            setAdapters();
             wishShelf();
         }
         return _v;
@@ -129,9 +140,9 @@ public class Shelf extends Fragment
 
     private void hardTest()
     {
-         //ouverture + creation du fichier
+        //ouverture + creation du fichier
         SharedPreferences sp = _v.getContext().getSharedPreferences("Bibliothèque", Context.MODE_PRIVATE);
-         //edition du fichier
+        //edition du fichier
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("biblio", "[\n" +
                 "{\"titre\":\"Le trône de fer tome 5\",\n" +

@@ -38,6 +38,10 @@
             android:name="com.eip.bookshelf.InfoBook"
             android:label="Informations"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.eip.bookshelf.EditProfil"
+            android:label="Modifications"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

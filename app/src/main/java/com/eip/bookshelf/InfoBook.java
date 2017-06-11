@@ -54,7 +54,6 @@ public class InfoBook extends AppCompatActivity
         Intent i = getIntent();
         Bundle b = i.getBundleExtra("book");
         _type = (MainActivity.shelfType)i.getSerializableExtra("shelf");
-        @SuppressWarnings("unchecked")
         HashMap<String, String> info = (HashMap<String, String>)b.getSerializable("info");
 
         setAdapters();

@@ -9,5 +9,8 @@
     <string name="picture_desc">No picture.</string>
     <string name="not_login">Vous n\'êtes pas connecté !</string>
     <string name="facebook_app_id">223852384693149</string>
+
+    <string name="hint_com">Commentaire...</string>
+    <string name="btn_send_com">Envoyer</string>
     <string name="server_client_id">674910180408-6rqcnq88222adr2kuhnjiuor08lrhk7s.apps.googleusercontent.com</string>
 </resources>
