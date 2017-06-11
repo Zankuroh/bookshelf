@@ -12,14 +12,14 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.support.v7.app.AppCompatActivity;
 import com.eip.utilities.api.BookshelfApi;
-import com.eip.utilities.model.SimpleResponse;
+import com.eip.utilities.model.Register.Register;
+
 import org.json.JSONObject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import com.facebook.FacebookSdk;
 
 /**
  * Created by jolyn on 23/11/2016.
@@ -98,13 +98,12 @@ public class SignUp extends AppCompatActivity
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<SimpleResponse> call = bookshelfApi.Register(name, password, email);
-        call.enqueue(new Callback<SimpleResponse>() {
+        Call<Register> call = bookshelfApi.Register(name, password, email);
+        call.enqueue(new Callback<Register>() {
             @Override
-            public void onResponse(Call<SimpleResponse> call, Response<SimpleResponse> response) {
+            public void onResponse(Call<Register> call, Response<Register> response) {
                 if (response.isSuccessful()) {
-                    SimpleResponse auth = response.body();
-                    String success = auth.getSuccess();
+                    Register auth = response.body();
                     Snackbar snackbar = Snackbar.make(_lp, "Création réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
                     snackbar.show();
@@ -123,7 +122,7 @@ public class SignUp extends AppCompatActivity
             }
 
             @Override
-            public void onFailure(Call<SimpleResponse> call, Throwable t)
+            public void onFailure(Call<Register> call, Throwable t)
             {
                 Snackbar snackbar = Snackbar.make(_lp, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();

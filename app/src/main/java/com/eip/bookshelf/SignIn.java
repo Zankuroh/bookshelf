@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -83,6 +85,17 @@ public class SignIn extends Fragment implements View.OnClickListener
 
                 //TODO gérer la création de compte
                 connect("","");
+
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run()
+                    {
+                        if (MainActivity.co) {
+                            MainActivity.MenuItemCo.setTitle("Déconnexion");
+                            //Todo: launch fragment shelf
+                        }
+                    }
+                }, 3000);
             }
 
             @Override
@@ -115,6 +128,8 @@ public class SignIn extends Fragment implements View.OnClickListener
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                /*.requestIdToken("")*/
+                //.requestServerAuthCode(getString(R.string.server_client_id))
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(_v.getContext())
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -128,8 +143,9 @@ public class SignIn extends Fragment implements View.OnClickListener
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 
         if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            Log.i("GOOGLE DATA", result.toString());
             if(result.isSuccess()) {
                 final GoogleApiClient client = mGoogleApiClient;
                 Log.i("GOOGLE", "YEAHHHH");
@@ -139,8 +155,30 @@ public class SignIn extends Fragment implements View.OnClickListener
                 String personFamilyName = acct.getFamilyName();
                 String personEmail = acct.getEmail();
                 String personId = acct.getId();
+                String token = acct.getServerAuthCode();
+
+                Log.i("GOOGLE NAME", personName);
+                Log.i("GOOGLE GIVENNAME", personGivenName);
+                Log.i("GOOGLE FAMILY NAME", personFamilyName);
+                Log.i("GOOGLE EMAIL", personEmail);
+                Log.i("GOOGLE ID",personId);
+                Log.i("GOOGLE TOKEN",token);
+
+                connect("","");
+
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run()
+                    {
+                        if (MainActivity.co) {
+                            MainActivity.MenuItemCo.setTitle("Déconnexion");
+                            //Todo: launch fragment shelf
+                        }
+                    }
+                }, 3000);
 
             } else {
+
                 //handleSignInResult(...);
             }
         } else {

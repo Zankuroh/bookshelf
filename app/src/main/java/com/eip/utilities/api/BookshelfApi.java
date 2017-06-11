@@ -1,9 +1,15 @@
 package com.eip.utilities.api;
 
 
-import com.eip.utilities.model.Auth;
-import com.eip.utilities.model.SimpleResponse;
-import com.eip.utilities.model.LocalBook;
+import com.eip.utilities.model.Auth.Auth;
+import com.eip.utilities.model.Authors.Authors;
+import com.eip.utilities.model.BooksLocal.BooksLocal;
+import com.eip.utilities.model.DelProfile.DelProfile;
+import com.eip.utilities.model.ModifAuthor.ModifAuthor;
+import com.eip.utilities.model.ModifBook.ModifBook;
+import com.eip.utilities.model.Profile.Profile;
+import com.eip.utilities.model.ProfileModification.ProfileModification;
+import com.eip.utilities.model.Register.Register;
 
 import retrofit2.Call;
 import retrofit2.http.DELETE;
@@ -17,21 +23,54 @@ import retrofit2.http.Query;
 
 public interface BookshelfApi
 {
-    public static final String APIPath = "http://bookshelf.caolin.ovh:8000/api/";
+    public static final String APIPath = "http://bookshelf.caolin.ovh/api/";
 
     @POST("auth")
     Call<Auth> Connexion(@Query("email") String email, @Query("password") String password);
 
     @POST("register")
-    Call<SimpleResponse> Register(@Query("name") String name, @Query("password") String password, @Query("email") String email);
+    Call<Register> Register(@Query("name") String name, @Query("password") String password, @Query("email") String email);
 
-    @GET("books")
-    Call<LocalBook> getBookshelf(@Query("token") String token);
+    @POST("book")
+    Call<ModifBook> AddBooks(@Query("Isbn") String isbn);
 
-    @POST("books")
-    Call<SimpleResponse> AddBooks(@Query("token") String token, @Query("Isbn") String isbn);
+    @GET("book")
+    Call<BooksLocal> getBookshelf();
 
-    @DELETE("books")
-    Call<SimpleResponse> SimpleResponse(@Query("token") String token, @Query("Isbn") String isbn);
+    @DELETE("book")
+    Call<ModifBook> DelBook(@Query("Isbn") String isbn, @Query("deleted") String deleted);
+
+    @GET("profile")
+    Call<Profile> getProfile();
+
+    @POST("profile/password")
+    Call<ProfileModification> ChangePwd(@Query("password") String password, @Query("new_password") String new_password);
+
+    @POST("profile/email")
+    Call<ProfileModification> ChangeEmail(@Query("password") String password, @Query("email") String email);
+
+    @POST("profile/name")
+    Call<ProfileModification> ChangeName(@Query("password") String password, @Query("name") String name);
+
+    @POST("author")
+    Call<ModifAuthor> AddAuthor(@Query("first_name") String first_name, @Query("last_name") String last_name);
+
+    @DELETE("profile")
+    Call<DelProfile> DelProfil(@Query("password") String password, @Query("deleted") String deleted);
+
+    @GET("author")
+    Call<Authors> getAuthors();
+
+    @DELETE("author")
+    Call<ModifAuthor> DelAuthor(@Query("id") String id);
+
+    @POST("wish/book")
+    Call<ModifBook> AddWishBooks(@Query("Isbn") String isbn);
+
+    @GET("wish/book")
+    Call<BooksLocal> getWishBookshelf();
+
+    @DELETE("wish/book")
+    Call<ModifBook> DelWishBook(@Query("Isbn") String isbn, @Query("deleted") String deleted);
 
 }
