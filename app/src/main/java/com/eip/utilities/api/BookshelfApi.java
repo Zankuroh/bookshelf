@@ -14,6 +14,7 @@ import com.eip.utilities.model.Register.Register;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -32,45 +33,45 @@ public interface BookshelfApi
     Call<Register> Register(@Query("name") String name, @Query("password") String password, @Query("email") String email);
 
     @POST("book")
-    Call<ModifBook> AddBooks(@Query("Isbn") String isbn);
+    Call<ModifBook> AddBooks(@Header("Authorization") String token, @Query("Isbn") String isbn);
 
     @GET("book")
-    Call<BooksLocal> getBookshelf();
+    Call<BooksLocal> getBookshelf(@Header("Authorization") String token);
 
     @DELETE("book")
-    Call<ModifBook> DelBook(@Query("Isbn") String isbn, @Query("deleted") String deleted);
+    Call<ModifBook> DelBook(@Header("Authorization") String token, @Query("Isbn") String isbn, @Query("deleted") String deleted);
 
     @GET("profile")
-    Call<Profile> getProfile();
+    Call<Profile> getProfile(@Header("Authorization") String token);
 
     @POST("profile/password")
-    Call<ProfileModification> ChangePwd(@Query("password") String password, @Query("new_password") String new_password);
+    Call<ProfileModification> ChangePwd(@Header("Authorization") String token, @Query("password") String password, @Query("new_password") String new_password);
 
     @POST("profile/email")
-    Call<ProfileModification> ChangeEmail(@Query("password") String password, @Query("email") String email);
+    Call<ProfileModification> ChangeEmail(@Header("Authorization") String token, @Query("password") String password, @Query("email") String email);
 
     @POST("profile/name")
-    Call<ProfileModification> ChangeName(@Query("password") String password, @Query("name") String name);
+    Call<ProfileModification> ChangeName(@Header("Authorization") String token, @Query("password") String password, @Query("name") String name);
 
     @POST("author")
-    Call<ModifAuthor> AddAuthor(@Query("first_name") String first_name, @Query("last_name") String last_name);
+    Call<ModifAuthor> AddAuthor(@Header("Authorization") String token, @Query("first_name") String first_name, @Query("last_name") String last_name);
 
     @DELETE("profile")
-    Call<DelProfile> DelProfil(@Query("password") String password, @Query("deleted") String deleted);
+    Call<DelProfile> DelProfil(@Header("Authorization") String token, @Query("password") String password, @Query("deleted") String deleted);
 
     @GET("author")
-    Call<Authors> getAuthors();
+    Call<Authors> getAuthors(@Header("Authorization") String token);
 
     @DELETE("author")
-    Call<ModifAuthor> DelAuthor(@Query("id") String id);
+    Call<ModifAuthor> DelAuthor(@Header("Authorization") String token, @Query("id") String id);
 
     @POST("wish/book")
-    Call<ModifBook> AddWishBooks(@Query("Isbn") String isbn);
+    Call<ModifBook> AddWishBooks(@Header("Authorization") String token, @Query("Isbn") String isbn);
 
     @GET("wish/book")
-    Call<BooksLocal> getWishBookshelf();
+    Call<BooksLocal> getWishBookshelf(@Header("Authorization") String token);
 
     @DELETE("wish/book")
-    Call<ModifBook> DelWishBook(@Query("Isbn") String isbn, @Query("deleted") String deleted);
+    Call<ModifBook> DelWishBook(@Header("Authorization") String token, @Query("Isbn") String isbn, @Query("deleted") String deleted);
 
 }

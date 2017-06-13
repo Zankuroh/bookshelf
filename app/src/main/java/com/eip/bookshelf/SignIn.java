@@ -24,7 +24,8 @@ import com.facebook.GraphRequestAsyncTask;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.Auth;
+//import com.google.android.gms.auth.api.Auth;
+import com.eip.utilities.model.Auth.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -122,7 +123,7 @@ public class SignIn extends Fragment implements View.OnClickListener
     private static final int RC_SIGN_IN = 9001;
 
     private void signInWithGoogle() {
-        if(mGoogleApiClient != null) {
+        /*if(mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
 
@@ -130,13 +131,13 @@ public class SignIn extends Fragment implements View.OnClickListener
                 .requestEmail()
                 /*.requestIdToken("")*/
                 //.requestServerAuthCode(getString(R.string.server_client_id))
-                .build();
+                /*.build();
         mGoogleApiClient = new GoogleApiClient.Builder(_v.getContext())
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
         final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        startActivityForResult(signInIntent, RC_SIGN_IN);*/
     }
 
     @Override
@@ -144,7 +145,7 @@ public class SignIn extends Fragment implements View.OnClickListener
 
         if (requestCode == RC_SIGN_IN) {
 
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            /*GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             Log.i("GOOGLE DATA", result.toString());
             if(result.isSuccess()) {
                 final GoogleApiClient client = mGoogleApiClient;
@@ -180,7 +181,7 @@ public class SignIn extends Fragment implements View.OnClickListener
             } else {
 
                 //handleSignInResult(...);
-            }
+            }*/
         } else {
             _callbackManager.onActivityResult(requestCode, resultCode, data);
         }
@@ -226,41 +227,42 @@ public class SignIn extends Fragment implements View.OnClickListener
 
     private void connect(String email, String pwd)
     {
-//        BookshelfApi bookshelfApi = new Retrofit.Builder()
-//                .baseUrl(BookshelfApi.APIPath)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build()
-//                .create(BookshelfApi.class);
-//        Call<Auth> call = bookshelfApi.Connexion(email,pwd);
-//        call.enqueue(new Callback<Auth>() {
-//            @Override
-//            public void onResponse(Call<Auth> call, Response<Auth> response) {
-//                if (response.isSuccessful()) {
-//                    Auth auth = response.body();
-//                    String token = auth.getToken();
-//                    Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
-//                    MainActivity.co = true;
-//                    snackbar.show();
-//                } else {
-//                    try {
-//                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-//                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("error"), Snackbar.LENGTH_LONG);
-//                        snackbar.show();
-//                    } catch (Exception e) {
-//                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-//                        snackbar.show();
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Auth> call, Throwable t) {
-//                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-//                snackbar.show();
-//                t.printStackTrace();
-//            }
-//        });
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<Auth> call = bookshelfApi.Connexion(email,pwd);
+        call.enqueue(new Callback<Auth>() {
+            @Override
+            public void onResponse(Call<Auth> call, Response<Auth> response) {
+                if (response.isSuccessful()) {
+                    Auth auth = response.body();
+
+                    String token = auth.getData().getToken();
+                    Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
+                    MainActivity.co = true;
+                    snackbar.show();
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("error"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Auth> call, Throwable t) {
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
         MainActivity.co = true;
     }
 }
