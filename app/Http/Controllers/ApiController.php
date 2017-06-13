@@ -44,4 +44,9 @@ class ApiController extends Controller
     {
         return $this->_response;
     }
+
+    public function getDefaultFailureJsonResponse($optsErrorsFields = true)
+    {
+        return $this->_ARV->getFailureJson($optsErrorsFields);
+    }
 }

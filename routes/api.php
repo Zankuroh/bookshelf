@@ -29,6 +29,8 @@ Route::group(['namespace' => 'Auth'], function() {
  */
 Route::group(['namespace' => 'Api'], function() {
 
+
+
     /**
      *   Registration call, doesn't need JWT authentication
      */
@@ -38,6 +40,11 @@ Route::group(['namespace' => 'Api'], function() {
      *   Calls where JWT authentication is mandatory
      */
     Route::group(['middleware' => 'jwt.auth'], function() {
+
+        /**
+         * Review group
+         **/
+        Route::resource('review', 'ReviewController');
 
         Route::get('author', 'AuthorController@index'); // List all authors
         Route::post('author', 'AuthorController@store'); // Store a new authors, need to be confirmed before to be active (by voting system)
@@ -85,6 +92,7 @@ Route::group(['namespace' => 'Api'], function() {
             });
 
         });
+
 
         
         /** Profile group */

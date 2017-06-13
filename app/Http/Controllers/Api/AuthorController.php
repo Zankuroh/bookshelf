@@ -52,7 +52,7 @@ class AuthorController extends \App\Http\Controllers\ApiController
      */
     public function store(Request $request)
     {
-        $response = $this->_response;
+        $response = $this->getDefaultJsonResponse();
         if (!$this->_ARV->validate($request, [
                 'first_name' => 'required|alpha_num|between:5,30|unique:authors,first_name',
                 'last_name' => 'required|alpha_num|between:5,30|unique:authors,last_name'])
