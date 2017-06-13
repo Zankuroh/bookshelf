@@ -191,7 +191,10 @@ return [
         /*
          * Api Response Service Provider
          */
-        App\Providers\ApiResponseServiceProvider::class
+        App\Providers\ApiResponseServiceProvider::class,
+
+        /** Api generator documentation */
+        Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class
 
     ],
 
