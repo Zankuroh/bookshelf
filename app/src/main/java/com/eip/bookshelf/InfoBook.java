@@ -122,7 +122,7 @@ public class InfoBook extends AppCompatActivity
         TextView tvt = (TextView) findViewById(R.id.TVTitreBook);
         TextView tvr = (TextView) findViewById(R.id.TVResum);
         ImageView iv = (ImageView) findViewById(R.id.IVBook);
-
+        //TODO remplacer par la requête qui est dans getInfoBook dans Book.java
         tvt.setText(info.get("title"));
         tv.setText("Date de sortie : " + info.get("date"));
         tv.setText(tv.getText() + "\nAuteur : " + info.get("author"));
