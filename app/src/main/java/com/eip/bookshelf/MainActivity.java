@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
 {
     public static boolean co = false;
+    public static String token = null;
     public static MenuItem MenuItemCo;
     enum shelfType {
         MAINSHELF,

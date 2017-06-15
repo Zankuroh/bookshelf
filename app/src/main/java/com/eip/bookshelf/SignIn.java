@@ -240,6 +240,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                     Auth auth = response.body();
 
                     String token = auth.getData().getToken();
+                    MainActivity.token = token;
                     Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
                     snackbar.show();

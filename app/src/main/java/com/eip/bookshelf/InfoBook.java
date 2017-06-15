@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,13 +15,26 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.eip.utilities.api.BookshelfApi;
+import com.eip.utilities.api.GoogleBooksApi;
+import com.eip.utilities.model.Books;
+import com.eip.utilities.model.Item;
+import com.eip.utilities.model.ModifBook.ModifBook;
 import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Maxime on 25/04/2017.
@@ -31,6 +45,7 @@ public class InfoBook extends AppCompatActivity
     private ListView _lvCom;
     private ArrayList<ComAdapter> _modelListCom = new ArrayList<>();
     private MainActivity.shelfType _type;
+    private RelativeLayout _rl;
 
     public InfoBook()
     {
@@ -42,7 +57,7 @@ public class InfoBook extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.book_info);
-
+        _rl = (RelativeLayout)findViewById(R.id.RLBookInfo);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
@@ -69,12 +84,10 @@ public class InfoBook extends AppCompatActivity
                 onBackPressed();
                 return true;
             case R.id.IAddBook:
-                snackbar = Snackbar.make(findViewById(R.id.RLBookInfo), "Le livre a été ajouté à votre bibliothèque", Snackbar.LENGTH_LONG);
-                snackbar.show();
+                AddToBookShelf();
                 break;
             case R.id.IRemoveBook:
-                snackbar = Snackbar.make(findViewById(R.id.RLBookInfo), "Le livre a été supprimé de votre bibliothèque", Snackbar.LENGTH_LONG);
-                snackbar.show();
+                deleteToBookShelf();
                 break;
         }
 
@@ -150,5 +163,158 @@ public class InfoBook extends AppCompatActivity
         et.setText("");
         MainActivity.hideSoftKeyboard(InfoBook.this);
         getTotalHeightofListView();
+    }
+
+
+    public void AddToBookShelf(){
+        String isbn = "";
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ModifBook> call = bookshelfApi.AddBook(MainActivity.token, isbn);
+        call.enqueue(new Callback<ModifBook>() {
+            @Override
+            public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
+                if (response.isSuccessful()) {
+                    ModifBook modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le livre a été ajouté à votre bibliothèque", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModifBook> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void deleteToBookShelf(){
+        String isbn = "";
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ModifBook> call = bookshelfApi.DelBook(MainActivity.token, isbn, "deleted");
+        call.enqueue(new Callback<ModifBook>() {
+            @Override
+            public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
+                if (response.isSuccessful()) {
+                    ModifBook modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre bibliothèque", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModifBook> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void AddToWishList(){
+        String isbn = "";
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ModifBook> call = bookshelfApi.AddWishBook(MainActivity.token, isbn);
+        call.enqueue(new Callback<ModifBook>() {
+            @Override
+            public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
+                if (response.isSuccessful()) {
+                    ModifBook modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le livre a été ajouté à votre liste de souhait", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModifBook> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void deleteToWishList(){
+        String isbn = "";
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ModifBook> call = bookshelfApi.DelWishBook(MainActivity.token, isbn, "deleted");
+        call.enqueue(new Callback<ModifBook>() {
+            @Override
+            public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
+                if (response.isSuccessful()) {
+                    ModifBook modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre liste de souhait", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModifBook> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
     }
 }

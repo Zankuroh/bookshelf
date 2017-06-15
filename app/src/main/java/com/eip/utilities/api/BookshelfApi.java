@@ -33,7 +33,7 @@ public interface BookshelfApi
     Call<Register> Register(@Query("name") String name, @Query("password") String password, @Query("email") String email);
 
     @POST("book")
-    Call<ModifBook> AddBooks(@Header("Authorization") String token, @Query("Isbn") String isbn);
+    Call<ModifBook> AddBook(@Header("Authorization") String token, @Query("Isbn") String isbn);
 
     @GET("book")
     Call<BooksLocal> getBookshelf(@Header("Authorization") String token);
@@ -66,7 +66,7 @@ public interface BookshelfApi
     Call<ModifAuthor> DelAuthor(@Header("Authorization") String token, @Query("id") String id);
 
     @POST("wish/book")
-    Call<ModifBook> AddWishBooks(@Header("Authorization") String token, @Query("Isbn") String isbn);
+    Call<ModifBook> AddWishBook(@Header("Authorization") String token, @Query("Isbn") String isbn);
 
     @GET("wish/book")
     Call<BooksLocal> getWishBookshelf(@Header("Authorization") String token);
