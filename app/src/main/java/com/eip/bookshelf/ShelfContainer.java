@@ -181,7 +181,7 @@ public class ShelfContainer extends Fragment
                 "\"isbn\":3\n" +
                 "},\n" +
                 "{\"titre\":\"Le trône de fer tome 4\",\n" +
-                "\"image\":\"http://www.georgerrmartin.fr/assets/integrales/Integrale4.jpg\",\n" +
+                "\"image\":\"http://img.livraddict.com/covers/122/122957/couv57196916.png\",\n" +
                 "\"auteur\":\"Georges R. R. Martin\",\n" +
                 "\"date\":\"\",\n" +
                 "\"genre\":\"fantastique\",\n" +
