@@ -68,10 +68,7 @@ public class Profil extends Fragment implements View.OnClickListener
             @Override
             public void onResponse(Call<Profile> call, Response<Profile> response) {
                 if (response.isSuccessful()) {
-                    Profile modif = response.body();
-                    Snackbar snackbar = Snackbar.make(_rl, "Modification réussie !", Snackbar.LENGTH_LONG);
-                    MainActivity.co = true;
-                    snackbar.show();
+                    Profile profile = response.body();
                 } else {
                     try {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
