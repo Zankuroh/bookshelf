@@ -24,7 +24,7 @@ import retrofit2.http.Query;
 
 public interface BookshelfApi
 {
-    public static final String APIPath = "http://bookshelf.caolin.ovh/api/";
+    public static final String APIPath = "http://79.137.87.198/api/";
 
     @POST("auth")
     Call<Auth> Connexion(@Query("email") String email, @Query("password") String password);
