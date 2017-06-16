@@ -4,18 +4,36 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.eip.utilities.api.BookshelfApi;
+import com.eip.utilities.api.GoogleBooksApi;
+import com.eip.utilities.model.Books;
+import com.eip.utilities.model.BooksLocal.BooksLocal;
+import com.eip.utilities.model.ImageLinks;
+import com.eip.utilities.model.IndustryIdentifier;
+import com.eip.utilities.model.Item;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Maxime on 02/03/2017.
@@ -26,6 +44,7 @@ public class ShelfContainer extends Fragment
     private List<Book> _infos;
     private ArrayList<BiblioAdapter> _modelListBiblio = new ArrayList<>();
     private View _v;
+    private RelativeLayout _rl;
     private MainActivity.shelfType _type;
 
     public ShelfContainer()
@@ -36,6 +55,7 @@ public class ShelfContainer extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+
         Bundle b = getArguments();
         if (b != null) {
             _type = (MainActivity.shelfType)b.getSerializable("type");
@@ -59,13 +79,55 @@ public class ShelfContainer extends Fragment
             setAdapters();
             wishShelf();
         }
+        _rl = (RelativeLayout)_v.findViewById(R.id.RLShelf);
         return _v;
     }
 
     private void mainShelf(boolean added)
     {
         //Todo: Appel à la BDD pour recup la vraie biblio
-        for (int i = 0; i < _infos.size(); i++) {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<BooksLocal> call = bookshelfApi.getBookshelf(MainActivity.token);
+        call.enqueue(new Callback<BooksLocal>() {
+            @Override
+            public void onResponse(Call<BooksLocal> call, Response<BooksLocal> response) {
+                if (response.isSuccessful()) {
+                    BooksLocal bookshelf = response.body();
+                    List<com.eip.utilities.model.BooksLocal.Book> list = bookshelf.getData();
+
+                    ListIterator<com.eip.utilities.model.BooksLocal.Book> it = list.listIterator();
+                    while(it.hasNext()){
+                        com.eip.utilities.model.BooksLocal.Book book = it.next();
+                        getInfoBook(book.getIsbn());
+                    }
+                } else {
+                    try {
+
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BooksLocal> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+
+       /* for (int i = 0; i < _infos.size(); i++) {
             if (!_infos.get(i).getTitre().equals("Harry Potter et les reliques de la mort") &&
                     !_infos.get(i).getTitre().equals("La damnation de Pythos") &&
                     !_infos.get(i).getTitre().equals("Percy Jackson - Tome 1 : Le voleur de foudre") &&
@@ -75,7 +137,7 @@ public class ShelfContainer extends Fragment
             } else if (_infos.get(i).getTitre().equals("La damnation de Pythos") && added) {
                 _modelListBiblio.add(new BiblioAdapter(_infos.get(i).getTitre(), _infos.get(i).getImage(), _infos.get(i).getIsbn().toString()));
             }
-        }
+        }*/
     }
 
     private void propoShelf()
@@ -93,16 +155,58 @@ public class ShelfContainer extends Fragment
     private void wishShelf()
     {
         //Todo: Appel à la BDD pour recup les vrais WISH
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<BooksLocal> call = bookshelfApi.getWishBookshelf(MainActivity.token);
+        call.enqueue(new Callback<BooksLocal>() {
+            @Override
+            public void onResponse(Call<BooksLocal> call, Response<BooksLocal> response) {
+                if (response.isSuccessful()) {
+                    BooksLocal wishlist = response.body();
+                    List<com.eip.utilities.model.BooksLocal.Book> list = wishlist.getData();
+                    if (list != null) {
+                        ListIterator<com.eip.utilities.model.BooksLocal.Book> it = list.listIterator();
+                        while(it.hasNext()){
+                            com.eip.utilities.model.BooksLocal.Book book = it.next();
+                            getInfoBook(book.getIsbn());
+                        }
+                    }
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BooksLocal> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+
         BiblioAdapter ba = new BiblioAdapter("L' Arbre des Souhaits", "http://www.scholastic.ca/hipoint/648/?src=9781443155434.jpg&w=260", "1443155438");
         _modelListBiblio.add(ba);
     }
 
     private void setAdapters()
     {
+        //TODO changer le onclick
         GridView gvBiblio = (GridView) _v.findViewById(R.id.GVBiblio);
         customAdapterBiblio adapterBiblio = new customAdapterBiblio(_v, _modelListBiblio);
         gvBiblio.setAdapter(adapterBiblio);
-        gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String isbn = ((TextView) view.findViewById(R.id.TVISBN)).getText().toString();
@@ -130,12 +234,64 @@ public class ShelfContainer extends Fragment
                     startActivity(in);
                 }
             }
-        });
+        });*/
     }
 
     private String getValueOrDefault(String value)
     {
         return (value != null && !value.equals("")) ? value : "N/A";
+    }
+
+    private void getInfoBook(String isbn) {
+        GoogleBooksApi googleBooksApi = new Retrofit.Builder()
+                .baseUrl(GoogleBooksApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(GoogleBooksApi.class);
+
+        Call<Books> call = googleBooksApi.searchByIsbn("isbn:"+isbn);
+        call.enqueue(new Callback<Books>() {
+            @Override
+            public void onResponse(Call<Books> call, Response<Books> response) {
+                if (response.isSuccessful()) {
+                    Books book = response.body();
+                    if (book.getTotalItems() > 0) {
+                        Item item = book.getItems().get(0);
+                        String isbn13 = "0";
+                        List<IndustryIdentifier> isbns = item.getVolumeInfo().getIndustryIdentifiers();
+                        ListIterator<IndustryIdentifier> it = isbns.listIterator();
+                        while(it.hasNext()){
+                            IndustryIdentifier isbn = it.next();
+                            //if (isbn.getType() == "ISBN_13") {
+                                isbn13 = isbn.getIdentifier();
+                              //  Log.i("INFO LIVRE", isbn.getType()+"/");
+                            //}
+                        }
+                        _modelListBiblio.add(new BiblioAdapter(item.getVolumeInfo().getTitle(), item.getVolumeInfo().getImageLinks().getThumbnail() , isbn13));
+                        Log.i("INFO LIVRE", isbn13);
+
+
+                    }
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur !!!", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Books> call, Throwable t) {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
     }
 
     private void hardTest()

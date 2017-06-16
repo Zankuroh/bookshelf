@@ -71,48 +71,8 @@ public class Search extends Fragment implements View.OnClickListener
     private void searchByISBN()
     {
         EditText isbn = (EditText)_v.findViewById(R.id.searchField);
-
-        GoogleBooksApi googleBooksApi = new Retrofit.Builder()
-                .baseUrl(GoogleBooksApi.APIPath)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(GoogleBooksApi.class);
-
-        Call<Books> call = googleBooksApi.searchByIsbn("isbn:"+isbn);
-        call.enqueue(new Callback<Books>() {
-            @Override
-            public void onResponse(Call<Books> call, Response<Books> response) {
-                if (response.isSuccessful()) {
-                    Books book = response.body();
-                    Log.d("RESEARCH", book.getTotalItems().toString());
-                    Snackbar snackbar;
-                    if (book.getTotalItems() > 0) {
-                        Item item = book.getItems().get(0);
-                        String titre = item.getVolumeInfo().getTitle();
-                        snackbar = Snackbar.make(_v, titre, Snackbar.LENGTH_LONG);
-                    } else {
-                        snackbar = Snackbar.make(_v, "Aucun livre trouvé :(", Snackbar.LENGTH_LONG);
-                    }
-                    snackbar.show();
-                } else {
-                    try {
-                        Snackbar snackbar = Snackbar.make(_v, "Erreur !!!", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Books> call, Throwable t) {
-                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
-                t.printStackTrace();
-            }
-        });
+        //TODO Appeler getInfoBook de Book.java et changer de page pour afficher le résultat si il y en a un
     }
+
+
 }
