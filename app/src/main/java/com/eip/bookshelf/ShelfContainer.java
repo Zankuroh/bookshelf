@@ -262,10 +262,10 @@ public class ShelfContainer extends Fragment
                         ListIterator<IndustryIdentifier> it = isbns.listIterator();
                         while(it.hasNext()){
                             IndustryIdentifier isbn = it.next();
-                            //if (isbn.getType() == "ISBN_13") {
+                            if (isbn.getType().contains("13")) {
                                 isbn13 = isbn.getIdentifier();
-                              //  Log.i("INFO LIVRE", isbn.getType()+"/");
-                            //}
+                                Log.i("INFO LIVRE", isbn.getType()+"/");
+                            }
                         }
                         _modelListBiblio.add(new BiblioAdapter(item.getVolumeInfo().getTitle(), item.getVolumeInfo().getImageLinks().getThumbnail() , isbn13));
                         Log.i("INFO LIVRE", isbn13);

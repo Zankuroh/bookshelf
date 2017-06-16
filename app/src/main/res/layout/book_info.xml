@@ -47,15 +47,28 @@
                     android:textColor="@android:color/black"
                     android:layout_marginTop="30dp"
                     android:layout_below="@+id/IVBook"
+                    android:layout_alignStart="@+id/TVIsbnBook"
+                    android:layout_alignEnd="@+id/TVIsbnBook" />
+
+                <TextView
+                    android:id="@+id/TVIsbnBook"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:gravity="center"
+                    android:textColor="@android:color/black"
+                    android:layout_marginTop="30dp"
+                    android:layout_below="@+id/TVInfoBook"
                     android:layout_alignStart="@+id/TVResum"
-                    android:layout_alignEnd="@+id/TVResum" />
+                    android:layout_alignEnd="@+id/TVResum"
+                     />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/TVResum"
                     android:layout_alignParentEnd="true"
-                    android:layout_below="@+id/TVInfoBook"
+                    android:layout_below="@+id/TVIsbnBook"
                     android:textColor="@android:color/black"
                     android:layout_alignParentStart="true"
                     android:layout_marginLeft="15dp"
@@ -128,4 +141,5 @@
 
             </RelativeLayout>
         </ScrollView>
+
 </RelativeLayout>

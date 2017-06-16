@@ -93,49 +93,4 @@ class Book
         this.isbn = isbn;
     }
 
-    public static void getInfoBook(String isbn, final RelativeLayout _rl) {
-        GoogleBooksApi googleBooksApi = new Retrofit.Builder()
-                .baseUrl(GoogleBooksApi.APIPath)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(GoogleBooksApi.class);
-
-        Call<Books> call = googleBooksApi.searchByIsbn("isbn:"+isbn);
-        call.enqueue(new Callback<Books>() {
-            @Override
-            public void onResponse(Call<Books> call, Response<Books> response) {
-                if (response.isSuccessful()) {
-                    Books book = response.body();
-                    Log.d("RESEARCH", book.getTotalItems().toString());
-                    Snackbar snackbar;
-                    if (book.getTotalItems() > 0) {
-                        Item item = book.getItems().get(0);
-                        String titre = item.getVolumeInfo().getTitle();
-                        snackbar = Snackbar.make(_rl, titre, Snackbar.LENGTH_LONG);
-                    } else {
-                        snackbar = Snackbar.make(_rl, "Aucun livre trouvé :(", Snackbar.LENGTH_LONG);
-                    }
-                    snackbar.show();
-                } else {
-                    try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Erreur !!!", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Books> call, Throwable t) {
-                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
-                t.printStackTrace();
-            }
-        });
-    }
-
 }
