@@ -1,7 +1,6 @@
 package com.eip.bookshelf;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -78,17 +77,17 @@ public class SignUp extends AppCompatActivity
             return ;
         }
         register(name.getText().toString(), email.getText().toString(), password.getText().toString());
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run()
-            {
-                if (MainActivity.co) {
-                    MenuItem  mi = (MenuItem)_lp.findViewById(R.id.nav_co);
-                    mi.setTitle("Déconnexion");
-                    //Todo: Call fragment shelf
-                }
-            }
-        }, 3000);
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            public void run()
+//            {
+//                if (MainActivity.co) {
+//                    MenuItem  mi = (MenuItem)_lp.findViewById(R.id.nav_co);
+//                    MainActivity.MenuItemCo.setTitle("Déconnexion");
+//                    //Todo: Call fragment shelf
+//                }
+//            }
+//        }, 3000);
     }
 
     private void register(String name, String email, String password)
@@ -106,6 +105,8 @@ public class SignUp extends AppCompatActivity
                     Register auth = response.body();
                     Snackbar snackbar = Snackbar.make(_lp, "Création réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
+                    MainActivity.MenuItemCo.setTitle("Déconnexion");
+                    //Todo: Call fragment shelf
                     snackbar.show();
                 } else {
                     try {
@@ -136,7 +137,7 @@ public class SignUp extends AppCompatActivity
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    private static Boolean checkPassword(String pwd1,  String pwd2)
+    private static Boolean checkPassword(String pwd1, String pwd2)
     {
         return pwd1.equals(pwd2);
     }
