@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.api.GoogleBooksApi;
 import com.eip.utilities.model.Books;
+import com.eip.utilities.model.IndustryIdentifier;
 import com.eip.utilities.model.Item;
 import com.eip.utilities.model.ModifBook.ModifBook;
 import com.eip.utilities.model.VolumeInfo;
@@ -31,6 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -255,7 +258,12 @@ public class InfoBook extends AppCompatActivity
 
 
     public void AddToBookShelf(){
-        String isbn = "";
+
+
+        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
+        int start = tv.getText().toString().indexOf("Isbn : ");
+        String isbn = tv.getText().toString().substring(start + 7, start +7+13);
+        Log.i("ADDBOOK", isbn);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -293,7 +301,10 @@ public class InfoBook extends AppCompatActivity
     }
 
     public void deleteToBookShelf(){
-        String isbn = "";
+        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
+        int start = tv.getText().toString().indexOf("Isbn : ");
+        String isbn = tv.getText().toString().substring(start + 7, start +7+13);
+        Log.i("DELBOOK", isbn);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -331,7 +342,10 @@ public class InfoBook extends AppCompatActivity
     }
 
     public void AddToWishList(){
-        String isbn = "";
+        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
+        int start = tv.getText().toString().indexOf("Isbn : ");
+        String isbn = tv.getText().toString().substring(start + 7, start +7+13);
+        Log.i("ADDBOOK", isbn);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -369,7 +383,10 @@ public class InfoBook extends AppCompatActivity
     }
 
     public void deleteToWishList(){
-        String isbn = "";
+        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
+        int start = tv.getText().toString().indexOf("Isbn : ");
+        String isbn = tv.getText().toString().substring(start + 7, start +7+13);
+        Log.i("DELBOOK", isbn);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
