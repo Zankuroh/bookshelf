@@ -259,17 +259,15 @@ public class InfoBook extends AppCompatActivity
 
     public void AddToBookShelf(){
 
-
         TextView tv = (TextView) findViewById(R.id.TVInfoBook);
         int start = tv.getText().toString().indexOf("Isbn : ");
-        String isbn = tv.getText().toString().substring(start + 7, start +7+13);
-        Log.i("ADDBOOK", isbn);
+        Log.i("ADDBOOK", _isbn);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<ModifBook> call = bookshelfApi.AddBook(MainActivity.token, isbn);
+        Call<ModifBook> call = bookshelfApi.AddBook(MainActivity.token, _isbn);
         call.enqueue(new Callback<ModifBook>() {
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
