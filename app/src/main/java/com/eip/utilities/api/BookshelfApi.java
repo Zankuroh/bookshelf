@@ -13,6 +13,7 @@ import com.eip.utilities.model.Register.Register;
 
 import retrofit2.Call;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -41,7 +42,7 @@ public interface BookshelfApi
 
     @FormUrlEncoded
     @DELETE("book")
-    Call<ModifBook> DelBook(@Header("Authorization") String token, @Query("Isbn") String isbn, @Query("deleted") String deleted);
+    Call<ModifBook> DelBook(@Header("Authorization") String token, @Field("Isbn") String isbn, @Field("deleted") String deleted);
 
     @GET("profile")
     Call<Profile> getProfile(@Header("Authorization") String token);
@@ -60,14 +61,14 @@ public interface BookshelfApi
 
     @FormUrlEncoded
     @DELETE("profile")
-    Call<DelProfile> DelProfil(@Header("Authorization") String token, @Query("password") String password, @Query("deleted") String deleted);
+    Call<DelProfile> DelProfil(@Header("Authorization") String token, @Field("password") String password, @Field("deleted") String deleted);
 
     @GET("author")
     Call<Authors> getAuthors(@Header("Authorization") String token);
 
     @FormUrlEncoded
     @DELETE("author")
-    Call<ModifAuthor> DelAuthor(@Header("Authorization") String token, @Query("id") String id);
+    Call<ModifAuthor> DelAuthor(@Header("Authorization") String token, @Field("id") String id);
 
     @POST("wish/book")
     Call<ModifBook> AddWishBook(@Header("Authorization") String token, @Query("Isbn") String isbn);
@@ -77,6 +78,6 @@ public interface BookshelfApi
 
     @FormUrlEncoded
     @DELETE("wish/book")
-    Call<ModifBook> DelWishBook(@Header("Authorization") String token, @Query("Isbn") String isbn, @Query("deleted") String deleted);
+    Call<ModifBook> DelWishBook(@Header("Authorization") String token, @Field("Isbn") String isbn, @Field("deleted") String deleted);
 
 }
