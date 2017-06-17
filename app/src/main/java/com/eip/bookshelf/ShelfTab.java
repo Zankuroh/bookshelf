@@ -19,6 +19,8 @@ import java.util.List;
 
 public class ShelfTab extends Fragment
 {
+    static public boolean in_use = false;
+
     public ShelfTab()
     {
 
@@ -41,6 +43,7 @@ public class ShelfTab extends Fragment
 
     private void setupViewPager(ViewPager viewPager)
     {
+        Log.d("setupviewpager", "adapter");
         ViewPagerAdapter adapter = new ViewPagerAdapter(this.getActivity().getSupportFragmentManager());
         Bundle arg = new Bundle();
         arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
@@ -72,6 +75,7 @@ public class ShelfTab extends Fragment
         @Override
         public Fragment getItem(int position)
         {
+            Log.d("getitem", "Bonjour.");
             return mFragmentList.get(position);
         }
 

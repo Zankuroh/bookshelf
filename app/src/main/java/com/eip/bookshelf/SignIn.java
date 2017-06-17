@@ -264,6 +264,6 @@ public class SignIn extends Fragment implements View.OnClickListener
                 t.printStackTrace();
             }
         });
-        MainActivity.co = true;
+        //MainActivity.co = true;
     }
 }

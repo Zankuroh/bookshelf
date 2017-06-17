@@ -23,7 +23,10 @@ import com.eip.utilities.api.GoogleBooksApi;
 import com.eip.utilities.model.Books;
 import com.eip.utilities.model.Item;
 import com.eip.utilities.model.ModifBook.ModifBook;
+import com.eip.utilities.model.VolumeInfo;
 import com.squareup.picasso.Picasso;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,6 +49,8 @@ public class InfoBook extends AppCompatActivity
     private ArrayList<ComAdapter> _modelListCom = new ArrayList<>();
     private MainActivity.shelfType _type;
     private RelativeLayout _rl;
+    private String _isbn;
+    private VolumeInfo _vi;
 
     public InfoBook()
     {
@@ -69,10 +74,11 @@ public class InfoBook extends AppCompatActivity
         Intent i = getIntent();
         Bundle b = i.getBundleExtra("book");
         _type = (MainActivity.shelfType)i.getSerializableExtra("shelf");
-        HashMap<String, String> info = (HashMap<String, String>)b.getSerializable("info");
+//        HashMap<String, String> info = (HashMap<String, String>)b.getSerializable("info");
+        _isbn = b.getString("isbn");
 
         setAdapters();
-        moreDataBook(info);
+        moreDataBook();
     }
 
     @Override
@@ -103,6 +109,10 @@ public class InfoBook extends AppCompatActivity
         } else {
             menu.findItem(R.id.IRemoveBook).setVisible(false);
         }
+        if (_vi == null) {
+            menu.findItem(R.id.IRemoveBook).setVisible(false);
+            menu.findItem(R.id.IAddBook).setVisible(false);
+        }
         return true;
     }
 
@@ -116,22 +126,100 @@ public class InfoBook extends AppCompatActivity
         getTotalHeightofListView();
     }
 
-    private void moreDataBook(HashMap<String, String> info)
+    private void moreDataBook()
     {
         TextView tv = (TextView) findViewById(R.id.TVInfoBook);
         TextView tvt = (TextView) findViewById(R.id.TVTitreBook);
         TextView tvr = (TextView) findViewById(R.id.TVResum);
         ImageView iv = (ImageView) findViewById(R.id.IVBook);
-        //TODO remplacer par la requête qui est dans getInfoBook dans Book.java
-        tvt.setText(info.get("title"));
-        tv.setText("Date de sortie : " + info.get("date"));
-        tv.setText(tv.getText() + "\nAuteur : " + info.get("author"));
-        tv.setText(tv.getText() + "\nGenre : " + info.get("genre"));
-        tv.setText(tv.getText() + "\nNote : " + info.get("note"));
-        tvr.setText(info.get("resume"));
-        if (info.get("picture") != null && !info.get("picture").equals("")) {
-            Picasso.with(this).load(info.get("picture")).fit().into(iv);
+        Log.d("_isbn", _isbn);
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                _vi = ShelfContainer.getInfoBook(_isbn);
+            }
+        });
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        if (_vi == null) {
+            return;
+        }
+
+        tvt.setText(_vi.getTitle());
+
+        if (_vi.getPublishedDate() != null) {
+            SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = null;
+            Log.d("date", _vi.getPublishedDate());
+            try {
+                date = dt.parse(_vi.getPublishedDate());
+            } catch (ParseException e) {
+                dt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+                try {
+                    date = dt.parse(_vi.getPublishedDate());
+                } catch (ParseException e1) {
+                    date = null;
+                }
+            }
+            if (date != null) {
+                SimpleDateFormat dt1 = new SimpleDateFormat("dd'/'MM'/'yyyy");
+                tv.setText("Date de sortie : " + dt1.format(date));
+            } else {
+                tv.setText("Date de sortie : " + _vi.getPublishedDate());
+            }
+        } else {
+            tv.setText("Date de sortie : -");
+        }
+
+        if (_vi.getAuthors() == null || _vi.getAuthors().size() == 0) {
+            tv.setText(tv.getText() + "\nAuteur : -");
+        } else {
+            tv.setText(tv.getText() + "\nAuteur : ");
+            for (int i = 0; i < _vi.getAuthors().size(); i++) {
+                tv.setText(tv.getText() + _vi.getAuthors().get(i));
+                if (i != _vi.getAuthors().size() - 1) {
+                    tv.setText(tv.getText() + ", ");
+                }
+            }
+        }
+
+        if (_vi.getCategories() == null || _vi.getCategories().size() == 0) {
+            tv.setText(tv.getText() + "\nGenre : -");
+        } else {
+            tv.setText(tv.getText() + "\nGenre : ");
+            for (int i = 0; i < _vi.getCategories().size(); i++) {
+                tv.setText(tv.getText() + _vi.getCategories().get(i));
+                if (i != _vi.getCategories().size() - 1) {
+                    tv.setText(", ");
+                }
+            }
+        }
+
+        if (_vi.getRatingsCount() == null) {
+            tv.setText(tv.getText() + "\nNote : -");
+        } else {
+            tv.setText(tv.getText() + "\nNote : " + _vi.getRatingsCount());
+        }
+
+        if (_vi.getDescription() != null) {
+            tvr.setText(_vi.getDescription());
+        }
+
+        if (_vi.getImageLinks() != null && _vi.getImageLinks().getThumbnail() != null) {
+            Picasso.with(this).load(_vi.getImageLinks().getThumbnail()).fit().into(iv);
+        }
+//        tvt.setText(info.get("title"));
+//        tv.setText("Date de sortie : " + info.get("date"));
+//        tv.setText(tv.getText() + "\nAuteur : " + info.get("author"));
+//        tv.setText(tv.getText() + "\nGenre : " + info.get("genre"));
+//        tv.setText(tv.getText() + "\nNote : " + info.get("note"));
+//        tvr.setText(info.get("resume"));
+//        if (info.get("picture") != null && !info.get("picture").equals("")) {
+//            Picasso.with(this).load(info.get("picture")).fit().into(iv);
+//        }
     }
 
     private void getTotalHeightofListView()

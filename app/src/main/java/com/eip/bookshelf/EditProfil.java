@@ -1,12 +1,16 @@
 package com.eip.bookshelf;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.eip.utilities.api.BookshelfApi;
@@ -43,6 +47,8 @@ public class EditProfil extends AppCompatActivity
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
+        ((EditText)findViewById(R.id.ETPseudo)).setText(Profil.prof.getName());
+        //Todo: set les autres champs
     }
 
     @Override
@@ -59,9 +65,56 @@ public class EditProfil extends AppCompatActivity
 
     public void onClickValidate(View v)
     {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Entrez votre mot de passe actuel");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
+        builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                checkData(input.getText().toString());
+            }
+        });
+        builder.setNegativeButton("Annuler", null);
+        builder.show();
         //Todo: appeler la bonne fonction en fct des modifs
         //Todo: Si mdp rempli, check les deux champs puis appeler changePassword
+        //onBackPressed();
+    }
+
+    public void onClickDelete(View v)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("VOUS ALLEZ SUPPRIMER VOTRE COMPTE.\nPour confirmer, entrez votre mot de passe actuel");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
+        builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                //Todo: appel de la requete delete
+            }
+        });
+        builder.setNegativeButton("Annuler", null);
+        builder.show();
+    }
+
+    public void onClickCancel(View v)
+    {
         onBackPressed();
+    }
+
+    private void checkData(String mdp)
+    {
+        String pseudo = ((EditText)findViewById(R.id.ETPseudo)).getText().toString();
+        if (!pseudo.equals("") && !pseudo.equals(Profil.prof.getName())) {
+            changeName(mdp, pseudo);
+        }
+
+        String mdp1 = ((EditText)findViewById(R.id.ETPassword)).getText().toString();
+        String mdp2 = ((EditText)findViewById(R.id.ETPasswordVerif)).getText().toString();
+        if (!mdp1.equals("") && mdp1.equals(mdp2)) {
+            changePassword(mdp, mdp1);
+        }
     }
 
     public void changePassword(String oldPassword, String newPassword)
@@ -139,10 +192,5 @@ public class EditProfil extends AppCompatActivity
                 t.printStackTrace();
             }
         });
-    }
-
-    public void onClickCancel(View v)
-    {
-        onBackPressed();
     }
 }

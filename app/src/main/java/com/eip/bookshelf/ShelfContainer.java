@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -22,6 +23,7 @@ import com.eip.utilities.model.BooksLocal.BooksLocal;
 import com.eip.utilities.model.ImageLinks;
 import com.eip.utilities.model.IndustryIdentifier;
 import com.eip.utilities.model.Item;
+import com.eip.utilities.model.VolumeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,6 +48,8 @@ public class ShelfContainer extends Fragment
     private View _v;
     private RelativeLayout _rl;
     private MainActivity.shelfType _type;
+    private customAdapterBiblio _adapterBiblio;
+    private Call<Books> _call;
 
     public ShelfContainer()
     {
@@ -62,10 +66,10 @@ public class ShelfContainer extends Fragment
         } else {
             _type = null;
         }
-
+        Log.d("createviewShelfCont", _type.toString());
         if (_type == MainActivity.shelfType.MAINSHELF) {
             _v = inflater.inflate(R.layout.shelf_container, container, false);
-            hardTest();
+//            hardTest();
             setAdapters();
             mainShelf(false);
         } else if (_type == MainActivity.shelfType.PROPOSHELF) {
@@ -79,13 +83,31 @@ public class ShelfContainer extends Fragment
             setAdapters();
             wishShelf();
         }
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            public void run()
+//            {
+//                Log.d("list size", Integer.toString(_modelListBiblio.size()));
+////
+////                Log.d("list[0]", _modelListBiblio.get(0).get_isbn());
+////                Log.d("list[1]", _modelListBiblio.get(1).get_isbn());
+////                _modelListBiblio.clear();
+//
+//                _adapterBiblio.notifyDataSetChanged();
+//
+//            }
+//        }, 3000);
         _rl = (RelativeLayout)_v.findViewById(R.id.RLShelf);
         return _v;
     }
 
     private void mainShelf(boolean added)
     {
-        //Todo: Appel à la BDD pour recup la vraie biblio
+        if (ShelfTab.in_use) {
+            return;
+        } else {
+            ShelfTab.in_use = true;
+        }
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -95,18 +117,20 @@ public class ShelfContainer extends Fragment
         call.enqueue(new Callback<BooksLocal>() {
             @Override
             public void onResponse(Call<BooksLocal> call, Response<BooksLocal> response) {
+                _modelListBiblio.clear();
                 if (response.isSuccessful()) {
                     BooksLocal bookshelf = response.body();
                     List<com.eip.utilities.model.BooksLocal.Book> list = bookshelf.getData();
 
                     ListIterator<com.eip.utilities.model.BooksLocal.Book> it = list.listIterator();
+                    ArrayList<String> isbns = new ArrayList<>();
                     while(it.hasNext()){
                         com.eip.utilities.model.BooksLocal.Book book = it.next();
-                        getInfoBook(book.getIsbn());
+                        isbns.add(book.getIsbn());
                     }
+                    fuck(isbns);
                 } else {
                     try {
-
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
@@ -114,8 +138,8 @@ public class ShelfContainer extends Fragment
                         snackbar.show();
                         e.printStackTrace();
                     }
-
                 }
+                ShelfTab.in_use = false;
             }
 
             @Override
@@ -164,16 +188,18 @@ public class ShelfContainer extends Fragment
         call.enqueue(new Callback<BooksLocal>() {
             @Override
             public void onResponse(Call<BooksLocal> call, Response<BooksLocal> response) {
+                _modelListBiblio.clear();
                 if (response.isSuccessful()) {
-                    BooksLocal wishlist = response.body();
-                    List<com.eip.utilities.model.BooksLocal.Book> list = wishlist.getData();
-                    if (list != null) {
-                        ListIterator<com.eip.utilities.model.BooksLocal.Book> it = list.listIterator();
-                        while(it.hasNext()){
-                            com.eip.utilities.model.BooksLocal.Book book = it.next();
-                            getInfoBook(book.getIsbn());
-                        }
+                    BooksLocal bookshelf = response.body();
+                    List<com.eip.utilities.model.BooksLocal.Book> list = bookshelf.getData();
+
+                    ListIterator<com.eip.utilities.model.BooksLocal.Book> it = list.listIterator();
+                    ArrayList<String> isbns = new ArrayList<>();
+                    while(it.hasNext()){
+                        com.eip.utilities.model.BooksLocal.Book book = it.next();
+                        isbns.add(book.getIsbn());
                     }
+                    fuck(isbns);
                 } else {
                     try {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
@@ -183,58 +209,66 @@ public class ShelfContainer extends Fragment
                         snackbar.show();
                         e.printStackTrace();
                     }
-
                 }
+                ShelfTab.in_use = false;
             }
 
             @Override
             public void onFailure(Call<BooksLocal> call, Throwable t)
             {
+                Log.d("prout", "prout");
                 Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
             }
         });
 
-        BiblioAdapter ba = new BiblioAdapter("L' Arbre des Souhaits", "http://www.scholastic.ca/hipoint/648/?src=9781443155434.jpg&w=260", "1443155438");
-        _modelListBiblio.add(ba);
+       // BiblioAdapter ba = new BiblioAdapter("L' Arbre des Souhaits", "http://www.scholastic.ca/hipoint/648/?src=9781443155434.jpg&w=260", "1443155438");
+       // _modelListBiblio.add(ba);
     }
 
     private void setAdapters()
     {
+     //   Log.d("list", _modelListBiblio.toString());
         //TODO changer le onclick
+       // _modelListBiblio =  new ArrayList<>();
         GridView gvBiblio = (GridView) _v.findViewById(R.id.GVBiblio);
-        customAdapterBiblio adapterBiblio = new customAdapterBiblio(_v, _modelListBiblio);
-        gvBiblio.setAdapter(adapterBiblio);
-        /*gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        _adapterBiblio = new customAdapterBiblio(_v, _modelListBiblio);
+        gvBiblio.setAdapter(_adapterBiblio);
+        _modelListBiblio.clear();
+//        _adapterBiblio.notifyDataSetChanged();
+
+        gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String isbn = ((TextView) view.findViewById(R.id.TVISBN)).getText().toString();
-                HashMap<String, String> info = null;
-                Bundle b = null;
-                for (int i = 0; i < _infos.size(); i++) {
-                    if (isbn.equals(_infos.get(i).getIsbn().toString())) {
-                        info = new HashMap<>();
-                        b = new Bundle();
-                        info.put("title", getValueOrDefault(_infos.get(i).getTitre()));
-                        info.put("picture", _infos.get(i).getImage());
-                        info.put("genre", getValueOrDefault(_infos.get(i).getGenre()));
-                        info.put("author", getValueOrDefault(_infos.get(i).getAuteur()));
-                        info.put("date", getValueOrDefault(_infos.get(i).getDate()));
-                        info.put("note", getValueOrDefault(_infos.get(i).getNote().toString()));
-                        info.put("resume", getValueOrDefault(_infos.get(i).getResum()));
-                        b.putSerializable("info", info);
-                        break;
-                    }
-                }
-                if (info != null) {
+                Bundle b = new Bundle();
+                b.putString("isbn", isbn);
+//                HashMap<String, String> info = null;
+//                boolean done = false;
+//                for (int i = 0; i < _infos.size(); i++) {
+//                    if (isbn.equals(_infos.get(i).getIsbn().toString())) {
+////                        info = new HashMap<>();
+//                        done = true;
+////                        info.put("title", getValueOrDefault(_infos.get(i).getTitre()));
+////                        info.put("picture", _infos.get(i).getImage());
+////                        info.put("genre", getValueOrDefault(_infos.get(i).getGenre()));
+////                        info.put("author", getValueOrDefault(_infos.get(i).getAuteur()));
+////                        info.put("date", getValueOrDefault(_infos.get(i).getDate()));
+////                        info.put("note", getValueOrDefault(_infos.get(i).getNote().toString()));
+////                        info.put("resume", getValueOrDefault(_infos.get(i).getResum()));
+////                        b.putSerializable("info", info);
+//                        break;
+//                    }
+//                }
+//                if (done) {
                     Intent in = new Intent(getActivity(), InfoBook.class);
                     in.putExtra("book", b);
                     in.putExtra("shelf", _type);
                     startActivity(in);
-                }
+//                }
             }
-        });*/
+        });
     }
 
     private String getValueOrDefault(String value)
@@ -242,56 +276,106 @@ public class ShelfContainer extends Fragment
         return (value != null && !value.equals("")) ? value : "N/A";
     }
 
-    private void getInfoBook(String isbn) {
-        GoogleBooksApi googleBooksApi = new Retrofit.Builder()
+    private void fuck(final ArrayList<String> isbns)
+    {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                int i = 0;
+                while (i < isbns.size()) {
+                    Log.d("isbn -> ", isbns.get(i));
+                    VolumeInfo vi = getInfoBook(isbns.get(i));
+                    String img = "";
+                    if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
+                        img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
+                    } else {
+                        img = vi.getImageLinks().getThumbnail();
+                    }
+                    _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, isbns.get(i)));
+                    i++;
+                }
+            }
+        });
+        t.start();
+        try {
+            t.join();
+            _adapterBiblio.notifyDataSetChanged();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static VolumeInfo getInfoBook(String isbn)
+    {
+        GoogleBooksApi gbi = new Retrofit.Builder()
                 .baseUrl(GoogleBooksApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(GoogleBooksApi.class);
+        Call<Books> call = gbi.searchByIsbn("isbn:"+isbn);
+        VolumeInfo vi = null;
 
-        Call<Books> call = googleBooksApi.searchByIsbn("isbn:"+isbn);
-        call.enqueue(new Callback<Books>() {
-            @Override
-            public void onResponse(Call<Books> call, Response<Books> response) {
-                if (response.isSuccessful()) {
-                    Books book = response.body();
-                    if (book.getTotalItems() > 0) {
-                        Item item = book.getItems().get(0);
-                        String isbn13 = "0";
-                        List<IndustryIdentifier> isbns = item.getVolumeInfo().getIndustryIdentifiers();
-                        ListIterator<IndustryIdentifier> it = isbns.listIterator();
-                        while(it.hasNext()){
-                            IndustryIdentifier isbn = it.next();
-                            //if (isbn.getType() == "ISBN_13") {
-                                isbn13 = isbn.getIdentifier();
-                              //  Log.i("INFO LIVRE", isbn.getType()+"/");
-                            //}
-                        }
-                        _modelListBiblio.add(new BiblioAdapter(item.getVolumeInfo().getTitle(), item.getVolumeInfo().getImageLinks().getThumbnail() , isbn13));
-                        Log.i("INFO LIVRE", isbn13);
-
-
-                    }
-                } else {
-                    try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Erreur !!!", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        e.printStackTrace();
-                    }
-
-                }
+        try {
+            Books b = call.execute().body();
+            if (b.getTotalItems() > 0) {
+                Item item = b.getItems().get(0);
+                return item.getVolumeInfo();
+//                String isbn13 = "0";
+//                List<IndustryIdentifier> isbns = item.getVolumeInfo().getIndustryIdentifiers();
+//                ListIterator<IndustryIdentifier> it = isbns.listIterator();
+//                while(it.hasNext()){
+//                    IndustryIdentifier actual_isbn = it.next();
+//                    //if (isbn.getType() == "ISBN_13") {
+//                        isbn13 = actual_isbn.getIdentifier();
+//                      //  Log.i("INFO LIVRE", isbn.getType()+"/");
+//                    //}
+//                }
+                //Log.i("INFO LIVRE", isbn13 + " - " + item.getVolumeInfo().getTitle() + " - " + img);
             }
-
-            @Override
-            public void onFailure(Call<Books> call, Throwable t) {
-                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
-                t.printStackTrace();
-            }
-        });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return vi;
+//        call.enqueue(new Callback<Books>() {
+//            @Override
+//            public void onResponse(Call<Books> call, Response<Books> response) {
+//                if (response.isSuccessful()) {
+//                    Books book = response.body();
+//                    if (book.getTotalItems() > 0) {
+//                        Item item = book.getItems().get(0);
+//                        String isbn13 = "0";
+//                        List<IndustryIdentifier> isbns = item.getVolumeInfo().getIndustryIdentifiers();
+//                        ListIterator<IndustryIdentifier> it = isbns.listIterator();
+//                        while(it.hasNext()){
+//                            IndustryIdentifier isbn = it.next();
+//                            //if (isbn.getType() == "ISBN_13") {
+//                                isbn13 = isbn.getIdentifier();
+//                              //  Log.i("INFO LIVRE", isbn.getType()+"/");
+//                            //}
+//                        }
+//                        _modelListBiblio.add(new BiblioAdapter(item.getVolumeInfo().getTitle(), item.getVolumeInfo().getImageLinks().getThumbnail() , isbn13));
+//                        Log.i("INFO LIVRE", isbn13 + " - " + item.getVolumeInfo().getTitle() + " - " + item.getVolumeInfo().getImageLinks().getThumbnail());
+//                        _o.notifyAll();
+//                    }
+//                } else {
+//                    try {
+//                        Snackbar snackbar = Snackbar.make(_rl, "Erreur !!!", Snackbar.LENGTH_LONG);
+//                        snackbar.show();
+//                    } catch (Exception e) {
+//                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+//                        snackbar.show();
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Books> call, Throwable t) {
+//                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+//                snackbar.show();
+//                t.printStackTrace();
+//            }
+//        });
     }
 
     private void hardTest()

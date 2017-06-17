@@ -22,8 +22,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Vérification mot de passe"
+        android:inputType="textPassword"
+        android:hint="Verif new mdp"
         android:layout_below="@+id/ETPassword"
         android:layout_alignStart="@+id/ETPassword" />
 
@@ -76,11 +76,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Mot de passe"
+        android:inputType="textPassword"
+        android:hint="New mdp"
+        android:layout_marginTop="10dp"
         android:layout_below="@+id/ETPrefBook"
-        android:layout_alignStart="@+id/ETPrefBook"
-        android:layout_marginTop="10dp" />
+        android:layout_alignStart="@+id/ETPrefBook" />
 
     <Button
         android:id="@+id/BValid"
@@ -101,5 +101,17 @@
         android:text="Annuler"
         android:onClick="onClickCancel" />
 
+    <Button
+        android:id="@+id/BDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Supprimer le compte"
+        android:textColor="#FFFFFF"
+        android:background="@color/colorAccent"
+        android:onClick="onClickDelete"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
+        android:layout_alignEnd="@+id/BCancel"
+        android:layout_alignStart="@+id/BValid" />
 
 </RelativeLayout>

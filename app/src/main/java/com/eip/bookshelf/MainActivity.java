@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -23,7 +24,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     enum shelfType {
         MAINSHELF,
         PROPOSHELF,
-        WISHSHELF
+        WISHSHELF,
+        SEARCH
     }
     private SignIn _signFrag;
 
@@ -57,7 +59,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        _signFrag.onActivityResult(requestCode, resultCode, data);
+        if (!data.getAction().equals("com.google.zxing.client.android.SCAN")) {
+            _signFrag.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -77,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        Log.d("Select", "...");
 
         switch (id) {
             case R.id.nav_biblio:
@@ -86,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     ShelfTab shelfFrag = new ShelfTab();
                     shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
+                    Log.d("Select biblio", "PUTAIN !");
                     fragmentTransaction.commit();
                 } else {
                     accessDenied();
