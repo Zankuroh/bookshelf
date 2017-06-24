@@ -216,15 +216,6 @@ public class InfoBook extends AppCompatActivity
         if (_vi.getImageLinks() != null && _vi.getImageLinks().getThumbnail() != null) {
             Picasso.with(this).load(_vi.getImageLinks().getThumbnail()).fit().into(iv);
         }
-//        tvt.setText(info.get("title"));
-//        tv.setText("Date de sortie : " + info.get("date"));
-//        tv.setText(tv.getText() + "\nAuteur : " + info.get("author"));
-//        tv.setText(tv.getText() + "\nGenre : " + info.get("genre"));
-//        tv.setText(tv.getText() + "\nNote : " + info.get("note"));
-//        tvr.setText(info.get("resume"));
-//        if (info.get("picture") != null && !info.get("picture").equals("")) {
-//            Picasso.with(this).load(info.get("picture")).fit().into(iv);
-//        }
     }
 
     private void getTotalHeightofListView()
@@ -262,7 +253,6 @@ public class InfoBook extends AppCompatActivity
     public void AddToBookShelf(){
 
         TextView tv = (TextView) findViewById(R.id.TVInfoBook);
-        int start = tv.getText().toString().indexOf("Isbn : ");
         Log.i("ADDBOOK", _isbn);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
@@ -302,16 +292,13 @@ public class InfoBook extends AppCompatActivity
     }
 
     public void deleteToBookShelf(){
-        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
-        int start = tv.getText().toString().indexOf("Isbn : ");
-        String isbn = tv.getText().toString().substring(start + 7, start +7+13);
-        Log.i("DELBOOK", isbn);
+        Log.i("DELBOOK", _isbn);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<ModifBook> call = bookshelfApi.DelBook(MainActivity.token, isbn, "deleted");
+        Call<ModifBook> call = bookshelfApi.DelBook(MainActivity.token, _isbn, "deleted");
         call.enqueue(new Callback<ModifBook>() {
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
@@ -328,7 +315,6 @@ public class InfoBook extends AppCompatActivity
                         snackbar.show();
                         e.printStackTrace();
                     }
-
                 }
             }
 
@@ -344,15 +330,13 @@ public class InfoBook extends AppCompatActivity
 
     public void AddToWishList(){
         TextView tv = (TextView) findViewById(R.id.TVInfoBook);
-        int start = tv.getText().toString().indexOf("Isbn : ");
-        String isbn = tv.getText().toString().substring(start + 7, start +7+13);
-        Log.i("ADDBOOK", isbn);
+        Log.i("ADDBOOK", _isbn);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<ModifBook> call = bookshelfApi.AddWishBook(MainActivity.token, isbn);
+        Call<ModifBook> call = bookshelfApi.AddWishBook(MainActivity.token, _isbn);
         call.enqueue(new Callback<ModifBook>() {
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
@@ -369,7 +353,6 @@ public class InfoBook extends AppCompatActivity
                         snackbar.show();
                         e.printStackTrace();
                     }
-
                 }
             }
 
@@ -385,15 +368,13 @@ public class InfoBook extends AppCompatActivity
 
     public void deleteToWishList(){
         TextView tv = (TextView) findViewById(R.id.TVInfoBook);
-        int start = tv.getText().toString().indexOf("Isbn : ");
-        String isbn = tv.getText().toString().substring(start + 7, start +7+13);
-        Log.i("DELBOOK", isbn);
+        Log.i("DELBOOK", _isbn);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<ModifBook> call = bookshelfApi.DelWishBook(MainActivity.token, isbn, "deleted");
+        Call<ModifBook> call = bookshelfApi.DelWishBook(MainActivity.token, _isbn, "deleted");
         call.enqueue(new Callback<ModifBook>() {
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
@@ -410,7 +391,6 @@ public class InfoBook extends AppCompatActivity
                         snackbar.show();
                         e.printStackTrace();
                     }
-
                 }
             }
 
