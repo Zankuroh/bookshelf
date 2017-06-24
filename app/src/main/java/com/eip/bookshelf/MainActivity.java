@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static boolean co = false;
     public static String token = null;
     public static MenuItem MenuItemCo;
+    public static MenuItem MenuItemBiblio;
     enum shelfType {
         MAINSHELF,
         PROPOSHELF,
@@ -149,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_co:
                 if (!MainActivity.co) {
                     MenuItemCo = item;
+                    MenuItemBiblio = ((NavigationView)findViewById(R.id.nav_view)).getMenu().findItem(R.id.nav_biblio);
                     defineNameToolBar("Connexion");
                     _signFrag = new SignIn();
                     fragmentTransaction.replace(R.id.fragment_container, _signFrag);

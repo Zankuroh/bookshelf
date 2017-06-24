@@ -2,6 +2,7 @@ package com.eip.bookshelf;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -203,16 +204,16 @@ public class SignIn extends Fragment implements View.OnClickListener
         EditText passwd = (EditText) _v.findViewById(R.id.ETsignInMdp);
         connect(login.getText().toString(), passwd.getText().toString());
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run()
-            {
-                if (MainActivity.co) {
-                    MainActivity.MenuItemCo.setTitle("Déconnexion");
-                    //Todo: launch fragment shelf
-                }
-            }
-        }, 3000);
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            public void run()
+//            {
+//                if (MainActivity.co) {
+//                    MainActivity.MenuItemCo.setTitle("Déconnexion");
+//                    //Todo: launch fragment shelf
+//                }
+//            }
+//        }, 3000);
     }
 
     private void connect(String email, String pwd)
@@ -234,6 +235,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                     Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
                     snackbar.show();
+                    switchFragment();
                 } else {
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
@@ -254,6 +256,18 @@ public class SignIn extends Fragment implements View.OnClickListener
                 t.printStackTrace();
             }
         });
-        //MainActivity.co = true;
+    }
+
+    private void switchFragment()
+    {
+        MainActivity.MenuItemCo.setTitle("Déconnexion");
+        MainActivity.MenuItemBiblio.setChecked(true);
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        Bundle arg = new Bundle();
+        arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
+        ShelfTab shelfFrag = new ShelfTab();
+        shelfFrag.setArguments(arg);
+        fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
+        fragmentTransaction.commit();
     }
 }
