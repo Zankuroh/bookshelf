@@ -10,6 +10,7 @@ use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Tymon\JWTAuth\Exceptions\JWTExceptions;
+use Log;
 
 /**
  * @todo Use a constant variable to access to the table of the controller
@@ -26,8 +27,9 @@ class WishBookController extends \App\Http\Controllers\ApiController
      */
     public function index(Request $request)
     {
-        $response = $this->getDefaultJsonResponse()->setData($this->getCurrentUser()->wishBooks());
-
+        $response = $this->getDefaultJsonResponse();
+        $response->setData($this->getCurrentUser()->wishBooks()->get());
+        
         return $response->getJson();
     }
 

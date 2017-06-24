@@ -29,10 +29,18 @@ return [
         'secret' => env('SPARKPOST_SECRET'),
     ],
 
+    'google' => [
+        'client_id' => '758818420378-kcg3p2or8bm0faha8vubpp4b7vsipsv0.apps.googleusercontent.com',
+        'client_secret' => 'ymzSbZHLKm6awCRsuiKyVTZQ',
+        'redirect' => '',
+    ],
+
     'stripe' => [
         'model' => App\User::class,
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
+
+
 
 ];

@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTExceptions;
 use JWTAuth;
 use Illuminate\Foundation\Auth\AuthenticateUsers;
+use Socialite;
+use Log;
 
-use \Illuminate\Support\Facades\Log as Log;
 
 class ApiAuthController extends \App\Http\Controllers\ApiController
 {
@@ -19,6 +20,33 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
 
     public function authenticate(Request $request)
     {
+
+
+        Log::debug("SOCIALITE PHASE");
+        //$user = Socialite::driver('google')->userFromToken("4/L--D7EKgNf6pSwPvqsGe7IvMLT7Bx01I75O4nk5ih7g");
+        //Log::debug($user);
+
+        $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        Log::debug("LOCAL URI : " . $actual_link);
+
+        $driver = Socialite::driver("google"); // provider is 'google' here
+
+
+        $access_token = $driver->getAccessTokenResponse("4/9GMhPItm1zz8SjQ3u9v4bATOplxvYjvEoPhmgIGfccs");
+        //Then you can get the user info using this token:
+        //
+        Log::debug("CHELOU DE OUFF");
+
+        $socialUser = $driver->userFromToken($access_token);
+
+
+        Log::debug($user);
+            
+        Log::debug("second user !!!!!!");
+        Log::debug($socialUser);
+        Log::debug("-----END SOCILIATE");
+
+
         $response = $this->getDefaultJsonResponse();
         $authenticated = true;
         $failureAuthenticationReasons = null;
@@ -35,13 +63,13 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
                 if (!$token)
                 {
                     $authenticated = false;
-                    $failureAuthenticationReasons = ['title' => 'Bad credentials.'];
+                    $failureAuthenticationReasons = ['title' => 'The email address or password you entered is not valid.'];
                 }
             }
             catch (JWTException $ex)
             {
                 $authenticated = false;
-                $failureAuthenticationReasons = ['title' => 'Something went wrong.'];
+                $failureAuthenticationReasons = ['title' => 'The email address or password you entered is not valid.'];
             }
 
             if ($authenticated)

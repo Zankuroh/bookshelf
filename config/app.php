@@ -194,7 +194,12 @@ return [
         App\Providers\ApiResponseServiceProvider::class,
 
         /** Api generator documentation */
-        Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class
+        Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class,
+
+        /**
+         * Socialte for facebook/google, etc .. connections
+         */
+        Laravel\Socialite\SocialiteServiceProvider::class
 
     ],
 
@@ -244,6 +249,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
 
     ],
 
