@@ -26,9 +26,9 @@ class WishBookController extends \App\Http\Controllers\ApiController
      */
     public function index(Request $request)
     {
-        $this->getDefaultJsonResponse()->setData($this->getCurrentUser()->wishBooks());
+        $response = $this->getDefaultJsonResponse()->setData($this->getCurrentUser()->wishBooks());
 
-        return $this->getDefaultJsonResponse()->getJson();
+        return $response->getJson();
     }
 
     /**

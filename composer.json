@@ -9,7 +9,8 @@
         "laravel/framework": "5.3.*",
         "laravel/passport": "^1.0",
         "tymon/jwt-auth": "0.5.9",
-        "mpociot/laravel-apidoc-generator": "1.7.*"
+        "mpociot/laravel-apidoc-generator": "1.7.*",
+	"laravel/socialite": "~2.0" 
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
