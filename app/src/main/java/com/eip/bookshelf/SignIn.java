@@ -28,8 +28,10 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
 
 import org.json.JSONObject;
 
@@ -126,9 +128,10 @@ public class SignIn extends Fragment implements View.OnClickListener
         }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(new Scope(Scopes.EMAIL))
                 .requestEmail()
-                //.requestIdToken(getString(R.string.server_client_id))
-                //.requestServerAuthCode(getString(R.string.server_client_id))
+                .requestIdToken(getString(R.string.server_client_id))
+                .requestServerAuthCode(getString(R.string.server_client_id))
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(_v.getContext())
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -144,28 +147,13 @@ public class SignIn extends Fragment implements View.OnClickListener
 
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if(result.isSuccess()) {
-                final GoogleApiClient client = mGoogleApiClient;
                 Log.i("GOOGLE", "YEAHHHH");
                 GoogleSignInAccount acct = result.getSignInAccount();
-                //String idToken = acct.getIdToken();
-                //String Authcode = acct.getServerAuthCode();
-
-                /*String personName = acct.getDisplayName();
-                String personGivenName = acct.getGivenName();
-                String personFamilyName = acct.getFamilyName();
-                String personEmail = acct.getEmail();
-                String personId = acct.getId();
-                String token = acct.getServerAuthCode();
-
-                Log.i("GOOGLE NAME", personName);
-                Log.i("GOOGLE GIVENNAME", personGivenName);
-                Log.i("GOOGLE FAMILY NAME", personFamilyName);
-                Log.i("GOOGLE EMAIL", personEmail);
-                Log.i("GOOGLE ID",personId);
-                Log.i("GOOGLE TOKEN",token);*/
-
-                //Log.i("GOOGLE IDTOKEN", idToken);
-                //Log.i("GOOGLE AUTHCODE",Authcode);
+                String idToken = acct.getIdToken();
+                String Authcode = acct.getServerAuthCode();
+                
+                Log.i("GOOGLE IDTOKEN", idToken);
+                Log.i("GOOGLE AUTHCODE",Authcode);
                 //connect("","");
 
                 Handler handler = new Handler();
@@ -180,6 +168,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 }, 3000);
 
             } else {
+                Log.i("GOOGLE NOT SUCCESSFULLY","COUCOU");
 
                 //handleSignInResult(...);
             }
