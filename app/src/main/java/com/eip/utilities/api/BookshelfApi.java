@@ -18,7 +18,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
+import retrofit2.http.Field;
 
 /**
  * Created by jolyn on 08/12/2016.
@@ -28,36 +28,43 @@ public interface BookshelfApi
 {
     public static final String APIPath = "http://79.137.87.198/api/";
 
+    @FormUrlEncoded
     @POST("auth")
-    Call<Auth> Connexion(@Query("email") String email, @Query("password") String password);
+    Call<Auth> Connexion(@Field("email") String email, @Field("password") String password);
 
+    @FormUrlEncoded
     @POST("register")
-    Call<Register> Register(@Query("name") String name, @Query("password") String password, @Query("email") String email);
+    Call<Register> Register(@Field("name") String name, @Field("password") String password, @Field("email") String email);
 
+    @FormUrlEncoded
     @POST("book")
-    Call<ModifBook> AddBook(@Header("Authorization") String token, @Query("Isbn") String isbn);
+    Call<ModifBook> AddBook(@Header("Authorization") String token, @Field("isbn") String isbn);
 
     @GET("book")
     Call<BooksLocal> getBookshelf(@Header("Authorization") String token);
 
     @FormUrlEncoded
     @DELETE("book")
-    Call<ModifBook> DelBook(@Header("Authorization") String token, @Field("Isbn") String isbn, @Field("deleted") String deleted);
+    Call<ModifBook> DelBook(@Header("Authorization") String token, @Field("isbn") String isbn, @Field("deleted") String deleted);
 
     @GET("profile")
     Call<Profile> getProfile(@Header("Authorization") String token);
 
+    @FormUrlEncoded
     @POST("profile/password")
-    Call<ProfileModification> ChangePwd(@Header("Authorization") String token, @Query("password") String password, @Query("new_password") String new_password);
+    Call<ProfileModification> ChangePwd(@Header("Authorization") String token, @Field("password") String password, @Field("new_password") String new_password);
 
+    @FormUrlEncoded
     @POST("profile/email")
-    Call<ProfileModification> ChangeEmail(@Header("Authorization") String token, @Query("password") String password, @Query("email") String email);
+    Call<ProfileModification> ChangeEmail(@Header("Authorization") String token, @Field("password") String password, @Field("email") String email);
 
+    @FormUrlEncoded
     @POST("profile/name")
-    Call<ProfileModification> ChangeName(@Header("Authorization") String token, @Query("password") String password, @Query("name") String name);
+    Call<ProfileModification> ChangeName(@Header("Authorization") String token, @Field("password") String password, @Field("name") String name);
 
+    @FormUrlEncoded
     @POST("author")
-    Call<ModifAuthor> AddAuthor(@Header("Authorization") String token, @Query("first_name") String first_name, @Query("last_name") String last_name);
+    Call<ModifAuthor> AddAuthor(@Header("Authorization") String token, @Field("first_name") String first_name, @Field("last_name") String last_name);
 
     @FormUrlEncoded
     @DELETE("profile")
@@ -70,14 +77,15 @@ public interface BookshelfApi
     @DELETE("author")
     Call<ModifAuthor> DelAuthor(@Header("Authorization") String token, @Field("id") String id);
 
+    @FormUrlEncoded
     @POST("wish/book")
-    Call<ModifBook> AddWishBook(@Header("Authorization") String token, @Query("Isbn") String isbn);
+    Call<ModifBook> AddWishBook(@Header("Authorization") String token, @Field("isbn") String isbn);
 
     @GET("wish/book")
     Call<BooksLocal> getWishBookshelf(@Header("Authorization") String token);
 
     @FormUrlEncoded
     @DELETE("wish/book")
-    Call<ModifBook> DelWishBook(@Header("Authorization") String token, @Field("Isbn") String isbn, @Field("deleted") String deleted);
+    Call<ModifBook> DelWishBook(@Header("Authorization") String token, @Field("isbn") String isbn, @Field("deleted") String deleted);
 
 }

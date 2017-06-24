@@ -27,6 +27,8 @@ import com.eip.utilities.model.ModifBook.ModifBook;
 import com.eip.utilities.model.VolumeInfo;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -277,7 +279,8 @@ public class InfoBook extends AppCompatActivity
                     snackbar.show();
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);

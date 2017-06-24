@@ -193,4 +193,8 @@ public class EditProfil extends AppCompatActivity
             }
         });
     }
+
+    private void deleteUser() {
+
+    }
 }
