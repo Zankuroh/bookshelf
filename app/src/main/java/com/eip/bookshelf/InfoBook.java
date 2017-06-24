@@ -98,6 +98,8 @@ public class InfoBook extends AppCompatActivity
                 AddToBookShelf();
                 break;
             case R.id.IRemoveBook:
+                Log.i("DEBUG", "passe par la");
+
                 deleteToBookShelf();
                 break;
         }
@@ -298,7 +300,7 @@ public class InfoBook extends AppCompatActivity
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<ModifBook> call = bookshelfApi.DelBook(MainActivity.token, _isbn, "deleted");
+        Call<ModifBook> call = bookshelfApi.DelBook(MainActivity.token, _isbn, "yes");
         call.enqueue(new Callback<ModifBook>() {
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
@@ -308,7 +310,8 @@ public class InfoBook extends AppCompatActivity
                     snackbar.show();
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
@@ -374,7 +377,7 @@ public class InfoBook extends AppCompatActivity
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<ModifBook> call = bookshelfApi.DelWishBook(MainActivity.token, _isbn, "deleted");
+        Call<ModifBook> call = bookshelfApi.DelWishBook(MainActivity.token, _isbn, "yes");
         call.enqueue(new Callback<ModifBook>() {
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {

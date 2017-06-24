@@ -1,10 +1,10 @@
 
-package com.eip.utilities.model.Auth;
+package com.eip.utilities.model.AuthLocal;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Auth {
+public class AuthLocal {
 
     @SerializedName("data")
     @Expose

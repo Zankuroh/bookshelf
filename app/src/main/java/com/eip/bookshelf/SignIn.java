@@ -4,37 +4,34 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.os.Handler;
+import android.widget.EditText;
+
+import com.eip.utilities.api.BookshelfApi;
+import com.eip.utilities.model.AuthLocal.AuthLocal;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.eip.utilities.api.BookshelfApi;
 import com.facebook.GraphRequest;
 import com.facebook.GraphRequestAsyncTask;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-//import com.google.android.gms.auth.api.Auth;
-import com.eip.utilities.model.Auth.Auth;
+import com.google.android.gms.auth.api.Auth;
+
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.Arrays;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -85,7 +82,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 }).executeAsync();
 
                 //TODO gérer la création de compte
-                connect("","");
+                //connect("","");
 
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -123,21 +120,21 @@ public class SignIn extends Fragment implements View.OnClickListener
     private static final int RC_SIGN_IN = 9001;
 
     private void signInWithGoogle() {
-        /*if(mGoogleApiClient != null) {
+        if(mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
-                /*.requestIdToken("")*/
+                //.requestIdToken(getString(R.string.server_client_id))
                 //.requestServerAuthCode(getString(R.string.server_client_id))
-                /*.build();
+                .build();
         mGoogleApiClient = new GoogleApiClient.Builder(_v.getContext())
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
         final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);*/
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
@@ -145,13 +142,15 @@ public class SignIn extends Fragment implements View.OnClickListener
 
         if (requestCode == RC_SIGN_IN) {
 
-            /*GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            Log.i("GOOGLE DATA", result.toString());
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if(result.isSuccess()) {
                 final GoogleApiClient client = mGoogleApiClient;
                 Log.i("GOOGLE", "YEAHHHH");
                 GoogleSignInAccount acct = result.getSignInAccount();
-                String personName = acct.getDisplayName();
+                //String idToken = acct.getIdToken();
+                //String Authcode = acct.getServerAuthCode();
+
+                /*String personName = acct.getDisplayName();
                 String personGivenName = acct.getGivenName();
                 String personFamilyName = acct.getFamilyName();
                 String personEmail = acct.getEmail();
@@ -163,9 +162,11 @@ public class SignIn extends Fragment implements View.OnClickListener
                 Log.i("GOOGLE FAMILY NAME", personFamilyName);
                 Log.i("GOOGLE EMAIL", personEmail);
                 Log.i("GOOGLE ID",personId);
-                Log.i("GOOGLE TOKEN",token);
+                Log.i("GOOGLE TOKEN",token);*/
 
-                connect("","");
+                //Log.i("GOOGLE IDTOKEN", idToken);
+                //Log.i("GOOGLE AUTHCODE",Authcode);
+                //connect("","");
 
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -181,7 +182,7 @@ public class SignIn extends Fragment implements View.OnClickListener
             } else {
 
                 //handleSignInResult(...);
-            }*/
+            }
         } else {
             _callbackManager.onActivityResult(requestCode, resultCode, data);
         }
@@ -232,12 +233,12 @@ public class SignIn extends Fragment implements View.OnClickListener
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<Auth> call = bookshelfApi.Connexion(email,pwd);
-        call.enqueue(new Callback<Auth>() {
+        Call<AuthLocal> call = bookshelfApi.Connexion(email,pwd);
+        call.enqueue(new Callback<AuthLocal>() {
             @Override
-            public void onResponse(Call<Auth> call, Response<Auth> response) {
+            public void onResponse(Call<AuthLocal> call, Response<AuthLocal> response) {
                 if (response.isSuccessful()) {
-                    Auth auth = response.body();
+                    AuthLocal auth = response.body();
 
                     String token = auth.getData().getToken();
                     MainActivity.token = "bearer " + token;
@@ -258,7 +259,7 @@ public class SignIn extends Fragment implements View.OnClickListener
             }
 
             @Override
-            public void onFailure(Call<Auth> call, Throwable t) {
+            public void onFailure(Call<AuthLocal> call, Throwable t) {
                 Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
