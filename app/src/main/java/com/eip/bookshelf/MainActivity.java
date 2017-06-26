@@ -32,11 +32,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SEARCH
     }
     private SignIn _signFrag;
+    static private MainActivity _this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        _this = this;
         setContentView(R.layout.activity_main);
         //Set the fragment initially
         Disconnected fragment = new Disconnected();
@@ -192,15 +194,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.commit();
     }
 
-    private void defineNameToolBar(String title)
+    static public void defineNameToolBar(String title)
     {
-        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(tb);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
+        Toolbar tb = (Toolbar) _this.findViewById(R.id.toolbar);
+        _this.setSupportActionBar(tb);
+        if (_this.getSupportActionBar() != null) {
+            _this.getSupportActionBar().setTitle(title);
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, tb, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        DrawerLayout drawer = (DrawerLayout) _this.findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(_this, drawer, tb, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
     }

@@ -16,5 +16,6 @@ public class LocalDBContract
         public static final String COLUMN_NAME_ISBN = "isbn";
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_PIC = "picture";
+        public static final String COLUMN_NAME_TYPE = "type";
     }
 }

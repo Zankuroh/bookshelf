@@ -1,6 +1,7 @@
 package com.eip.bookshelf;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -52,10 +53,13 @@ public class InfoBook extends AppCompatActivity
 {
     private ListView _lvCom;
     private ArrayList<ComAdapter> _modelListCom = new ArrayList<>();
-    private MainActivity.shelfType _type;
     private RelativeLayout _rl;
     private String _isbn;
     private VolumeInfo _vi;
+    private boolean _inMain;
+    private boolean _inWish;
+    private Menu _menu;
+    private RequestDBLocal _req;
 
     public InfoBook()
     {
@@ -78,10 +82,9 @@ public class InfoBook extends AppCompatActivity
         _lvCom = (ListView) findViewById(R.id.LVCom);
         Intent i = getIntent();
         Bundle b = i.getBundleExtra("book");
-        _type = (MainActivity.shelfType)i.getSerializableExtra("shelf");
-//        HashMap<String, String> info = (HashMap<String, String>)b.getSerializable("info");
         _isbn = b.getString("isbn");
 
+        setButtons();
         setAdapters();
         moreDataBook();
     }
@@ -89,18 +92,29 @@ public class InfoBook extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        Snackbar snackbar;
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 return true;
-            case R.id.IAddBook:
-                AddToBookShelf();
+            case R.id.IAddBookBiblio:
+                addToBookShelf();
+                _menu.findItem(R.id.IAddBookBiblio).setVisible(false);
+                _menu.findItem(R.id.IRemoveBookBiblio).setVisible(true);
                 break;
-            case R.id.IRemoveBook:
-                Log.i("DEBUG", "passe par la");
-
+            case R.id.IRemoveBookBiblio:
                 deleteToBookShelf();
+                _menu.findItem(R.id.IAddBookBiblio).setVisible(true);
+                _menu.findItem(R.id.IRemoveBookBiblio).setVisible(false);
+                break;
+            case R.id.IAddBookWish:
+                addToWishList();
+                _menu.findItem(R.id.IAddBookWish).setVisible(false);
+                _menu.findItem(R.id.IRemoveBookWish).setVisible(true);
+                break;
+            case R.id.IRemoveBookWish:
+                deleteToWishList();
+                _menu.findItem(R.id.IAddBookWish).setVisible(true);
+                _menu.findItem(R.id.IRemoveBookWish).setVisible(false);
                 break;
         }
 
@@ -111,18 +125,35 @@ public class InfoBook extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.main, menu);
-        if (_type == MainActivity.shelfType.MAINSHELF) {
-            menu.findItem(R.id.IAddBook).setVisible(false);
+        _menu = menu;
+        if (_inMain) {
+            menu.findItem(R.id.IAddBookBiblio).setVisible(false);
         } else {
-            menu.findItem(R.id.IRemoveBook).setVisible(false);
+            menu.findItem(R.id.IRemoveBookBiblio).setVisible(false);
         }
-        if (_vi == null) {
-            menu.findItem(R.id.IRemoveBook).setVisible(false);
-            menu.findItem(R.id.IAddBook).setVisible(false);
+
+        if (_inWish) {
+            menu.findItem(R.id.IAddBookWish).setVisible(false);
+        } else {
+            menu.findItem(R.id.IRemoveBookWish).setVisible(false);
         }
         return true;
     }
 
+    private void setButtons()
+    {
+        _req = new RequestDBLocal(MainActivity.shelfType.MAINSHELF, this);
+        ArrayList<String> isbns = new ArrayList<>();
+        isbns.add(_isbn);
+
+        Cursor c = _req.readPrimaryInfo(isbns);
+        _inMain = c.getCount() != 0;
+        c.close();
+        _req.setType(MainActivity.shelfType.WISHSHELF);
+        c = _req.readPrimaryInfo(isbns);
+        _inWish = c.getCount() != 0;
+        c.close();
+    }
 
     private void setAdapters()
     {
@@ -252,7 +283,7 @@ public class InfoBook extends AppCompatActivity
     }
 
 
-    public void AddToBookShelf(){
+    public void addToBookShelf(){
 
         TextView tv = (TextView) findViewById(R.id.TVInfoBook);
         Log.i("ADDBOOK", _isbn);
@@ -307,12 +338,14 @@ public class InfoBook extends AppCompatActivity
                 if (response.isSuccessful()) {
                     ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre bibliothèque", Snackbar.LENGTH_LONG);
+
                     snackbar.show();
                 } else {
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
                         Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
                         snackbar.show();
+                        _req.deletePrimaryInfo(_isbn, MainActivity.shelfType.MAINSHELF);
                     } catch (Exception e) {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
@@ -331,7 +364,7 @@ public class InfoBook extends AppCompatActivity
         });
     }
 
-    public void AddToWishList(){
+    public void addToWishList(){
         TextView tv = (TextView) findViewById(R.id.TVInfoBook);
         Log.i("ADDBOOK", _isbn);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
@@ -385,6 +418,7 @@ public class InfoBook extends AppCompatActivity
                     ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre liste de souhait", Snackbar.LENGTH_LONG);
                     snackbar.show();
+                    _req.deletePrimaryInfo(_isbn, MainActivity.shelfType.WISHSHELF);
                 } else {
                     try {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
