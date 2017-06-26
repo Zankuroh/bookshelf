@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "758818420378",
+    "project_id": "bookshelf-87714"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758818420378:android:c418e734b0c3df62",
+        "android_client_info": {
+          "package_name": "com.eip.bookshelf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "758818420378-kcg3p2or8bm0faha8vubpp4b7vsipsv0.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "758818420378-0hdfci5bncp44tfd16jv95cc1ah47dht.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eip.bookshelf",
+            "certificate_hash": "57166fa2d4c6058da19b94eb77e9455d5765e4e8"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhH5Hp2_lsEw2wf92BeE5HXGB9U6jfEKU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
         <item
@@ -21,9 +20,13 @@
             android:icon="@mipmap/ic_wish"
             android:title="Ma liste de souhaits" />
         <item
-            android:id="@+id/nav_autor"
+            android:id="@+id/nav_author"
             android:icon="@mipmap/ic_autor"
             android:title="Auteurs suivis" />
+        <item
+            android:id="@+id/nav_profil"
+            android:icon="@mipmap/ic_user"
+            android:title="Mon profil" />
     </group>
 
     <item android:title="Options">

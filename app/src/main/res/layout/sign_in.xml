@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:id="@+id/RLsignIn">
+
+    <Button
+        android:text="Mot de passe oublié"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnForgetPass"
+        android:layout_below="@+id/btnCo"
+        android:layout_alignStart="@+id/btnCo"
+        android:layout_alignEnd="@+id/btnCo" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:hint="Mot de passe"
+        android:layout_marginTop="32dp"
+        android:id="@+id/ETsignInMdp"
+        android:layout_below="@+id/ETsignInMail"
+        android:layout_alignLeft="@+id/ETsignInMail"
+        android:layout_alignStart="@+id/ETsignInMail" />
+
+    <Button
+        android:text="Connexion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnCo"
+        android:layout_marginTop="28dp"
+        android:layout_below="@+id/ETsignInMdp"
+        android:layout_alignEnd="@+id/ETsignInMdp"
+        android:layout_alignStart="@+id/ETsignInMdp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:hint="E-mail"
+        android:ems="10"
+        android:layout_marginTop="119dp"
+        android:id="@+id/ETsignInMail"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/gConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="33dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/btnCreateAccount"
+        android:layout_alignEnd="@+id/btnCreateAccount" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/fConnect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@+id/gConnect"
+        android:layout_marginBottom="10dp"
+        android:layout_alignStart="@+id/gConnect"
+        android:layout_alignEnd="@+id/gConnect" />
+
+    <Button
+        android:id="@+id/btnCreateAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Créer un compte"
+        android:layout_below="@+id/btnForgetPass"
+        android:layout_alignStart="@+id/btnForgetPass"
+        android:layout_alignEnd="@+id/btnForgetPass" />
+
+</RelativeLayout>

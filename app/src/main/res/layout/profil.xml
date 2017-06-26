@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/RLProfil">
+
+    <ImageView
+        android:id="@+id/IVPic"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="100dp"
+        app:srcCompat="@drawable/com_facebook_profile_picture_blank_square"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/TVLabPseudo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pseudo: "
+        android:layout_alignTop="@+id/IVPic"
+        android:layout_toEndOf="@+id/TVLabDateLast" />
+
+    <TextView
+        android:id="@+id/TVLabEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="E-mail: "
+        android:layout_below="@+id/TVLabPseudo"
+        android:layout_alignStart="@+id/TVLabPseudo"
+        android:layout_marginTop="50dp" />
+
+    <TextView
+        android:id="@+id/TVLabBirth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Anniversaire: "
+        android:layout_marginTop="50dp"
+        android:layout_below="@+id/TVLabEmail"
+        android:layout_alignStart="@+id/TVLabEmail" />
+
+    <TextView
+        android:id="@+id/TVLabPrefGenre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Genre préféré: "
+        android:layout_below="@+id/IVPic"
+        android:layout_alignStart="@+id/IVPic"
+        android:layout_marginTop="60dp" />
+
+    <TextView
+        android:id="@+id/TVLabPrefBook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Livre préféré: "
+        android:layout_below="@+id/TVLabPrefGenre"
+        android:layout_alignStart="@+id/TVLabPrefGenre"
+        android:layout_marginTop="30dp" />
+
+    <TextView
+        android:id="@+id/TVLabDateCrea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date de création compte: "
+        android:layout_marginTop="28dp"
+        android:layout_below="@+id/TVLabPrefBook"
+        android:layout_alignStart="@+id/TVLabPrefBook" />
+
+    <TextView
+        android:id="@+id/TVLabDateLast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date de dernière connexion: "
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/TVLabDateCrea"
+        android:layout_alignStart="@+id/TVLabDateCrea" />
+
+    <Button
+        android:id="@+id/BEditProfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/TVLabDateLast"
+        android:layout_below="@+id/TVLabDateLast"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:text="Modifier les informations personnelles"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/TVPseudo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_alignBaseline="@+id/TVLabPseudo"
+        android:layout_alignBottom="@+id/TVLabPseudo"
+        android:layout_toEndOf="@+id/TVLabPseudo" />
+
+    <TextView
+        android:id="@+id/TVEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_alignBaseline="@+id/TVLabEmail"
+        android:layout_alignBottom="@+id/TVLabEmail"
+        android:layout_toEndOf="@+id/TVLabEmail" />
+
+    <TextView
+        android:id="@+id/TVBirth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_alignBaseline="@+id/TVLabBirth"
+        android:layout_alignBottom="@+id/TVLabBirth"
+        android:layout_toEndOf="@+id/TVLabBirth" />
+
+    <TextView
+        android:id="@+id/TVGenre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_alignBaseline="@+id/TVLabPrefGenre"
+        android:layout_alignBottom="@+id/TVLabPrefGenre"
+        android:layout_toEndOf="@+id/TVLabPrefGenre" />
+
+    <TextView
+        android:id="@+id/TVBook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_alignBaseline="@+id/TVLabPrefBook"
+        android:layout_alignBottom="@+id/TVLabPrefBook"
+        android:layout_toEndOf="@+id/TVLabPrefBook" />
+
+    <TextView
+        android:id="@+id/TVCrea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_alignBaseline="@+id/TVLabDateCrea"
+        android:layout_alignBottom="@+id/TVLabDateCrea"
+        android:layout_toEndOf="@+id/TVLabDateCrea" />
+
+    <TextView
+        android:id="@+id/TVLast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_alignBaseline="@+id/TVLabDateLast"
+        android:layout_alignBottom="@+id/TVLabDateLast"
+        android:layout_toEndOf="@+id/TVLabDateLast" />
+</RelativeLayout>

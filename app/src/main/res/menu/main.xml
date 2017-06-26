@@ -2,8 +2,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/IAddBook"
+        android:id="@+id/IAddBookBiblio"
         android:orderInCategory="100"
         android:title="Ajouter dans ma bibliothèque"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/IRemoveBookBiblio"
+        android:orderInCategory="100"
+        android:title="Retirer de ma bibliothèque"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/IAddBookWish"
+        android:orderInCategory="100"
+        android:title="Ajouter dans ma liste de souhait"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/IRemoveBookWish"
+        android:orderInCategory="100"
+        android:title="Retirer de ma liste de souhait"
         app:showAsAction="never" />
 </menu>

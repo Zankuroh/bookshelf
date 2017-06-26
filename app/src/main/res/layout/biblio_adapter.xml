@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:id="@+id/RLAdaptBook">
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content" android:id="@+id/RLAdaptBook">
 
     <ImageView
         android:layout_width="120dp"
-        android:layout_height="wrap_content"
+        android:layout_height="160dp"
         android:scaleType="fitXY"
         android:paddingTop="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:adjustViewBounds="true"
         android:id="@+id/IVAff"
+        android:contentDescription="@string/picture_desc"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <TextView
@@ -22,5 +22,12 @@
         android:paddingBottom="10dp"
         android:gravity="center"
         android:id="@+id/TVAff"
+        android:maxLines="2"
+        android:minLines="1"
         android:layout_below="@+id/IVAff"/>
+    <TextView
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:id="@+id/TVISBN"
+        android:visibility="gone"/>
 </RelativeLayout>

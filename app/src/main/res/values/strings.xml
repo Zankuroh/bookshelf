@@ -5,4 +5,12 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="picture_desc">No picture.</string>
+    <string name="not_login">Vous n\'êtes pas connecté !</string>
+    <string name="facebook_app_id">223852384693149</string>
+
+    <string name="hint_com">Commentaire...</string>
+    <string name="btn_send_com">Envoyer</string>
+    <string name="server_client_id">758818420378-kcg3p2or8bm0faha8vubpp4b7vsipsv0.apps.googleusercontent.com</string>
 </resources>
