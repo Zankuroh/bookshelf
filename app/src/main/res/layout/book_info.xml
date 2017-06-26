@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/SVBook">
+
+        <RelativeLayout
+            android:orientation="vertical" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/RLBook">
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:gravity="center"
+                android:id="@+id/TVTitreBook"
+                android:layout_alignRight="@+id/IVBook"
+                android:layout_alignEnd="@+id/IVBook"
+                android:layout_alignLeft="@+id/IVBook"
+                android:layout_alignStart="@+id/IVBook"
+                android:layout_marginTop="15dp"
+                android:textSize="3mm"
+                android:textStyle="bold"
+                />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="350dp"
+                android:paddingTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:id="@+id/IVBook"
+                android:textColor="@android:color/black"
+                android:layout_below="@+id/TVTitreBook"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:gravity="center"
+                android:id="@+id/TVInfoBook"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="30dp"
+                android:layout_below="@+id/IVBook"
+                android:layout_alignRight="@+id/IVBook"
+                android:layout_alignEnd="@+id/IVBook"
+                android:layout_alignLeft="@+id/IVBook"
+                android:layout_alignStart="@+id/IVBook" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/TVResum"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/TVInfoBook"
+                android:textColor="@android:color/black"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                />
+            <!--<TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/TVComTitle"
+                android:text="Commentaires:"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/TVResum"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp" />-->
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/TVResum"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@android:color/darker_gray"
+                android:id="@+id/VLine"/>
+
+            <LinearLayout
+                android:id="@+id/LLPublish"
+                android:layout_below="@+id/VLine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/ETCom"
+                android:layout_weight=".7"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="Commentaire..."/>
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_weight=".3"
+                android:layout_width="0dp"
+                android:text="Envoyer"
+                android:layout_height="wrap_content"
+                android:onClick="sendCom"/>
+            </LinearLayout>
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/LVCom"
+                android:layout_alignParentBottom="true"
+                android:dividerHeight="2dp"
+                android:layout_below="@+id/LLPublish"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+
+        </RelativeLayout>
+    </ScrollView>
+
