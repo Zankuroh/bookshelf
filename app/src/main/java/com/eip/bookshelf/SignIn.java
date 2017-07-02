@@ -92,10 +92,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 handler.postDelayed(new Runnable() {
                     public void run()
                     {
-                        if (MainActivity.co) {
-                            MainActivity.MenuItemCo.setTitle("Déconnexion");
-                            //Todo: launch fragment shelf
-                        }
+                        switchFragment();
                     }
                 }, 3000);
             }
@@ -152,7 +149,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 GoogleSignInAccount acct = result.getSignInAccount();
                 String idToken = acct.getIdToken();
                 String Authcode = acct.getServerAuthCode();
-                
+
                 Log.i("GOOGLE IDTOKEN", idToken);
                 Log.i("GOOGLE AUTHCODE",Authcode);
                 //connect("","");
@@ -161,15 +158,12 @@ public class SignIn extends Fragment implements View.OnClickListener
                 handler.postDelayed(new Runnable() {
                     public void run()
                     {
-                        if (MainActivity.co) {
-                            MainActivity.MenuItemCo.setTitle("Déconnexion");
-                            //Todo: launch fragment shelf
-                        }
+                        switchFragment();
                     }
                 }, 3000);
 
             } else {
-                Log.i("GOOGLE NOT SUCCESSFULLY","COUCOU");
+                Log.i("GOOGLE NOT SUCCESSFULLY","");
 
                 //handleSignInResult(...);
             }
