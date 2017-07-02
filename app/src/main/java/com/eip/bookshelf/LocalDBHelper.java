@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class LocalDBHelper extends SQLiteOpenHelper
 {
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "Biblio.db";
 
     private static final String SQL_CREATE_ENTRIES =
@@ -18,7 +18,8 @@ public class LocalDBHelper extends SQLiteOpenHelper
                     LocalDBContract.LocalDB._ID + " INTEGER PRIMARY KEY," +
                     LocalDBContract.LocalDB.COLUMN_NAME_ISBN + " TEXT," +
                     LocalDBContract.LocalDB.COLUMN_NAME_TITLE + " TEXT," +
-                    LocalDBContract.LocalDB.COLUMN_NAME_PIC + " TEXT)";
+                    LocalDBContract.LocalDB.COLUMN_NAME_PIC + " TEXT," +
+                    LocalDBContract.LocalDB.COLUMN_NAME_TYPE + " TEXT)";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + LocalDBContract.LocalDB.TABLE_NAME;

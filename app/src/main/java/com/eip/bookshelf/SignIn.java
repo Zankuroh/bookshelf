@@ -256,6 +256,7 @@ public class SignIn extends Fragment implements View.OnClickListener
     {
         MainActivity.MenuItemCo.setTitle("Déconnexion");
         MainActivity.MenuItemBiblio.setChecked(true);
+        MainActivity.defineNameToolBar("Bibliothèque");
         android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         Bundle arg = new Bundle();
         arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
