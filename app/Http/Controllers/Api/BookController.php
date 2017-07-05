@@ -20,9 +20,21 @@ class BookController extends \App\Http\Controllers\ApiController
      */
     public function index(Request $request)
     {
-        $this->getDefaultJsonResponse()->setData($this->getCurrentUser()->books()->get());
+        $response = $this->getDefaultJsonResponse();
 
-        return ($this->getDefaultJsonResponse()->getJson());
+        
+        // if ($this->useSecondDB)
+        // {
+        //     $books = DB::connection('mysql2')->select('select * from books where active = 1');
+        // }
+        // else
+        // {
+            $books = $this->getCurrentUser()->books()->get();
+        // }
+        $response->setData($books);
+
+
+        return ($response->getJson());
     }
 
     /**

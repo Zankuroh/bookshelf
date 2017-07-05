@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Models\Review as Review;
 use Validator;
+use Log;
 
 class ReviewController extends \App\Http\Controllers\ApiController
 {
@@ -33,7 +34,22 @@ class ReviewController extends \App\Http\Controllers\ApiController
         else
         {
             $isbn = $request->input('isbn');
-            $reviews = Review::where('isbn', $isbn)->get()->all();
+            $reviews = [];
+            $rawReviews = Review::leftJoin('users', 'users.id', '=', 'reviews.user_id')->where('reviews.isbn', '=', $isbn)->get()->all();
+            foreach ($rawReviews as $rawReview)
+            {
+                $tmpReview = [];
+                $tmpReview['id'] = $rawReview['id'];
+                $tmpReview['isbn'] = $rawReview['isbn'];
+                $tmpReview['rate'] = $rawReview['rate'];
+                $tmpReview['content'] = $rawReview['content'];
+                $tmpReview['created_at'] = is_null($rawReview['created_at']) ? 'Unknown' : $rawReview['created_at']->toDateTimeString();
+                $tmpReview['user_name'] = is_null($rawReview['name']) ? 'Unknown' : $rawReview['name'];
+                $tmpReview['can_edit'] =  $rawReview['user_id'] == $this->getCurrentUser()->id ? 'true' : 'false';
+                array_push($reviews, $tmpReview);
+            }
+
+
             $response->setData(['reviews' => $reviews]);
         }
 

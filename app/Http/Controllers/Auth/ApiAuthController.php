@@ -22,29 +22,36 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
     {
 
 
-        Log::debug("SOCIALITE PHASE");
-        //$user = Socialite::driver('google')->userFromToken("4/L--D7EKgNf6pSwPvqsGe7IvMLT7Bx01I75O4nk5ih7g");
-        //Log::debug($user);
+        // Log::debug("SOCIALITE PHASE");
+        // $user = Socialite::driver('google')->userFromToken("4/L--D7EKgNf6pSwPvqsGe7IvMLT7Bx01I75O4nk5ih7g");
+        // Log::debug($user);
 
-        $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        Log::debug("LOCAL URI : " . $actual_link);
+        // $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        // Log::debug("LOCAL URI : " . $actual_link);
 
-        $driver = Socialite::driver("google"); // provider is 'google' here
+        // $driver = Socialite::driver("google");
+        // $driverFB = Socialite::driver("facebook");
 
+        // $access_token = $driver->getAccessTokenResponse("4/9GMhPItm1zz8SjQ3u9v4bATOplxvYjvEoPhmgIGfccs");
+        
 
-        $access_token = $driver->getAccessTokenResponse("4/9GMhPItm1zz8SjQ3u9v4bATOplxvYjvEoPhmgIGfccs");
-        //Then you can get the user info using this token:
-        //
-        Log::debug("CHELOU DE OUFF");
-
-        $socialUser = $driver->userFromToken($access_token);
+        // $access_token_fb = $driverFB->getAccessTokenResponse("4/9GMhPItm1zz8SjQ3u9v4bATOplxvYjvEoPhmgIGfccs");
 
 
-        Log::debug($user);
+        // Log::debug("Foobar1");
+
+        // $socialUser = $driver->userFromToken($access_token);
+
+
+        // $socialUserFB = $driverFB->userFromToken($access_token_fb);
+
+        // Log::debug($user);
             
-        Log::debug("second user !!!!!!");
-        Log::debug($socialUser);
-        Log::debug("-----END SOCILIATE");
+        // Log::debug("second user !!!!!!");
+        // Log::debug($socialUser);
+        // Log::debug("-----get access token");
+
+        
 
 
         $response = $this->getDefaultJsonResponse();
