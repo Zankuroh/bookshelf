@@ -61,7 +61,7 @@ public class ShelfContainer extends Fragment
         _req = new RequestDBLocal(_type, getContext());
 //        _req.deletePrimaryInfo(null, null);
         if (_type == MainActivity.shelfType.MAINSHELF) {
-            _v = inflater.inflate(R.layout.shelf_container, container, false);
+            _v = inflater.inflate(R.layout.shelf_simple, container, false); //Anciennement shelf_container !
             setAdapters();
             mainShelf();
         } else if (_type == MainActivity.shelfType.PROPOSHELF) {

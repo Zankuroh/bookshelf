@@ -90,11 +90,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_biblio:
                 defineNameToolBar("Bibliothèque");
                 if (MainActivity.co) {
+//                    Bundle arg = setArgs(shelfType.MAINSHELF);
+//                    ShelfTab shelfFrag = new ShelfTab();
+//                    shelfFrag.setArguments(arg);
+//                    fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
+//                    Log.d("Select biblio", "PUTAIN !");
+//                    fragmentTransaction.commit();
                     Bundle arg = setArgs(shelfType.MAINSHELF);
-                    ShelfTab shelfFrag = new ShelfTab();
+                    ShelfContainer shelfFrag = new ShelfContainer();
                     shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
-                    Log.d("Select biblio", "PUTAIN !");
                     fragmentTransaction.commit();
                 } else {
                     accessDenied();

@@ -266,7 +266,11 @@ public class SignIn extends Fragment implements View.OnClickListener
         android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         Bundle arg = new Bundle();
         arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
-        ShelfTab shelfFrag = new ShelfTab();
+//        ShelfTab shelfFrag = new ShelfTab();
+//        shelfFrag.setArguments(arg);
+//        fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
+//        fragmentTransaction.commit();
+        ShelfContainer shelfFrag = new ShelfContainer();
         shelfFrag.setArguments(arg);
         fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
         fragmentTransaction.commit();
