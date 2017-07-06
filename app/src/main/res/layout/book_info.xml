@@ -3,143 +3,109 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent" android:id="@+id/RLBookInfo" >
     <include
-    layout="@layout/app_bar_main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
-        <ScrollView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/SVBook" android:layout_marginTop="85dp">
-            <RelativeLayout
-                android:orientation="vertical" android:layout_width="fill_parent"
-                android:layout_height="wrap_content" android:id="@+id/RLBook">
-                <TextView
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="10dp"
-                    android:gravity="center"
-                    android:id="@+id/TVTitreBook"
-                    android:layout_marginTop="11dp"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignEnd="@+id/TVInfoBook"
-                    android:layout_alignStart="@+id/TVInfoBook" />
+        layout="@layout/app_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/SVBook" android:layout_marginTop="85dp">
+        <RelativeLayout
+            android:orientation="vertical" android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:id="@+id/RLBook">
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:gravity="center"
+                android:id="@+id/TVTitreBook"
+                android:layout_marginTop="11dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_alignEnd="@+id/TVInfoBook"
+                android:layout_alignStart="@+id/TVInfoBook" />
 
-                <ImageView
-                    android:layout_width="210dp"
-                    android:layout_height="317dp"
-                    android:id="@+id/IVBook"
-                    android:textColor="@android:color/black"
-                    android:src="@drawable/unavailable"
-                    android:contentDescription="@string/picture_desc"
-                    android:layout_marginTop="23dp"
-                    android:layout_below="@+id/TVTitreBook"
-                    android:layout_centerHorizontal="true" />
+            <ImageView
+                android:layout_width="210dp"
+                android:layout_height="317dp"
+                android:id="@+id/IVBook"
+                android:textColor="@android:color/black"
+                android:src="@drawable/unavailable"
+                android:contentDescription="@string/picture_desc"
+                android:layout_marginTop="23dp"
+                android:layout_below="@+id/TVTitreBook"
+                android:layout_centerHorizontal="true" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="10dp"
-                    android:gravity="center"
-                    android:id="@+id/TVInfoBook"
-                    android:textColor="@android:color/black"
-                    android:layout_marginTop="30dp"
-                    android:layout_below="@+id/IVBook"
-                    android:layout_alignStart="@+id/TVIsbnBook"
-                    android:layout_alignEnd="@+id/TVIsbnBook" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:gravity="center"
+                android:id="@+id/TVInfoBook"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="30dp"
+                android:layout_below="@+id/IVBook"
+                android:layout_alignStart="@+id/TVIsbnBook"
+                android:layout_alignEnd="@+id/TVIsbnBook" />
 
-                <TextView
-                    android:id="@+id/TVIsbnBook"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="10dp"
-                    android:gravity="center"
-                    android:textColor="@android:color/black"
-                    android:layout_marginTop="30dp"
-                    android:layout_below="@+id/TVInfoBook"
-                    android:layout_alignStart="@+id/TVResum"
-                    android:layout_alignEnd="@+id/TVResum"
-                     />
+            <TextView
+                android:id="@+id/TVIsbnBook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="30dp"
+                android:layout_below="@+id/TVInfoBook"
+                android:layout_alignStart="@+id/TVResum"
+                android:layout_alignEnd="@+id/TVResum"
+                />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/TVResum"
-                    android:layout_alignParentEnd="true"
-                    android:layout_below="@+id/TVIsbnBook"
-                    android:textColor="@android:color/black"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/TVResum"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/TVIsbnBook"
+                android:textColor="@android:color/black"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@id/TVResum"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginTop="20dp"
-                    android:background="@android:color/darker_gray"
-                    android:id="@+id/VLine"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/TVResum"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@android:color/darker_gray"
+                android:id="@+id/VLine"/>
 
-                <RelativeLayout
-                    android:id="@+id/LLNote"
-                    android:layout_below="@+id/VLine"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true">
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_below="@id/VLine"
+                android:layout_width="match_parent"
+                android:text="@string/btn_review"
+                android:layout_height="wrap_content"
+                android:id="@+id/BReview"
+                android:onClick="onClickReview"
+                android:layout_marginLeft="50dip"
+                android:layout_marginRight="50dip"/>
 
-                    <RatingBar
-                        android:id="@+id/ratingBar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:numStars="5"
-                        android:scaleX="0.75"
-                        android:scaleY="0.75"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true" />
-                </RelativeLayout>
-
-                <LinearLayout
-                    android:id="@+id/LLPublish"
-                    android:layout_below="@+id/LLNote"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true">
-                    <EditText
-                        android:id="@+id/ETCom"
-                        android:layout_weight=".7"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/hint_com"
-                        android:nextFocusUp="@id/ETCom"
-                        android:nextFocusLeft="@id/ETCom" />
-                    <Button
-                        style="?android:attr/buttonStyleSmall"
-                        android:layout_weight=".3"
-                        android:layout_width="0dp"
-                        android:text="@string/btn_send_com"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/btnSendCom"
-                        android:onClick="onClickSendCom"/>
-                </LinearLayout>
-
-                <ListView
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:id="@+id/LVCom"
-                    android:layout_alignParentBottom="true"
-                    android:dividerHeight="2dp"
-                    android:layout_below="@+id/LLPublish"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp" />
-
-            </RelativeLayout>
-        </ScrollView>
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:id="@+id/LVCom"
+                android:layout_alignParentBottom="true"
+                android:dividerHeight="2dp"
+                android:layout_below="@+id/BReview"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+        </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>
