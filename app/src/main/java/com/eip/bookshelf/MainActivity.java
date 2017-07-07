@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
                     fragmentTransaction.commit();
                 } else {
-                    accessDenied();
+                    accessDenied(_this);
                 }
                 break;
             case R.id.nav_search:
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
                     fragmentTransaction.commit();
                 } else {
-                    accessDenied();
+                    accessDenied(_this);
                 }
                 break;
             case R.id.nav_wish:
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
                     fragmentTransaction.commit();
                 } else {
-                    accessDenied();
+                    accessDenied(_this);
                 }
                 break;
             case R.id.nav_author:
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fragmentTransaction.replace(R.id.fragment_container, authorFrag);
                     fragmentTransaction.commit();
                 } else {
-                    accessDenied();
+                    accessDenied(_this);
                 }
                 break;
             case R.id.nav_profil:
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fragmentTransaction.replace(R.id.fragment_container, profilFrag);
                     fragmentTransaction.commit();
                 } else {
-                    accessDenied();
+                    accessDenied(_this);
                 }
                 break;
             case R.id.nav_co:
@@ -166,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 } else {
                     MainActivity.co = false;
                     item.setTitle("Connexion");
-                    accessDenied();
+                    accessDenied(_this);
                 }
                 break;
             case R.id.nav_param:
@@ -191,15 +192,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return args;
     }
 
-    private void accessDenied()
+    static void accessDenied(FragmentActivity act)
     {
         Disconnected decoFrag = new Disconnected();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = act.getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, decoFrag);
         fragmentTransaction.commit();
     }
 
-    static public void defineNameToolBar(String title)
+    static void defineNameToolBar(String title)
     {
         Toolbar tb = (Toolbar) _this.findViewById(R.id.toolbar);
         _this.setSupportActionBar(tb);
@@ -223,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         builder.show();
     }
 
-    public static void hideSoftKeyboard(Activity activity)
+    static void hideSoftKeyboard(Activity activity)
     {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         View current_focus = activity.getCurrentFocus();

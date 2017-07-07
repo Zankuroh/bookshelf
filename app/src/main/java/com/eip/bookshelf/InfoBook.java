@@ -475,8 +475,6 @@ public class InfoBook extends AppCompatActivity
             public void onResponse(Call<Reviews> call, Response<Reviews> response) {
                 if (response.isSuccessful()) {
                     Reviews modif = response.body();
-                    Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre liste de souhait", Snackbar.LENGTH_LONG);
-                    snackbar.show();
                 } else {
                     try {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);

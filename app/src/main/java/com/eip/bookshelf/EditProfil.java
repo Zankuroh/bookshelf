@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class EditProfil extends AppCompatActivity
 {
     private RelativeLayout _rl;
+    private EditProfil _this;
 
     public EditProfil()
     {
@@ -42,6 +44,7 @@ public class EditProfil extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_profil);
         _rl = (RelativeLayout)findViewById(R.id.RLEditProfil);
+        _this = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
@@ -105,14 +108,35 @@ public class EditProfil extends AppCompatActivity
     private void checkData(String mdp)
     {
         String pseudo = ((EditText)findViewById(R.id.ETPseudo)).getText().toString();
+        String error_msg = "";
         if (!pseudo.equals("") && !pseudo.equals(Profil.prof.getName())) {
-            changeName(mdp, pseudo);
+            if (pseudo.length() < 5) {
+                error_msg += "Le champs pseudo doit comporter 5 caractères minimum";
+            } else {
+                changeName(mdp, pseudo);
+            }
+        } else {
+            error_msg += "Les champs pseudo ne peuvent pas être vide";
         }
 
         String mdp1 = ((EditText)findViewById(R.id.ETPassword)).getText().toString();
         String mdp2 = ((EditText)findViewById(R.id.ETPasswordVerif)).getText().toString();
-        if (!mdp1.equals("") && mdp1.equals(mdp2)) {
+        if (mdp1.equals("") || mdp2.equals("")) {
+            if (!error_msg.equals("")) {
+                error_msg += "\n";
+            }
+            error_msg += "Les champs de mot de passe doivent être remplis";
+        } else if (!mdp1.equals(mdp2)) {
+            if (!error_msg.equals("")) {
+                error_msg += "\n";
+            }
+            error_msg += "Les champs de mot de passe doivent être identiques";
+        } else {
             changePassword(mdp, mdp1);
+        }
+        if (!error_msg.equals("")) {
+            Snackbar snackbar = Snackbar.make(_rl, error_msg, Snackbar.LENGTH_LONG);
+            snackbar.show();
         }
     }
 
@@ -193,7 +217,8 @@ public class EditProfil extends AppCompatActivity
         });
     }
 
-    private void deleteUser(String mdp) {
+    private void deleteUser(String mdp)
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -206,6 +231,9 @@ public class EditProfil extends AppCompatActivity
                 if (response.isSuccessful()) {
                     DelProfile del = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Suppression réussi !", Snackbar.LENGTH_LONG);
+                    MainActivity.co = false;
+                    MainActivity.accessDenied(_this);
+                    SignIn.switchFragment(_this, true);
                     snackbar.show();
                 } else {
                     try {

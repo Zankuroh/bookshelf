@@ -1,5 +1,6 @@
 package com.eip.bookshelf;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -52,6 +53,7 @@ public class SignIn extends Fragment implements View.OnClickListener
     private View _v;
     private CallbackManager _callbackManager;
     private GoogleApiClient mGoogleApiClient;
+    private FragmentActivity _fa;
 
     public SignIn()
     {
@@ -66,7 +68,7 @@ public class SignIn extends Fragment implements View.OnClickListener
         _v.findViewById(R.id.btnForgetPass).setOnClickListener(this);
         _v.findViewById(R.id.btnCreateAccount).setOnClickListener(this);
 
-
+        _fa = (FragmentActivity)getContext();
         _callbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) _v.findViewById(R.id.fConnect);
         loginButton.setReadPermissions("public_profile email");
@@ -93,7 +95,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 handler.postDelayed(new Runnable() {
                     public void run()
                     {
-                        switchFragment();
+                        switchFragment(_fa, false);
                     }
                 }, 3000);
             }
@@ -174,7 +176,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 handler.postDelayed(new Runnable() {
                     public void run()
                     {
-                        switchFragment();
+                        switchFragment(_fa, false);
                     }
                 }, 3000);
 
@@ -245,7 +247,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                     Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
                     snackbar.show();
-                    switchFragment();
+                    switchFragment(_fa, false);
                 } else {
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
@@ -287,7 +289,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                     Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
                     snackbar.show();
-                    switchFragment();
+                    switchFragment(_fa, false);
                 } else {
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
@@ -310,12 +312,16 @@ public class SignIn extends Fragment implements View.OnClickListener
         });
     }
 
-    private void switchFragment()
+    static void switchFragment(FragmentActivity fa, boolean deco)
     {
-        MainActivity.MenuItemCo.setTitle("Déconnexion");
+        if (deco) {
+            MainActivity.MenuItemCo.setTitle("Connexion");
+        } else {
+            MainActivity.MenuItemCo.setTitle("Déconnexion");
+        }
         MainActivity.MenuItemBiblio.setChecked(true);
         MainActivity.defineNameToolBar("Bibliothèque");
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = fa.getSupportFragmentManager().beginTransaction();
         Bundle arg = new Bundle();
         arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
 //        ShelfTab shelfFrag = new ShelfTab();
