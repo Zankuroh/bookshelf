@@ -1,17 +1,23 @@
 package com.eip.bookshelf;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -266,15 +272,35 @@ public class InfoBook extends AppCompatActivity
         _lvCom.requestLayout();
     }
 
-    public void onClickSendCom(View v)
+    public void onClickReview(View v)
     {
-        EditText et = (EditText) findViewById(R.id.ETCom);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH'h'mm", Locale.FRANCE);
-        String currentDateandTime = sdf.format(new Date());
-        _modelListCom.add(new ComAdapter("Nicolas", currentDateandTime, et.getText().toString()));
-        et.setText("");
-        MainActivity.hideSoftKeyboard(InfoBook.this);
-        getTotalHeightofListView();
+//        EditText et = (EditText) findViewById(R.id.ETCom);
+//        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH'h'mm", Locale.FRANCE);
+//        String currentDateandTime = sdf.format(new Date());
+//        _modelListCom.add(new ComAdapter("Nicolas", currentDateandTime, et.getText().toString()));
+//        et.setText("");
+//        MainActivity.hideSoftKeyboard(InfoBook.this);
+//        getTotalHeightofListView();
+
+        final Dialog dial = new Dialog(this);
+        dial.setContentView(R.layout.review_popup);
+        dial.setTitle("Votre critique");
+        Button btnCancel = (Button)dial.findViewById(R.id.BReviewCancel);
+        Button btnConfirm = (Button)dial.findViewById(R.id.BReviewConfirm);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dial.dismiss();
+            }
+        });
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dial.dismiss();
+                //TODO: requete set review
+            }
+        });
+        dial.show();
     }
 
 
