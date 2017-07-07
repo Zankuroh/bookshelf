@@ -20,11 +20,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eip.utilities.api.BookshelfApi;
-import com.eip.utilities.api.GoogleBooksApi;
-import com.eip.utilities.model.Books;
-import com.eip.utilities.model.IndustryIdentifier;
-import com.eip.utilities.model.Item;
+import com.eip.utilities.model.ModifReview.ModifReview;
 import com.eip.utilities.model.ModifBook.ModifBook;
+import com.eip.utilities.model.Reviews.Reviews;
 import com.eip.utilities.model.VolumeInfo;
 import com.squareup.picasso.Picasso;
 
@@ -34,9 +32,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -433,6 +428,156 @@ public class InfoBook extends AppCompatActivity
 
             @Override
             public void onFailure(Call<ModifBook> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void getReview(){
+        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<Reviews> call = bookshelfApi.getReview(MainActivity.token, _isbn);
+        call.enqueue(new Callback<Reviews>() {
+            @Override
+            public void onResponse(Call<Reviews> call, Response<Reviews> response) {
+                if (response.isSuccessful()) {
+                    Reviews modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre liste de souhait", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Reviews> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void addReview(String content, String rate){
+        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ModifReview> call = bookshelfApi.AddReview(MainActivity.token, _isbn, content, rate);
+        call.enqueue(new Callback<ModifReview>() {
+            @Override
+            public void onResponse(Call<ModifReview> call, Response<ModifReview> response) {
+                if (response.isSuccessful()) {
+                    ModifReview add = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le commentaire a bien été ajouté", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModifReview> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void ChangeReview(int reviewId, String content, String rate){
+        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ModifReview> call = bookshelfApi.ChangeReview(MainActivity.token, reviewId, content, rate);
+        call.enqueue(new Callback<ModifReview>() {
+            @Override
+            public void onResponse(Call<ModifReview> call, Response<ModifReview> response) {
+                if (response.isSuccessful()) {
+                    ModifReview modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le commentaire a bien été modifié", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    _req.deletePrimaryInfo(_isbn, MainActivity.shelfType.WISHSHELF);
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModifReview> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void deleteReview(int reviewId){
+        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ModifReview> call = bookshelfApi.DelReview(MainActivity.token, reviewId, "true");
+        call.enqueue(new Callback<ModifReview>() {
+            @Override
+            public void onResponse(Call<ModifReview> call, Response<ModifReview> response) {
+                if (response.isSuccessful()) {
+                    ModifReview modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le commentaire a bien été supprimé", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    _req.deletePrimaryInfo(_isbn, MainActivity.shelfType.WISHSHELF);
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModifReview> call, Throwable t)
             {
                 Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();

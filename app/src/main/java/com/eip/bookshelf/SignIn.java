@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Handler;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.AuthLocal.AuthLocal;
@@ -74,19 +75,19 @@ public class SignIn extends Fragment implements View.OnClickListener
         loginButton.registerCallback(_callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.i("FACEBOOK", "YEAHHHH");
+
                 AccessToken accessToken = loginResult.getAccessToken();
-                GraphRequestAsyncTask request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+                Log.i("FACEBOOK", accessToken.getToken());
+               /* GraphRequestAsyncTask request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject user, GraphResponse graphResponse) {
                         Log.i("FACEBOOK EMAIL",user.optString("email"));
                         Log.i("FACEBOOK NAME",user.optString("name"));
                         Log.i("FACEBOOK ID",user.optString("id"));
                     }
-                }).executeAsync();
+                }).executeAsync();*/
 
-                //TODO gérer la création de compte
-                //connect("","");
+                connectOauth(accessToken.getToken(), "facebook");
 
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -108,6 +109,7 @@ public class SignIn extends Fragment implements View.OnClickListener
         });
 
         SignInButton mGoogleSignInButton = (SignInButton)_v.findViewById(R.id.gConnect);
+
         mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,9 +152,23 @@ public class SignIn extends Fragment implements View.OnClickListener
                 String idToken = acct.getIdToken();
                 String Authcode = acct.getServerAuthCode();
 
+                SignInButton mGoogleSignInButton = (SignInButton)_v.findViewById(R.id.gConnect);
+                for (int i = 0; i < mGoogleSignInButton.getChildCount(); i++) {
+                    View v = mGoogleSignInButton.getChildAt(i);
+
+                    // if the view is instance of TextView then change the text SignInButton
+                    if (v instanceof TextView) {
+                        TextView tv = (TextView) v;
+                        tv.setText("Se déconnecter");
+                        //TODO faire la déconnexion si l'envie t'en prend @nicolas
+                    }
+                }
+
                 Log.i("GOOGLE IDTOKEN", idToken);
                 Log.i("GOOGLE AUTHCODE",Authcode);
-                //connect("","");
+                Snackbar snackbar = Snackbar.make(_v, Authcode, 5000);
+                snackbar.show();
+                //connectOauth(Authcode, "google");
 
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -218,6 +234,48 @@ public class SignIn extends Fragment implements View.OnClickListener
                 .build()
                 .create(BookshelfApi.class);
         Call<AuthLocal> call = bookshelfApi.Connexion(email,pwd);
+        call.enqueue(new Callback<AuthLocal>() {
+            @Override
+            public void onResponse(Call<AuthLocal> call, Response<AuthLocal> response) {
+                if (response.isSuccessful()) {
+                    AuthLocal auth = response.body();
+
+                    String token = auth.getData().getToken();
+                    MainActivity.token = "bearer " + token;
+                    Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
+                    MainActivity.co = true;
+                    snackbar.show();
+                    switchFragment();
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AuthLocal> call, Throwable t) {
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void connectOauth(String token, String provider)
+    {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<AuthLocal> call = bookshelfApi.Oauth(token,provider);
         call.enqueue(new Callback<AuthLocal>() {
             @Override
             public void onResponse(Call<AuthLocal> call, Response<AuthLocal> response) {

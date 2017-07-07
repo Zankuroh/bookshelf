@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.eip.utilities.api.BookshelfApi;
+import com.eip.utilities.model.DelProfile.DelProfile;
 import com.eip.utilities.model.ProfileModification.ProfileModification;
 
 import retrofit2.Call;
@@ -77,8 +78,6 @@ public class EditProfil extends AppCompatActivity
         });
         builder.setNegativeButton("Annuler", null);
         builder.show();
-        //Todo: appeler la bonne fonction en fct des modifs
-        //Todo: Si mdp rempli, check les deux champs puis appeler changePassword
         //onBackPressed();
     }
 
@@ -91,7 +90,7 @@ public class EditProfil extends AppCompatActivity
         builder.setView(input);
         builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                //Todo: appel de la requete delete
+                deleteUser(input.getText().toString());
             }
         });
         builder.setNegativeButton("Annuler", null);
@@ -194,7 +193,40 @@ public class EditProfil extends AppCompatActivity
         });
     }
 
-    private void deleteUser() {
+    private void deleteUser(String mdp) {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<DelProfile> call = bookshelfApi.DelProfil(MainActivity.token, mdp, "yes");
+        call.enqueue(new Callback<DelProfile>() {
+            @Override
+            public void onResponse(Call<DelProfile> call, Response<DelProfile> response) {
+                if (response.isSuccessful()) {
+                    DelProfile del = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Suppression réussi !", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
 
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DelProfile> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
     }
 }

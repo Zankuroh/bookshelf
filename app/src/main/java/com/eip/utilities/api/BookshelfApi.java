@@ -1,6 +1,7 @@
 package com.eip.utilities.api;
 
 
+import com.eip.utilities.model.ModifReview.ModifReview;
 import com.eip.utilities.model.AuthLocal.AuthLocal;
 import com.eip.utilities.model.Authors.Authors;
 import com.eip.utilities.model.BooksLocal.BooksLocal;
@@ -10,6 +11,7 @@ import com.eip.utilities.model.ModifBook.ModifBook;
 import com.eip.utilities.model.Profile.Profile;
 import com.eip.utilities.model.ProfileModification.ProfileModification;
 import com.eip.utilities.model.Register.Register;
+import com.eip.utilities.model.Reviews.Reviews;
 
 import retrofit2.Call;
 import retrofit2.http.DELETE;
@@ -19,6 +21,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -32,6 +35,11 @@ public interface BookshelfApi
     @FormUrlEncoded
     @POST("auth")
     Call<AuthLocal> Connexion(@Field("email") String email, @Field("password") String password);
+
+    @FormUrlEncoded
+    @POST("oauth")
+    Call<AuthLocal> Oauth(@Field("token") String token, @Field("provider") String provider);
+
 
     @FormUrlEncoded
     @POST("register")
@@ -86,15 +94,15 @@ public interface BookshelfApi
     Call<ModifBook> DelWishBook(@Header("Authorization") String token, @Query("isbn") String isbn, @Query("deleted") String deleted);
 
     @GET("review")
-    Call<ModifBook> getReview(@Header("Authorization") String token);
+    Call<Reviews> getReview(@Header("Authorization") String token, @Query("isbn") String isbn);
 
     @FormUrlEncoded
     @POST("review")
-    Call<ModifBook> AddReview(@Header("Authorization") String token, @Field("isbn") String isbn, @Field("content") String content, @Field("rate") String rate);
+    Call<ModifReview> AddReview(@Header("Authorization") String token, @Field("isbn") String isbn, @Field("content") String content, @Field("rate") String rate);
 
-    @PUT("review/")
-    Call<ModifBook> ChangeReview(@Header("Authorization") String token, @Query("content") String content, @Query("rate") String rate);
+    @PUT("review/{reviewId}")
+    Call<ModifReview> ChangeReview(@Header("Authorization") String token, @Path("reviewId") int reviewId, @Query("content") String content, @Query("rate") String rate);
 
-    @DELETE("review/")
-    Call<ModifBook> DelReview(@Header("Authorization") String token, @Query("validation") String validation);
+    @DELETE("review/{reviewId}")
+    Call<ModifReview> DelReview(@Header("Authorization") String token, @Path("reviewId") int reviewId, @Query("validation") String validation);
 }
