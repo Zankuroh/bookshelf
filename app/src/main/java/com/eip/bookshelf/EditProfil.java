@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -17,6 +18,9 @@ import android.widget.RelativeLayout;
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.DelProfile.DelProfile;
 import com.eip.utilities.model.ProfileModification.ProfileModification;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -158,7 +162,8 @@ public class EditProfil extends AppCompatActivity
                     snackbar.show();
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
@@ -196,7 +201,8 @@ public class EditProfil extends AppCompatActivity
                     snackbar.show();
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
@@ -237,7 +243,22 @@ public class EditProfil extends AppCompatActivity
                     snackbar.show();
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        JSONObject jObj = new JSONObject(response.errorBody().string());
+                        JSONObject jObjError = jObj.getJSONObject("errors");
+                        String error = "";
+                        error = jObj.getString("title");
+                        JSONArray password = null;
+                        JSONArray deleted = null;
+                        try {
+                            password = jObjError.getJSONArray("password");
+                            error += "\n" + password.getString(0);
+                        } catch (Exception e) {}
+                        try {
+                            deleted = jObjError.getJSONArray("delete");
+                            error += "\n" + deleted.getString(0);
+                        } catch (Exception e) {}
+                        error.trim();
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + error, Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);

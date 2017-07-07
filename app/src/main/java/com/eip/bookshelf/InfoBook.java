@@ -184,6 +184,8 @@ public class InfoBook extends AppCompatActivity
             e.printStackTrace();
         }
         if (_vi == null) {
+            Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + "Le livre n'a pas été trouvé", Snackbar.LENGTH_LONG);
+            snackbar.show();
             return;
         }
 
