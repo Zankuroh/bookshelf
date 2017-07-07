@@ -66,28 +66,39 @@ public class SignUp extends AppCompatActivity
         EditText password2 = (EditText) findViewById(R.id.SignUpPwd2);
         EditText email = (EditText) findViewById(R.id.SignUpMail);
         Log.i("creation", email.getText().toString());
-        if (!SignUp.verifyEmail(email.getText().toString())) {
-            Snackbar snackbar = Snackbar.make(_lp, "L'adresse mail n'est pas valide !", Snackbar.LENGTH_LONG);
-            snackbar.show();
-            return ;
+        String errors = "";
+        if (name.getText().toString() == "")
+            errors += "Le champ pseudo est obligatoire.";
+        if (password.getText().toString() == "" || password2.getText().toString() == "")
+            if (errors != "")
+                errors += "\n";
+            errors += "Les champs mot de passe et validation mots de passe sont obligatoires.";
+        if (email.getText().toString() == "")
+            if (errors != "")
+                errors += "\n";
+            errors += "Le champ email est obligatoire.";
+
+        if (errors == "") {
+            if (!SignUp.verifyEmail(email.getText().toString())) {
+                errors += "L'adresse mail n'est pas valide !";
+            }
+            if (password.getText().toString().length() < 5) {
+                if (errors != "")
+                    errors += "\n";
+                errors += "Le mots de passe contenir 5 caractères ou plus.";
+            }
+            if (!SignUp.checkPassword(password.getText().toString(), password2.getText().toString())) {
+                if (errors != "")
+                    errors += "\n";
+                errors += "Les mots de passe ne sont pas identiques !";
+            }
         }
-        if (!SignUp.checkPassword(password.getText().toString(), password2.getText().toString())) {
-            Snackbar snackbar = Snackbar.make(_lp, "Les mots de passe ne sont pas identiques !", Snackbar.LENGTH_LONG);
+        if (errors != "") {
+            Snackbar snackbar = Snackbar.make(_lp, errors, Snackbar.LENGTH_LONG);
             snackbar.show();
             return ;
         }
         register(name.getText().toString(), email.getText().toString(), password.getText().toString());
-//        Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            public void run()
-//            {
-//                if (MainActivity.co) {
-//                    MenuItem  mi = (MenuItem)_lp.findViewById(R.id.nav_co);
-//                    MainActivity.MenuItemCo.setTitle("Déconnexion");
-//                    //Todo: Call fragment shelf
-//                }
-//            }
-//        }, 3000);
     }
 
     private void register(String name, String email, String password)

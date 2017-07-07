@@ -104,7 +104,12 @@ public class ShelfContainer extends Fragment
                         com.eip.utilities.model.BooksLocal.Book book = it.next();
                         isbns.add(book.getIsbn());
                     }
-                    searchBookInShelf(isbns);
+                    if (!isbns.isEmpty())
+                        searchBookInShelf(isbns);
+                    else {
+                        Snackbar snackbar = Snackbar.make(_v, "Votre bibliothèque est vide", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
                 } else {
                     try {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
@@ -155,7 +160,12 @@ public class ShelfContainer extends Fragment
                         com.eip.utilities.model.BooksLocal.Book book = it.next();
                         isbns.add(book.getIsbn());
                     }
-                    searchBookInShelf(isbns);
+                    if (!isbns.isEmpty())
+                        searchBookInShelf(isbns);
+                    else {
+                        Snackbar snackbar = Snackbar.make(_v, "Votre liste de souhaits est vide", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
                 } else {
                     try {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);

@@ -75,7 +75,7 @@ public interface BookshelfApi
     Call<ModifAuthor> AddAuthor(@Header("Authorization") String token, @Field("first_name") String first_name, @Field("last_name") String last_name);
 
     @DELETE("profile/")
-    Call<DelProfile> DelProfil(@Header("Authorization") String token, @Query("password") String password, @Query("deleted") String deleted);
+    Call<DelProfile> DelProfil(@Header("Authorization") String token, @Query("password") String password, @Query("delete") String deleted);
 
     @GET("author")
     Call<Authors> getAuthors(@Header("Authorization") String token);
