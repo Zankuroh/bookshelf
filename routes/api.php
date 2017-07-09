@@ -21,6 +21,8 @@ Route::group(['namespace' => 'Auth'], function() {
 
     Log::alert('namespace auth group');
     Route::post('auth', 'ApiAuthController@authenticate');
+
+    Route::post('oauth', 'ApiAuthController@oauthenticate');
 });
 
 /**

@@ -36,6 +36,7 @@ class RegisterController extends \App\Http\Controllers\ApiController
                 $newUser = new \App\Models\User();
                 $newUser->email = $newUserEmail;
                 $newUser->name = $request->input('name');
+                $newUser->name = $request->input('name');
                 $newUser->password = Hash::make($request->input('password'));
                 $newUser->save();
                 $response->setData($newUser);

@@ -35,11 +35,13 @@ class ReviewController extends \App\Http\Controllers\ApiController
         {
             $isbn = $request->input('isbn');
             $reviews = [];
-            $rawReviews = Review::leftJoin('users', 'users.id', '=', 'reviews.user_id')->where('reviews.isbn', '=', $isbn)->get()->all();
+            $rawReviews = Review::select('reviews.id as review_id', 'reviews.isbn', 'reviews.rate', 'reviews.content', 'reviews.created_at', 'users.name', 'reviews.user_id' )->leftJoin('users', 'reviews.user_id', '=', 'users.id')->where('reviews.isbn', '=', $isbn)->get()->all();
+            Log::debug($rawReviews);
             foreach ($rawReviews as $rawReview)
             {
+                Log::debug($rawReview);
                 $tmpReview = [];
-                $tmpReview['id'] = $rawReview['id'];
+                $tmpReview['id'] = $rawReview['review_id'];
                 $tmpReview['isbn'] = $rawReview['isbn'];
                 $tmpReview['rate'] = $rawReview['rate'];
                 $tmpReview['content'] = $rawReview['content'];
