@@ -196,7 +196,7 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
                 {
                     $token = JWTAuth::attempt($credentials);
                 }
-                if (is_null($token))
+                if (is_null($token) || $token == false)
                 {
                     $authenticated = false;
                     $failureAuthenticationReasons = ['title' => 'The email address or password you entered is not valid.'];

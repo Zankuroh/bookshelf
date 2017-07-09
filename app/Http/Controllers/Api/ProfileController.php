@@ -183,7 +183,7 @@ class ProfileController extends \App\Http\Controllers\ApiController
             $currentUser = JWTAuth::toUser(JWTAuth::getToken());
             if (\Illuminate\Support\Facades\Hash::check($request->input('password'), $currentUser->password))
             {
-                $currentUser->password = \Illuminate\Support\Facades\Hash::make($request->input('new_password'));
+                $currentUser->password = \Illuminate\Support\Facades\Hash::make($request->input('password'));
                 $currentUser->delete();
                 $response->setData(['deleted' => 'true']);
             }
