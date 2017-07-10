@@ -226,6 +226,8 @@ public class SignIn extends Fragment implements View.OnClickListener
                     AuthLocal auth = response.body();
 
                     String token = auth.getData().getToken();
+                    String userId = auth.getData().getUserId(); //TODO CADEAU
+
                     MainActivity.token = "bearer " + token;
                     Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
@@ -268,6 +270,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                     AuthLocal auth = response.body();
 
                     String token = auth.getData().getToken();
+                    String userId = auth.getData().getUserId(); //TODO CADEAU 2
                     MainActivity.token = "bearer " + token;
                     Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
