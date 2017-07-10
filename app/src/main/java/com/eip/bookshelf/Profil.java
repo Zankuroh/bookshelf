@@ -4,11 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -25,6 +23,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by Maxime on 28/04/2017.
@@ -60,7 +60,6 @@ public class Profil extends Fragment implements View.OnClickListener
         _book = (TextView)v.findViewById(R.id.TVBook);
         _create = (TextView)v.findViewById(R.id.TVCrea);
         _last = (TextView)v.findViewById(R.id.TVLast);
-        getInfo();
         return v;
     }
 
@@ -69,17 +68,31 @@ public class Profil extends Fragment implements View.OnClickListener
     {
         switch (v.getId()) {
             case R.id.BEditProfil:
-                startActivity(new Intent(getActivity(), EditProfil.class));
+                startActivityForResult(new Intent(getActivity(), EditProfil.class), 4242);
                 break;
             default:
                 break;
         }
     }
 
-//    private void onClickEditProfil()
-//    {
-//        startActivity(new Intent(getActivity(), EditProfil.class));
-//    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (requestCode == 4242 && resultCode == RESULT_OK) { // EditProfil for delete
+            MainActivity.co = false;
+            MainActivity.MenuItemCo.setTitle("Connexion");
+            MainActivity.MenuItemBiblio.setChecked(true);
+            MainActivity.defineNameToolBar("Bibliothèque");
+            MainActivity.accessDenied(getActivity());
+        }
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        getInfo();
+    }
 
     public void getInfo(){
         BookshelfApi bookshelfApi = new Retrofit.Builder()
@@ -108,7 +121,6 @@ public class Profil extends Fragment implements View.OnClickListener
                         snackbar.show();
                         e.printStackTrace();
                     }
-
                 }
             }
 
@@ -121,7 +133,6 @@ public class Profil extends Fragment implements View.OnClickListener
             }
         });
     }
-
-    //Todo: Récupérer les info user dans la BDD
+    //Todo: Récupérer les restant d'info du user
     //Todo: Rechercher un user ?
 }

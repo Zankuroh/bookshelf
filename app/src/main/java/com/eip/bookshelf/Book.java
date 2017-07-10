@@ -1,19 +1,5 @@
 package com.eip.bookshelf;
 
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.widget.RelativeLayout;
-
-import com.eip.utilities.api.GoogleBooksApi;
-import com.eip.utilities.model.Books;
-import com.eip.utilities.model.Item;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
 /**
  * Created by joly_i on 22/02/16.
  */

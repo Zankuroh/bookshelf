@@ -10,7 +10,6 @@
         android:text="New Text"
         android:id="@+id/TVComWho"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <TextView
@@ -20,25 +19,31 @@
         android:text="New Text"
         android:id="@+id/TVComDate"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
     <View
+        android:id="@+id/VReviewDisplayLine"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/TVComDate"
         android:background="@android:color/darker_gray"/>
 
+    <RatingBar
+        android:id="@+id/ratingBarDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:isIndicator="true"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_below="@+id/VReviewDisplayLine"/>
+
     <TextView
         android:layout_marginBottom="5dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="New Text"
         android:textSize="17dp"
         android:textColor="@android:color/black"
         android:id="@+id/TVComContent"
-        android:layout_below="@+id/TVComWho"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/TVComDate"
-        android:layout_alignEnd="@+id/TVComDate" />
+        android:layout_below="@+id/ratingBarDisplay"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

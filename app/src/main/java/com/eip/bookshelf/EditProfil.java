@@ -2,14 +2,13 @@ package com.eip.bookshelf;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -36,6 +35,7 @@ public class EditProfil extends AppCompatActivity
 {
     private RelativeLayout _rl;
     private EditProfil _this;
+    private String _login;
 
     public EditProfil()
     {
@@ -49,6 +49,7 @@ public class EditProfil extends AppCompatActivity
         setContentView(R.layout.edit_profil);
         _rl = (RelativeLayout)findViewById(R.id.RLEditProfil);
         _this = this;
+        _login = Profil.prof.getName();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
@@ -113,29 +114,29 @@ public class EditProfil extends AppCompatActivity
     {
         String pseudo = ((EditText)findViewById(R.id.ETPseudo)).getText().toString();
         String error_msg = "";
-        if (!pseudo.equals("") && !pseudo.equals(Profil.prof.getName())) {
+        if (!pseudo.equals("") && !pseudo.equals(_login)) {
             if (pseudo.length() < 5) {
                 error_msg += "Le champs pseudo doit comporter 5 caractères minimum";
             } else {
                 changeName(mdp, pseudo);
             }
-        } else {
+        } else if (pseudo.equals("")) {
             error_msg += "Les champs pseudo ne peuvent pas être vide";
         }
 
         String mdp1 = ((EditText)findViewById(R.id.ETPassword)).getText().toString();
         String mdp2 = ((EditText)findViewById(R.id.ETPasswordVerif)).getText().toString();
-        if (mdp1.equals("") || mdp2.equals("")) {
-            if (!error_msg.equals("")) {
-                error_msg += "\n";
-            }
-            error_msg += "Les champs de mot de passe doivent être remplis";
-        } else if (!mdp1.equals(mdp2)) {
+        if (!mdp1.equals(mdp2)) {
             if (!error_msg.equals("")) {
                 error_msg += "\n";
             }
             error_msg += "Les champs de mot de passe doivent être identiques";
-        } else {
+        } else if (mdp1.length() < 5 && mdp1.length() > 0) {
+            if (!error_msg.equals("")) {
+                error_msg += "\n";
+            }
+            error_msg += "Le mot de passe doit contenir 5 caractères minimum";
+        } else if (!mdp1.equals("") && !mdp2.equals("")) {
             changePassword(mdp, mdp1);
         }
         if (!error_msg.equals("")) {
@@ -170,7 +171,6 @@ public class EditProfil extends AppCompatActivity
                         snackbar.show();
                         e.printStackTrace();
                     }
-
                 }
             }
 
@@ -184,7 +184,7 @@ public class EditProfil extends AppCompatActivity
         });
     }
 
-    public void changeName(String oldPassword, String newName)
+    public void changeName(String oldPassword, final String newName)
     {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
@@ -197,6 +197,7 @@ public class EditProfil extends AppCompatActivity
             public void onResponse(Call<ProfileModification> call, Response<ProfileModification> response) {
                 if (response.isSuccessful()) {
                     ProfileModification modif = response.body();
+                    _login = newName;
                     Snackbar snackbar = Snackbar.make(_rl, "Modification réussie !", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
@@ -236,11 +237,11 @@ public class EditProfil extends AppCompatActivity
             public void onResponse(Call<DelProfile> call, Response<DelProfile> response) {
                 if (response.isSuccessful()) {
                     DelProfile del = response.body();
-                    Snackbar snackbar = Snackbar.make(_rl, "Suppression réussi !", Snackbar.LENGTH_LONG);
-                    MainActivity.co = false;
-                    MainActivity.accessDenied(_this);
-                    SignIn.switchFragment(_this, true);
+                    Snackbar snackbar = Snackbar.make(_rl, "Suppression réussie !", Snackbar.LENGTH_LONG);
                     snackbar.show();
+                    Intent intent = new Intent();
+                    setResult(RESULT_OK, intent);
+                    finish();
                 } else {
                     try {
                         JSONObject jObj = new JSONObject(response.errorBody().string());
@@ -265,7 +266,6 @@ public class EditProfil extends AppCompatActivity
                         snackbar.show();
                         e.printStackTrace();
                     }
-
                 }
             }
 

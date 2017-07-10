@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eip.utilities.api.BookshelfApi;
@@ -39,7 +38,6 @@ public class ShelfContainer extends Fragment
 {
     private ArrayList<BiblioAdapter> _modelListBiblio = new ArrayList<>();
     private View _v;
-    private RelativeLayout _rl;
     private MainActivity.shelfType _type;
     private customAdapterBiblio _adapterBiblio;
     private RequestDBLocal _req;
@@ -59,7 +57,7 @@ public class ShelfContainer extends Fragment
             _type = null;
         }
         _req = new RequestDBLocal(_type, getContext());
-//        _req.deletePrimaryInfo(null, null);
+        //_req.deletePrimaryInfo(null, null);
         if (_type == MainActivity.shelfType.MAINSHELF) {
             _v = inflater.inflate(R.layout.shelf_simple, container, false); //Anciennement shelf_container !
             setAdapters();
@@ -73,8 +71,22 @@ public class ShelfContainer extends Fragment
             setAdapters();
             wishShelf();
         }
-        _rl = (RelativeLayout)_v.findViewById(R.id.RLShelf);
         return _v;
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        _modelListBiblio.clear();
+        _adapterBiblio.notifyDataSetChanged();
+        if (_type == MainActivity.shelfType.MAINSHELF) {
+            mainShelf();
+        } else if (_type == MainActivity.shelfType.PROPOSHELF) {
+            propoShelf();
+        } else if (_type == MainActivity.shelfType.WISHSHELF) {
+            wishShelf();
+        }
     }
 
     private void mainShelf()
@@ -112,10 +124,10 @@ public class ShelfContainer extends Fragment
                     }
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }
@@ -126,7 +138,7 @@ public class ShelfContainer extends Fragment
             @Override
             public void onFailure(Call<BooksLocal> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
             }
@@ -168,10 +180,10 @@ public class ShelfContainer extends Fragment
                     }
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }
@@ -182,7 +194,7 @@ public class ShelfContainer extends Fragment
             @Override
             public void onFailure(Call<BooksLocal> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
             }

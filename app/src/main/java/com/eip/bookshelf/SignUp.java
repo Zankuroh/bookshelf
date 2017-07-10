@@ -1,5 +1,6 @@
 package com.eip.bookshelf;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -67,33 +68,40 @@ public class SignUp extends AppCompatActivity
         EditText email = (EditText) findViewById(R.id.SignUpMail);
         Log.i("creation", email.getText().toString());
         String errors = "";
-        if (name.getText().toString() == "")
+        if (name.getText().toString().equals("")) {
             errors += "Le champ pseudo est obligatoire.";
-        if (password.getText().toString() == "" || password2.getText().toString() == "")
-            if (errors != "")
+        }
+        if (password.getText().toString().equals("") || password2.getText().toString().equals("")) {
+            if (!errors.equals("")) {
                 errors += "\n";
+            }
             errors += "Les champs mot de passe et validation mots de passe sont obligatoires.";
-        if (email.getText().toString() == "")
-            if (errors != "")
+        }
+        if (email.getText().toString().equals("")) {
+            if (!errors.equals("")) {
                 errors += "\n";
+            }
             errors += "Le champ email est obligatoire.";
+        }
 
-        if (errors == "") {
+        if (errors.equals("")) {
             if (!SignUp.verifyEmail(email.getText().toString())) {
-                errors += "L'adresse mail n'est pas valide !";
+                errors += "L'adresse mail n'est pas valide.";
             }
             if (password.getText().toString().length() < 5) {
-                if (errors != "")
+                if (!errors.equals("")) {
                     errors += "\n";
-                errors += "Le mots de passe contenir 5 caractères ou plus.";
+                }
+                errors += "Le mots de passe doit contenir 5 caractères ou plus.";
             }
             if (!SignUp.checkPassword(password.getText().toString(), password2.getText().toString())) {
-                if (errors != "")
+                if (!errors.equals("")) {
                     errors += "\n";
-                errors += "Les mots de passe ne sont pas identiques !";
+                }
+                errors += "Les mots de passe ne sont pas identiques.";
             }
         }
-        if (errors != "") {
+        if (!errors.equals("")) {
             Snackbar snackbar = Snackbar.make(_lp, errors, Snackbar.LENGTH_LONG);
             snackbar.show();
             return ;
@@ -101,7 +109,7 @@ public class SignUp extends AppCompatActivity
         register(name.getText().toString(), email.getText().toString(), password.getText().toString());
     }
 
-    private void register(String name, String email, String password)
+    private void register(String name, final String email, final String password)
     {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
@@ -115,10 +123,12 @@ public class SignUp extends AppCompatActivity
                 if (response.isSuccessful()) {
                     Register auth = response.body();
                     Snackbar snackbar = Snackbar.make(_lp, "Création réussie !", Snackbar.LENGTH_LONG);
-                    MainActivity.co = true;
-                    MainActivity.MenuItemCo.setTitle("Déconnexion");
-                    //Todo: Call fragment shelf
                     snackbar.show();
+                    Intent intent = new Intent();
+                    intent.putExtra("login", email);
+                    intent.putExtra("pwd", password);
+                    setResult(RESULT_OK, intent);
+                    finish();
                 } else {
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
@@ -129,7 +139,6 @@ public class SignUp extends AppCompatActivity
                         snackbar.show();
                         e.printStackTrace();
                     }
-
                 }
             }
 
@@ -152,5 +161,4 @@ public class SignUp extends AppCompatActivity
     {
         return pwd1.equals(pwd2);
     }
-
 }

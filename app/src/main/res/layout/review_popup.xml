@@ -24,12 +24,13 @@
 
     <RatingBar
         android:id="@+id/ratingBar"
-        android:layout_below="@+id/VReviewLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:numStars="5"
+        android:stepSize="1"
         android:scaleX="0.75"
         android:scaleY="0.75"
+        android:layout_below="@+id/VReviewLine"
         android:layout_centerHorizontal="true" />
 
     <EditText
@@ -53,12 +54,12 @@
         android:layout_marginEnd="14dp"/>
 
     <Button
-        android:id="@+id/BReviewCancel"
+        android:id="@+id/BReviewDelete"
         android:background="#00FF"
         android:textColor="@color/colorAccent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Annuler"
+        android:text="Supprimer"
         android:layout_below="@+id/ETCom"
         android:layout_alignParentStart="true"/>
 

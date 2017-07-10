@@ -1,12 +1,9 @@
 package com.eip.bookshelf;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +18,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphRequestAsyncTask;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -53,7 +47,6 @@ public class SignIn extends Fragment implements View.OnClickListener
     private View _v;
     private CallbackManager _callbackManager;
     private GoogleApiClient mGoogleApiClient;
-    private FragmentActivity _fa;
 
     public SignIn()
     {
@@ -68,7 +61,6 @@ public class SignIn extends Fragment implements View.OnClickListener
         _v.findViewById(R.id.btnForgetPass).setOnClickListener(this);
         _v.findViewById(R.id.btnCreateAccount).setOnClickListener(this);
 
-        _fa = (FragmentActivity)getContext();
         _callbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) _v.findViewById(R.id.fConnect);
         loginButton.setReadPermissions("public_profile email");
@@ -95,7 +87,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 handler.postDelayed(new Runnable() {
                     public void run()
                     {
-                        switchFragment(_fa, false);
+                        switchFragment();
                     }
                 }, 3000);
             }
@@ -144,7 +136,16 @@ public class SignIn extends Fragment implements View.OnClickListener
     }
 
     @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data)
+    {
+//        if (requestCode == 4242) { // SignUp successfull -> Auto connect
+//            if (resultCode == RESULT_OK) {
+//                String login = data.getStringExtra("login");
+//                String passwd = data.getStringExtra("pwd");
+//                connect(login, passwd, _v);
+//            }
+//        }
+
         if (requestCode == RC_SIGN_IN) {
 
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -170,13 +171,13 @@ public class SignIn extends Fragment implements View.OnClickListener
                 Log.i("GOOGLE AUTHCODE",Authcode);
                 Snackbar snackbar = Snackbar.make(_v, Authcode, 5000);
                 snackbar.show();
-                //connectOauth(Authcode, "google");
+                connectOauth(Authcode, "google");
 
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     public void run()
                     {
-                        switchFragment(_fa, false);
+                        switchFragment();
                     }
                 }, 3000);
 
@@ -202,7 +203,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 snackbar.show();
                 break;
             case R.id.btnCreateAccount:
-                startActivity(new Intent(getActivity(), SignUp.class));
+                startActivityForResult(new Intent(getActivity(), SignUp.class), 4242);
                 break;
             default:
                 break;
@@ -214,21 +215,10 @@ public class SignIn extends Fragment implements View.OnClickListener
         MainActivity.hideSoftKeyboard(getActivity());
         EditText login = (EditText) _v.findViewById(R.id.ETsignInMail);
         EditText passwd = (EditText) _v.findViewById(R.id.ETsignInMdp);
-        connect(login.getText().toString(), passwd.getText().toString());
-
-//        Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            public void run()
-//            {
-//                if (MainActivity.co) {
-//                    MainActivity.MenuItemCo.setTitle("Déconnexion");
-//                    //Todo: launch fragment shelf
-//                }
-//            }
-//        }, 3000);
+        connect(login.getText().toString(), passwd.getText().toString(), _v);
     }
 
-    private void connect(String email, String pwd)
+    private void connect(String email, String pwd, final View v)
     {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
@@ -244,17 +234,18 @@ public class SignIn extends Fragment implements View.OnClickListener
 
                     String token = auth.getData().getToken();
                     MainActivity.token = "bearer " + token;
-                    Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
+                    Log.i("TOKEN", MainActivity.token);
+                    Snackbar snackbar = Snackbar.make(v, "Connexion réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
                     snackbar.show();
-                    switchFragment(_fa, false);
+                    switchFragment();
                 } else {
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }
@@ -263,7 +254,7 @@ public class SignIn extends Fragment implements View.OnClickListener
 
             @Override
             public void onFailure(Call<AuthLocal> call, Throwable t) {
-                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
             }
@@ -289,7 +280,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                     Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
                     snackbar.show();
-                    switchFragment(_fa, false);
+                    switchFragment();
                 } else {
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
@@ -312,16 +303,13 @@ public class SignIn extends Fragment implements View.OnClickListener
         });
     }
 
-    static void switchFragment(FragmentActivity fa, boolean deco)
+    private void switchFragment()
     {
-        if (deco) {
-            MainActivity.MenuItemCo.setTitle("Connexion");
-        } else {
-            MainActivity.MenuItemCo.setTitle("Déconnexion");
-        }
+        MainActivity.MenuItemCo.setTitle("Déconnexion");
         MainActivity.MenuItemBiblio.setChecked(true);
         MainActivity.defineNameToolBar("Bibliothèque");
-        android.support.v4.app.FragmentTransaction fragmentTransaction = fa.getSupportFragmentManager().beginTransaction();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+
         Bundle arg = new Bundle();
         arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
 //        ShelfTab shelfFrag = new ShelfTab();
