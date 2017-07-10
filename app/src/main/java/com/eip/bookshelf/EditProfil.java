@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -58,9 +59,9 @@ public class EditProfil extends AppCompatActivity
         }
         ((EditText)findViewById(R.id.ETPseudo)).setText(Profil.prof.getName());
         if (MainActivity.provider != null) {
-            findViewById(R.id.ETPassword).setVisibility(View.GONE);
-            findViewById(R.id.ETPasswordVerif).setVisibility(View.GONE);
-            findViewById(R.id.BDelete).setVisibility(View.GONE);
+            findViewById(R.id.ETPassword).setVisibility(View.INVISIBLE);
+            findViewById(R.id.ETPasswordVerif).setVisibility(View.INVISIBLE);
+            findViewById(R.id.BDelete).setVisibility(View.INVISIBLE);
         }
         //Todo: set les autres champs
     }
