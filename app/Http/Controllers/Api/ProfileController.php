@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth as JWTAuth;
+use Log;
 
 class ProfileController extends \App\Http\Controllers\ApiController
 {
@@ -60,8 +61,8 @@ class ProfileController extends \App\Http\Controllers\ApiController
     {
         $response = $this->getDefaultJsonResponse();
         if ($this->_ARV->validate($request,
-                ['name' => 'required|string|between:5,30',
-                'password' => 'required|string|between:5,30']))
+            ['name' => 'required|string|between:5,30',
+            'password' => 'required|string|between:5,30']))
         {
             $currentUser = JWTAuth::toUser(JWTAuth::getToken());
             \Illuminate\Support\Facades\Log::alert("CURRENT USER PASSWORD" . $currentUser->password . ' and name ' . $currentUser->name);
@@ -174,23 +175,29 @@ class ProfileController extends \App\Http\Controllers\ApiController
     public function deleteProfile(Request $request)
     {
         $response = $this->getDefaultJsonResponse();
-
         if ($this->_ARV->validate($request, 
-            ['password' => 'required|string|between:5,30',
-            'delete' => 'required|accepted']
+            ['delete' => 'required|accepted']
             ))
         {
-            $currentUser = JWTAuth::toUser(JWTAuth::getToken());
-            if (\Illuminate\Support\Facades\Hash::check($request->input('password'), $currentUser->password))
+            $currentUser =  $this->getCurrentUser();
+            if (!$currentUser->social_auth)
             {
-                $currentUser->password = \Illuminate\Support\Facades\Hash::make($request->input('password'));
-                $currentUser->delete();
-                $response->setData(['deleted' => 'true']);
+                if (\Illuminate\Support\Facades\Hash::check($request->input('password'), $currentUser->password))
+                {
+                    $currentUser->password = \Illuminate\Support\Facades\Hash::make($request->input('password'));
+                    $currentUser->delete();
+                    $response->setData(['deleted' => 'true']);
+                }
+                else
+                {
+                    $response = $this->_ARV->getFailureJson();
+                    $response->setOptionnalFields(['title' => 'Bad credentials.']);
+                }   
             }
             else
             {
-                $response = $this->_ARV->getFailureJson();
-                $response->setOptionnalFields(['title' => 'Bad credentials.']);
+                $currentUser->delete();
+                $response->setData(['deleted' => 'true']);
             }
         }
         else

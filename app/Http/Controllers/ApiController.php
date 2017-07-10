@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Log;
 
 class ApiController extends Controller
 {
