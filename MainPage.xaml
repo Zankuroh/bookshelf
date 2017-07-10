@@ -1,0 +1,55 @@
+﻿<Page
+    x:Class="BookShelf.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BookShelf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid x:Name="grdMain" Background="Beige" Margin="2,2">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20*"/>
+            <RowDefinition Height="20*"/>
+            <RowDefinition Height="20*"/>
+            <RowDefinition Height="20*"/>
+            <RowDefinition Height="20*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="80*" MinWidth="160" MaxWidth="200"/>
+            <ColumnDefinition Width="10*"/>
+        </Grid.ColumnDefinitions>
+        <!--<ScrollViewer Grid.Row="3"  Grid.Column="1" VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBlock Text="App ID: " VerticalAlignment="Center" Width="85"/>
+                    <TextBox x:Name="FacebookClientID" Height="14" Width="200" Text=""/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBlock  Text="Site URL: " VerticalAlignment="Center" Width="85"/>
+                    <TextBox x:Name="FacebookCallbackUrl" Height="14" Width="200" Text=""/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBox x:Name="FacebookReturnedToken" Width="285" Text="Press Launch to view returned token..." IsEnabled="False"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>-->
+        <StackPanel x:Name="stpnlCredential" Grid.Row="1" Grid.Column="1" Background="Beige">
+            <TextBox x:Name="txbxUsrEmail" TextAlignment="Left" PlaceholderText="Email" />
+            <PasswordBox x:Name="pwdbxUsr" Password="" PlaceholderText="Entrez Mot de Passe"/>
+        </StackPanel>
+        <StackPanel x:Name="stpnAccount" Grid.Row="2" Grid.Column="1" Background="Beige" Margin="2,2">
+            <Button x:Name="btConnection" Content="Connexion" HorizontalAlignment="Stretch" Margin="0,2" VerticalAlignment="Bottom" Click="btConnection_Click" Foreground="Black"/>
+            <Button x:Name="btForgotPwd" Content="Mot de passe Oublié" HorizontalAlignment="Stretch" Margin="0,2" VerticalAlignment="Bottom" Foreground="Black" Click="btForgotPwd_Click"/>
+            <Button x:Name="btCreateAccount" Content="Créer un compte" HorizontalAlignment="Stretch" Margin="0,2" VerticalAlignment="Bottom"  Foreground="Black" Click="btCreateAccount_Click"/>
+        </StackPanel>
+        <StackPanel x:Name="stpnlSocNet" Grid.Row="4" Grid.Column="1" Background="Beige" Margin="2,2">
+            <Button x:Name="btFacebook" Content="Facebook" HorizontalAlignment="Center" Margin="10,2" VerticalAlignment="Bottom"  Width="100" Click="btFacebook_Click" Foreground="Black"/>
+            <Button x:Name="btGoogle" Content="Google" HorizontalAlignment="Center" Margin="10,2" VerticalAlignment="Bottom"  Width="100" Foreground="Black" Click="btGoogle_Click"/>
+            <!--<StackPanel Orientation="Vertical" Margin="0,10,0,0">
+                <Button x:Name="Launch" Content="Launch" Width="285" Click="Launch_Click"/>
+            </StackPanel>-->
+        </StackPanel>
+    </Grid>
+</Page>

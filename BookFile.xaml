@@ -1,0 +1,60 @@
+﻿<Page
+    x:Class="BookShelf.BookFile"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BookShelf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="RessourceDict.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <StackPanel x:Name="stpnlMain" Margin="0,0,0,0">
+        <CommandBar>
+            <AppBarSeparator/>
+            <AppBarButton Icon="Add"  Label="Add" Click="btAddBook_Click"/>
+            <AppBarButton Icon="Delete" Label="Delete" Click="btDeleteLib_Click"/>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Icon="Bookmarks"  Label="Add to Wishlist" Click="btAddtoWhishlst"/>
+                <AppBarButton Icon="Bookmarks"  Label="Remove from Wishlist" Click="btDeleteWish_Click"/>
+            </CommandBar.SecondaryCommands>
+            <CommandBar.Content>
+                <TextBlock Text="A Book" />
+            </CommandBar.Content>
+        </CommandBar>
+        <ScrollViewer x:Name="scviSynopsis"  HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" Height="600">
+            <Grid x:Name="grdContent" Margin="0,0,0,0" Background="Beige">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="15*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Image  x:Name="imgBook" Grid.Row="0" Stretch="Fill" Source="Assets/StoreLogo.png" Height="Auto" HorizontalAlignment="Left" Width="Auto"></Image>
+                <StackPanel x:Name="stpnlBook" Grid.Row="1" >
+                    <TextBlock x:Name="txblTitle" Text="unknown" TextAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txblAuthor" Text="unknown" TextAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txblGenre" Text="unknown" TextAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txblLanguage" Text="unknown" TextAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txblPublisher" Text="unknown" TextAlignment="Center" VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock x:Name="txblSynopsis" Grid.Row="2" Text="unknown" TextAlignment="Center" Margin="2,0" TextWrapping="Wrap"/>
+                <Grid x:Name="grdUsrReview" Grid.Row="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel x:Name="stpnlRev" Grid.Row="1">
+                    </StackPanel>
+                </Grid>
+                <!--<local:ucReviews x:Name="ucReview" Grid.Row="3"></local:ucReviews>-->
+            </Grid>
+        </ScrollViewer>
+    </StackPanel>
+</Page>

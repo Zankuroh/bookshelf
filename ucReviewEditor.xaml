@@ -1,0 +1,38 @@
+﻿<UserControl
+    x:Class="BookShelf.ucReviewEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BookShelf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    MinHeight="40"
+    MaxHeight="200">
+
+    <Grid x:Name="grdMain" Background="Beige">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="100*" MaxHeight="100"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="userData" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="100*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="txblTitle" Text="Votre Critique"/>
+            <Slider x:Name="sldGrade" Grid.Row="1"   Width="100" Orientation="Horizontal" HorizontalAlignment="Left" Value="0" Minimum="0" Maximum="5" 
+  SmallChange="1" TickPlacement="BottomRight" TickFrequency="1" Margin="10,2"/>
+            <TextBlock x:Name="txblYourGrade" Text="Votre Note = " Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Margin="2, 2"/>
+            <TextBlock x:Name="txblGrade" Text="{Binding Value, ElementName=sldGrade}" Grid.Row="1" Grid.Column="2" Margin="20,2"/>
+        </Grid>
+        <TextBox x:Name="txbxReview" PlaceholderText="Votre Commentaire" Grid.Row="1" MinHeight="50"/>
+        <Button x:Name="btReviewEdit" Grid.Row="2" Content="ENVOYER" HorizontalAlignment="Right" Click="btReviewEdit_Click"/>
+        <Button x:Name="btReviewDel" Grid.Row="2" Content="SUPPRIMER" HorizontalAlignment="Left" Visibility="Collapsed" Click="btReviewDel_Click"/>
+    </Grid>
+</UserControl>

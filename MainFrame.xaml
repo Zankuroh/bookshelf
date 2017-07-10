@@ -1,0 +1,55 @@
+﻿<Page
+    x:Class="BookShelf.MainFrame"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BookShelf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="RessourceDict.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <SplitView x:Name="ShellSplitView" DisplayMode="CompactOverlay"
+               IsPaneOpen="False" CompactPaneLength="48" OpenPaneLength="200"
+               PaneBackground="{ThemeResource SplitViewBackgroundBrush}">
+        <SplitView.Pane>
+            <StackPanel>
+                <!-- Menu (hamburger) button -->
+                <RadioButton Style="{StaticResource SplitViewMenuButtonStyle}" Click="OnMenuButtonClicked" />
+
+                 <!--Bookshelf button-->
+                <RadioButton Tag="" Content="Ma Bibliothèque" Style="{StaticResource SplitViewNavButtonStyle}" Click="LibraryButton_Click" IsChecked="True"/>
+
+                <!-- Search button -->
+                <RadioButton Tag="" Content="Recherche" Style="{StaticResource SplitViewNavButtonStyle}" Click="SearchButton_Click"/>
+
+                <!--Wishlist button-->
+                <RadioButton Tag="" Content="Liste de Souhaits" Style="{StaticResource SplitViewNavButtonStyle}" Click="WishLstButton_Click"/>
+
+                <!-- Authors button -->
+                <RadioButton  Tag=""  Content="Auteurs suivis" Style="{StaticResource SplitViewNavButtonStyle}" Click="AuthorsButton_Click"/>
+
+                <!-- Suggestion button -->
+                <RadioButton Tag="" Content="Suggestion" Style="{StaticResource SplitViewNavButtonStyle}" Click="Suugestions_Click"/>
+                
+                <!--Profile button-->
+                <RadioButton Tag="" Content="Profil" Style="{StaticResource SplitViewNavButtonStyle}" Click="ProfileButton_Click"/>
+                
+                <!-- Deconnexion button -->
+                <RadioButton Tag="" Content="Deconnexion" Style="{StaticResource SplitViewNavButtonStyle}" Click="Deconnection_Click"/>
+
+                <!-- Parameters button --><!--
+                <RadioButton Tag="" Content="Parametres" Style="{StaticResource SplitViewNavButtonStyle}"/>
+
+                --><!-- About button --><!--
+                <RadioButton Tag="" Content="A propos" Style="{StaticResource SplitViewNavButtonStyle}" Click="ProfileButton_Click"/>-->
+            </StackPanel>
+        </SplitView.Pane>
+    </SplitView>
+</Page>
