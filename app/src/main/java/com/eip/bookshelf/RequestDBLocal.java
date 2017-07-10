@@ -57,9 +57,10 @@ class RequestDBLocal
         }
         String where = sb.toString();
         String selection = LocalDBContract.LocalDB.COLUMN_NAME_ISBN + " in (" + where.substring(0, where.length() - 2) +
-                ") AND " + LocalDBContract.LocalDB.COLUMN_NAME_TYPE + " = ?";
+                ") AND " + LocalDBContract.LocalDB.COLUMN_NAME_TYPE + " = ?" +
+                " AND " + LocalDBContract.LocalDB.COLUMN_NAME_USERID + " = ?";
 
-        String[] selectionArgs = { _type };
+        String[] selectionArgs = { _type, MainActivity.userID };
 
         Cursor cursor = db.query(
                 LocalDBContract.LocalDB.TABLE_NAME,       // The table to query
@@ -82,6 +83,7 @@ class RequestDBLocal
         values.put(LocalDBContract.LocalDB.COLUMN_NAME_ISBN, isbn);
         values.put(LocalDBContract.LocalDB.COLUMN_NAME_PIC, pic);
         values.put(LocalDBContract.LocalDB.COLUMN_NAME_TYPE, _type);
+        values.put(LocalDBContract.LocalDB.COLUMN_NAME_USERID, MainActivity.userID);
 
         // Insert the new row, returning the primary key value of the new row
         db.insert(LocalDBContract.LocalDB.TABLE_NAME, null, values);
@@ -100,8 +102,9 @@ class RequestDBLocal
         }
 
         String selection = LocalDBContract.LocalDB.COLUMN_NAME_ISBN + " = ? " +
-                " AND " + LocalDBContract.LocalDB.COLUMN_NAME_TYPE + " = ?";
-        String[] selectionArgs = {isbn, type};
+                " AND " + LocalDBContract.LocalDB.COLUMN_NAME_TYPE + " = ?" +
+                " AND " + LocalDBContract.LocalDB.COLUMN_NAME_USERID + " = ?";
+        String[] selectionArgs = {isbn, type, MainActivity.userID};
 
         db.delete(LocalDBContract.LocalDB.TABLE_NAME, selection, selectionArgs);
     }

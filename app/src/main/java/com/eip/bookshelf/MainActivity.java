@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 {
     public static boolean co = false;
     public static String token = null;
+    public static String userID = null;
     public static MenuItem MenuItemCo;
     public static MenuItem MenuItemBiblio;
     enum shelfType {
