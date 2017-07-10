@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -57,6 +58,11 @@ public class EditProfil extends AppCompatActivity
             ab.setDisplayHomeAsUpEnabled(true);
         }
         ((EditText)findViewById(R.id.ETPseudo)).setText(Profil.prof.getName());
+        if (MainActivity.provider != null) {
+            findViewById(R.id.ETPassword).setVisibility(View.INVISIBLE);
+            findViewById(R.id.ETPasswordVerif).setVisibility(View.INVISIBLE);
+            findViewById(R.id.BDelete).setVisibility(View.INVISIBLE);
+        }
         //Todo: set les autres champs
     }
 
@@ -74,19 +80,22 @@ public class EditProfil extends AppCompatActivity
 
     public void onClickValidate(View v)
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Entrez votre mot de passe actuel");
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        builder.setView(input);
-        builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                checkData(input.getText().toString());
-            }
-        });
-        builder.setNegativeButton("Annuler", null);
-        builder.show();
-        //onBackPressed();
+        if (MainActivity.provider != null) {
+            checkData("");
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Entrez votre mot de passe actuel");
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+            builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    checkData(input.getText().toString());
+                }
+            });
+            builder.setNegativeButton("Annuler", null);
+            builder.show();
+        }
     }
 
     public void onClickDelete(View v)
