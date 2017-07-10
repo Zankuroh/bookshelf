@@ -2,7 +2,9 @@ package com.eip.bookshelf;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static boolean co = false;
     public static String token = null;
     public static String userID = null;
+    public static String provider = null;
     public static MenuItem MenuItemCo;
     public static MenuItem MenuItemBiblio;
     enum shelfType {
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SEARCH
     }
     private SignIn _signFrag;
+    private static Dialog _loading;
     static private MainActivity _this;
 
     @Override
@@ -59,6 +63,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setItemIconTintList(null);
 
         defineNameToolBar("Bibliothèque");
+        _loading = new Dialog(this);
+        _loading.setContentView(R.layout.loading);
+        _loading.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        _loading.setCancelable(false);;
     }
 
     @Override
@@ -164,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fragmentTransaction.commit();
                 } else {
                     MainActivity.co = false;
+                    MainActivity.provider = null;
                     item.setTitle("Connexion");
                     accessDenied(_this);
                 }
@@ -229,5 +238,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (current_focus != null) {
             inputMethodManager.hideSoftInputFromWindow(current_focus.getWindowToken(), 0);
         }
+    }
+
+    static void startLoading()
+    {
+        _loading.show();
+    }
+
+    static void stopLoading()
+    {
+        _loading.dismiss();
     }
 }

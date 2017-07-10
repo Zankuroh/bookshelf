@@ -8,9 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Handler;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.AuthLocal.AuthLocal;
@@ -82,7 +80,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                         Log.i("FACEBOOK ID",user.optString("id"));
                     }
                 }).executeAsync();*/
-
+                MainActivity.provider = "FB";
                 connectOauth(accessToken.getToken(), "facebook");
 
             }
@@ -166,6 +164,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 Log.i("GOOGLE AUTHCODE",Authcode);
                 Snackbar snackbar = Snackbar.make(_v, Authcode, 5000);
                 snackbar.show();
+                MainActivity.provider = "Google";
                 connectOauth(Authcode, "google");
 
             } else {
@@ -207,6 +206,7 @@ public class SignIn extends Fragment implements View.OnClickListener
 
     private void connect(String email, String pwd, final View v)
     {
+        MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -238,6 +238,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                         e.printStackTrace();
                     }
                 }
+                MainActivity.stopLoading();
             }
 
             @Override
@@ -245,12 +246,14 @@ public class SignIn extends Fragment implements View.OnClickListener
                 Snackbar snackbar = Snackbar.make(v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
+                MainActivity.stopLoading();
             }
         });
     }
 
     private void connectOauth(String token, String provider)
     {
+        MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -271,6 +274,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                     snackbar.show();
                     switchFragment();
                 } else {
+                    MainActivity.provider = null;
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
                         Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
@@ -281,6 +285,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                         e.printStackTrace();
                     }
                 }
+                MainActivity.stopLoading();
             }
 
             @Override
@@ -288,6 +293,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
+                MainActivity.stopLoading();
             }
         });
     }
