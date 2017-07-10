@@ -210,7 +210,8 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
 
             if ($authenticated)
             {
-                $response->setData(['token' => $token]);
+                $user = JWTAuth::toUser($token);
+                $response->setData(['token' => $token, 'user_id' => $user->id]);
             }
             else
             {
