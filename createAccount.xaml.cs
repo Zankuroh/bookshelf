@@ -94,7 +94,7 @@ namespace BookShelf
                 clFacebook fb = new clFacebook();
                 winsdkfb.FBSession sess = await fb.FBgetSession();
                 clRequestAPI Req = new clRequestAPI("/api/register");
-                string requestContent = "email=" + sess.User.Email + "&password=" + "123456789" + "&name=" + sess.User.FirstName;
+                string requestContent = "email=" + sess.User.Email + "&password=" + "samourai" + "&name=" + sess.User.FirstName;
                 res = await Req.PostRequest(requestContent, "application/x-www-form-urlencoded");
                 JsonObject jsonRes;
                 JsonObject.TryParse(res, out jsonRes);
