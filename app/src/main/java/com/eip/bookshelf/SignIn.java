@@ -38,6 +38,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Created by Maxime on 02/12/2016.
  */
@@ -143,13 +145,13 @@ public class SignIn extends Fragment implements View.OnClickListener
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data)
     {
-//        if (requestCode == 4242) { // SignUp successfull -> Auto connect
-//            if (resultCode == RESULT_OK) {
-//                String login = data.getStringExtra("login");
-//                String passwd = data.getStringExtra("pwd");
-//                connect(login, passwd, _v);
-//            }
-//        }
+        if (requestCode == 4242) { // SignUp successfull -> Auto connect
+            if (resultCode == RESULT_OK) {
+                String login = data.getStringExtra("login");
+                String passwd = data.getStringExtra("pwd");
+                connect(login, passwd, _v);
+            }
+        }
 
         if (requestCode == RC_SIGN_IN) {
 
