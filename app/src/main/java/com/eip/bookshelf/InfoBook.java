@@ -128,33 +128,44 @@ public class InfoBook extends AppCompatActivity
     {
         getMenuInflater().inflate(R.menu.main, menu);
         _menu = menu;
-        if (_inMain) {
-            menu.findItem(R.id.IAddBookBiblio).setVisible(false);
+
+        if (MainActivity.co) {
+            if (_inMain) {
+                menu.findItem(R.id.IAddBookBiblio).setVisible(false);
+            } else {
+                menu.findItem(R.id.IRemoveBookBiblio).setVisible(false);
+            }
+
+            if (_inWish) {
+                menu.findItem(R.id.IAddBookWish).setVisible(false);
+            } else {
+                menu.findItem(R.id.IRemoveBookWish).setVisible(false);
+            }
         } else {
             menu.findItem(R.id.IRemoveBookBiblio).setVisible(false);
-        }
-
-        if (_inWish) {
+            menu.findItem(R.id.IAddBookBiblio).setVisible(false);
             menu.findItem(R.id.IAddBookWish).setVisible(false);
-        } else {
             menu.findItem(R.id.IRemoveBookWish).setVisible(false);
         }
+
         return true;
     }
 
     private void setButtons()
     {
-        _req = new RequestDBLocal(MainActivity.shelfType.MAINSHELF, this);
-        ArrayList<String> isbns = new ArrayList<>();
-        isbns.add(_isbn);
+        if (MainActivity.co) {
+            _req = new RequestDBLocal(MainActivity.shelfType.MAINSHELF, this);
+            ArrayList<String> isbns = new ArrayList<>();
+            isbns.add(_isbn);
 
-        Cursor c = _req.readPrimaryInfo(isbns);
-        _inMain = c.getCount() != 0;
-        c.close();
-        _req.setType(MainActivity.shelfType.WISHSHELF);
-        c = _req.readPrimaryInfo(isbns);
-        _inWish = c.getCount() != 0;
-        c.close();
+            Cursor c = _req.readPrimaryInfo(isbns);
+            _inMain = c.getCount() != 0;
+            c.close();
+            _req.setType(MainActivity.shelfType.WISHSHELF);
+            c = _req.readPrimaryInfo(isbns);
+            _inWish = c.getCount() != 0;
+            c.close();
+        }
     }
 
     private void setAdapters()
