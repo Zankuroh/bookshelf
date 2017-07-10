@@ -23,6 +23,14 @@
             "package_name": "com.eip.bookshelf",
             "certificate_hash": "57166fa2d4c6058da19b94eb77e9455d5765e4e8"
           }
+        },
+        {
+          "client_id": "758818420378-oh554r66arte4qo2ajidrrjikpqjerqp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eip.bookshelf",
+            "certificate_hash": "A2:05:97:17:2E:C1:D5:45:A0:4D:95:C6:88:54:F9:DD:8C:F8:42:B1"
+          }
         }
       ],
       "api_key": [

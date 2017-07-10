@@ -131,8 +131,8 @@ public class SignIn extends Fragment implements View.OnClickListener
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.EMAIL))
                 .requestEmail()
-                .requestIdToken(getString(R.string.server_client_id))
-                .requestServerAuthCode(getString(R.string.server_client_id))
+                .requestIdToken(getString(R.string.server_client_id_2)) // R.string.server_client_id => nicolas // R.string.server_client_id_2 => maxime
+                .requestServerAuthCode(getString(R.string.server_client_id_2))// R.string.server_client_id => nicolas // R.string.server_client_id_2 => maxime
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(_v.getContext())
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
