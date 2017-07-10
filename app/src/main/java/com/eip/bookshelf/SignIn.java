@@ -83,13 +83,6 @@ public class SignIn extends Fragment implements View.OnClickListener
 
                 connectOauth(accessToken.getToken(), "facebook");
 
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run()
-                    {
-                        switchFragment();
-                    }
-                }, 3000);
             }
 
             @Override
@@ -103,6 +96,18 @@ public class SignIn extends Fragment implements View.OnClickListener
         });
 
         SignInButton mGoogleSignInButton = (SignInButton)_v.findViewById(R.id.gConnect);
+        /*if (MainActivity.token != null) {
+            for (int i = 0; i < mGoogleSignInButton.getChildCount(); i++) {
+                View v = mGoogleSignInButton.getChildAt(i);
+
+                // if the view is instance of TextView then change the text SignInButton
+                if (v instanceof TextView) {
+                    TextView tv = (TextView) v;
+                    tv.setText("Se déconnecter");
+                    //TODO faire la déconnexion si l'envie t'en prend @nicolas
+                }
+            }
+        }*/
 
         mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,31 +160,11 @@ public class SignIn extends Fragment implements View.OnClickListener
                 String idToken = acct.getIdToken();
                 String Authcode = acct.getServerAuthCode();
 
-                SignInButton mGoogleSignInButton = (SignInButton)_v.findViewById(R.id.gConnect);
-                for (int i = 0; i < mGoogleSignInButton.getChildCount(); i++) {
-                    View v = mGoogleSignInButton.getChildAt(i);
-
-                    // if the view is instance of TextView then change the text SignInButton
-                    if (v instanceof TextView) {
-                        TextView tv = (TextView) v;
-                        tv.setText("Se déconnecter");
-                        //TODO faire la déconnexion si l'envie t'en prend @nicolas
-                    }
-                }
-
                 Log.i("GOOGLE IDTOKEN", idToken);
                 Log.i("GOOGLE AUTHCODE",Authcode);
                 Snackbar snackbar = Snackbar.make(_v, Authcode, 5000);
                 snackbar.show();
                 connectOauth(Authcode, "google");
-
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run()
-                    {
-                        switchFragment();
-                    }
-                }, 3000);
 
             } else {
                 Log.i("GOOGLE NOT SUCCESSFULLY","");
@@ -233,6 +218,8 @@ public class SignIn extends Fragment implements View.OnClickListener
                     AuthLocal auth = response.body();
 
                     String token = auth.getData().getToken();
+                    String userId = auth.getData().getUserId(); //TODO CADEAU
+
                     MainActivity.token = "bearer " + token;
                     Log.i("TOKEN", MainActivity.token);
                     Snackbar snackbar = Snackbar.make(v, "Connexion réussie !", Snackbar.LENGTH_LONG);
@@ -276,6 +263,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                     AuthLocal auth = response.body();
 
                     String token = auth.getData().getToken();
+                    String userId = auth.getData().getUserId(); //TODO CADEAU 2
                     MainActivity.token = "bearer " + token;
                     Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
