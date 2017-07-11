@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ public class ShelfTab extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        Log.d("viewpager", String.valueOf(R.string.appbar_scrolling_view_behavior));
         View v = inflater.inflate(R.layout.shelf_tab, container, false);
 
         ViewPager viewPager = (ViewPager) v.findViewById(R.id.VPTab);
@@ -43,7 +41,6 @@ public class ShelfTab extends Fragment
 
     private void setupViewPager(ViewPager viewPager)
     {
-        Log.d("setupviewpager", "adapter");
         ViewPagerAdapter adapter = new ViewPagerAdapter(this.getActivity().getSupportFragmentManager());
         Bundle arg = new Bundle();
         arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
@@ -75,7 +72,6 @@ public class ShelfTab extends Fragment
         @Override
         public Fragment getItem(int position)
         {
-            Log.d("getitem", "Bonjour.");
             return mFragmentList.get(position);
         }
 

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +70,6 @@ public class SignIn extends Fragment implements View.OnClickListener
             public void onSuccess(LoginResult loginResult) {
 
                 AccessToken accessToken = loginResult.getAccessToken();
-                Log.i("FACEBOOK", accessToken.getToken());
                /* GraphRequestAsyncTask request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject user, GraphResponse graphResponse) {
@@ -121,8 +119,9 @@ public class SignIn extends Fragment implements View.OnClickListener
 
     private static final int RC_SIGN_IN = 9001;
 
-    private void signInWithGoogle() {
-        if(mGoogleApiClient != null) {
+    private void signInWithGoogle()
+    {
+        if (mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
 
@@ -154,22 +153,19 @@ public class SignIn extends Fragment implements View.OnClickListener
         if (requestCode == RC_SIGN_IN) {
 
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if(result.isSuccess()) {
-                Log.i("GOOGLE", "YEAHHHH");
+            if (result.isSuccess()) {
                 GoogleSignInAccount acct = result.getSignInAccount();
-                String idToken = acct.getIdToken();
-                String Authcode = acct.getServerAuthCode();
+                String Authcode = null;
+                if (acct != null) {
+                    Authcode = acct.getServerAuthCode();
+                }
 
-                Log.i("GOOGLE IDTOKEN", idToken);
-                Log.i("GOOGLE AUTHCODE",Authcode);
                 Snackbar snackbar = Snackbar.make(_v, Authcode, 5000);
                 snackbar.show();
                 MainActivity.provider = "Google";
                 connectOauth(Authcode, "google");
 
             } else {
-                Log.i("GOOGLE NOT SUCCESSFULLY","");
-
                 //handleSignInResult(...);
             }
         } else {
@@ -222,7 +218,6 @@ public class SignIn extends Fragment implements View.OnClickListener
                     String token = auth.getData().getToken();
                     MainActivity.userID = auth.getData().getUserId();
                     MainActivity.token = "bearer " + token;
-                    Log.i("TOKEN", MainActivity.token);
                     Snackbar snackbar = Snackbar.make(v, "Connexion réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
                     snackbar.show();
@@ -307,6 +302,7 @@ public class SignIn extends Fragment implements View.OnClickListener
 
         Bundle arg = new Bundle();
         arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
+        // A GARDER (TAB DANS SHELF)
 //        ShelfTab shelfFrag = new ShelfTab();
 //        shelfFrag.setArguments(arg);
 //        fragmentTransaction.replace(R.id.fragment_container, shelfFrag);

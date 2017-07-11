@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -27,7 +26,6 @@ class RequestDBLocal
     public void finalize() throws Throwable
     {
         super.finalize();
-        Log.d("END REQUEST", "finalize");
         _mDbHelper.close();
     }
 
@@ -62,7 +60,7 @@ class RequestDBLocal
 
         String[] selectionArgs = { _type, MainActivity.userID };
 
-        Cursor cursor = db.query(
+        return db.query(
                 LocalDBContract.LocalDB.TABLE_NAME,       // The table to query
                 projection,                               // The columns to return
                 selection,                                // The columns for the WHERE clause selection
@@ -71,7 +69,6 @@ class RequestDBLocal
                 null,                                     // don't filter by row groups
                 null                                      // The sort order
         );
-        return cursor;
     }
 
     void writePrimaryInfo(String title, String pic, String isbn)

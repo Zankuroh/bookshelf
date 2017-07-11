@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -66,7 +65,6 @@ public class SignUp extends AppCompatActivity
         EditText password = (EditText) findViewById(R.id.SignUpPwd);
         EditText password2 = (EditText) findViewById(R.id.SignUpPwd2);
         EditText email = (EditText) findViewById(R.id.SignUpMail);
-        Log.i("creation", email.getText().toString());
         String errors = "";
         if (name.getText().toString().equals("")) {
             errors += "Le champ pseudo est obligatoire.";
@@ -121,7 +119,7 @@ public class SignUp extends AppCompatActivity
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
                 if (response.isSuccessful()) {
-                    Register auth = response.body();
+                    //Register auth = response.body();
                     Snackbar snackbar = Snackbar.make(_lp, "Création réussie !", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     Intent intent = new Intent();

@@ -6,17 +6,17 @@ import android.provider.BaseColumns;
  * Created by Maxime on 23/06/2017.
  */
 
-public class LocalDBContract
+class LocalDBContract
 {
     private LocalDBContract() {}
 
-    public static class LocalDB implements BaseColumns
+    static class LocalDB implements BaseColumns
     {
-        public static final String TABLE_NAME = "primary_info";
-        public static final String COLUMN_NAME_ISBN = "isbn";
-        public static final String COLUMN_NAME_TITLE = "title";
-        public static final String COLUMN_NAME_PIC = "picture";
-        public static final String COLUMN_NAME_TYPE = "type";
-        public static final String COLUMN_NAME_USERID = "user_id";
+        static final String TABLE_NAME = "primary_info";
+        static final String COLUMN_NAME_ISBN = "isbn";
+        static final String COLUMN_NAME_TITLE = "title";
+        static final String COLUMN_NAME_PIC = "picture";
+        static final String COLUMN_NAME_TYPE = "type";
+        static final String COLUMN_NAME_USERID = "user_id";
     }
 }

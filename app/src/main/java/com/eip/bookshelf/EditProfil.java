@@ -9,7 +9,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -35,7 +34,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class EditProfil extends AppCompatActivity
 {
     private RelativeLayout _rl;
-    private EditProfil _this;
     private String _login;
 
     public EditProfil()
@@ -49,7 +47,6 @@ public class EditProfil extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_profil);
         _rl = (RelativeLayout)findViewById(R.id.RLEditProfil);
-        _this = this;
         _login = Profil.prof.getName();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -166,7 +163,7 @@ public class EditProfil extends AppCompatActivity
             @Override
             public void onResponse(Call<ProfileModification> call, Response<ProfileModification> response) {
                 if (response.isSuccessful()) {
-                    ProfileModification modif = response.body();
+                    //ProfileModification modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Modification réussie !", Snackbar.LENGTH_LONG);
                     MainActivity.co = true;
                     snackbar.show();
@@ -205,7 +202,7 @@ public class EditProfil extends AppCompatActivity
             @Override
             public void onResponse(Call<ProfileModification> call, Response<ProfileModification> response) {
                 if (response.isSuccessful()) {
-                    ProfileModification modif = response.body();
+                    //ProfileModification modif = response.body();
                     _login = newName;
                     Snackbar snackbar = Snackbar.make(_rl, "Modification réussie !", Snackbar.LENGTH_LONG);
                     snackbar.show();
@@ -245,7 +242,7 @@ public class EditProfil extends AppCompatActivity
             @Override
             public void onResponse(Call<DelProfile> call, Response<DelProfile> response) {
                 if (response.isSuccessful()) {
-                    DelProfile del = response.body();
+                    //DelProfile del = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Suppression réussie !", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     Intent intent = new Intent();
@@ -257,8 +254,8 @@ public class EditProfil extends AppCompatActivity
                         JSONObject jObjError = jObj.getJSONObject("errors");
                         String error = "";
                         error = jObj.getString("title");
-                        JSONArray password = null;
-                        JSONArray deleted = null;
+                        JSONArray password;
+                        JSONArray deleted;
                         try {
                             password = jObjError.getJSONArray("password");
                             error += "\n" + password.getString(0);
@@ -267,7 +264,6 @@ public class EditProfil extends AppCompatActivity
                             deleted = jObjError.getJSONArray("delete");
                             error += "\n" + deleted.getString(0);
                         } catch (Exception e) {}
-                        error.trim();
                         Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + error, Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {

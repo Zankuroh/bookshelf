@@ -3,12 +3,10 @@ package com.eip.bookshelf;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import com.eip.utilities.model.VolumeInfo;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -19,7 +17,6 @@ import com.google.zxing.integration.android.IntentResult;
 public class Search extends Fragment implements View.OnClickListener
 {
     private View _v;
-    private VolumeInfo _vi;
 
     public Search()
     {
@@ -68,7 +65,6 @@ public class Search extends Fragment implements View.OnClickListener
     {
         IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if (scanResult != null) {
-            Log.d("scan result", scanResult.getContents());
             Bundle b = new Bundle();
             b.putString("isbn", scanResult.getContents());
             Intent in = new Intent(getActivity(), InfoBook.class);
@@ -89,6 +85,4 @@ public class Search extends Fragment implements View.OnClickListener
         in.putExtra("shelf", MainActivity.shelfType.SEARCH);
         startActivity(in);
     }
-
-
 }

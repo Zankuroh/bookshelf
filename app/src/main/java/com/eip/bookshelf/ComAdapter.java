@@ -35,7 +35,8 @@ class ComAdapter
         this._content = _content;
     }
 
-    String get_date() {
+    String get_date()
+    {
         return _date;
     }
 

@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -232,11 +231,9 @@ public class ShelfContainer extends Fragment
                     String pic = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_PIC));
                     _modelListBiblio.add(new BiblioAdapter(title, pic, isbn));
                     isbns.remove(isbn);
-                    Log.d("local BDD", isbn);
                 }
                 cursor.close();
                 for (String isbn : isbns) {
-                    Log.d("GBook BDD", isbn);
                     VolumeInfo vi = getInfoBook(isbn);
                     String img;
                     if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
@@ -272,7 +269,7 @@ public class ShelfContainer extends Fragment
             Books b = call.execute().body();
             if (b.getTotalItems() > 0) {
                 Item item = b.getItems().get(0);
-                return item.getVolumeInfo();
+                vi = item.getVolumeInfo();
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -30,7 +30,7 @@ import retrofit2.http.Query;
 
 public interface BookshelfApi
 {
-    public static final String APIPath = "http://79.137.87.198/api/";
+    String APIPath = "http://79.137.87.198/api/";
 
     @FormUrlEncoded
     @POST("auth")

@@ -12,7 +12,7 @@ import retrofit2.http.Query;
 
 public interface GoogleBooksApi
 {
-    public static final String APIPath = "https://www.googleapis.com/books/v1/";
+    String APIPath = "https://www.googleapis.com/books/v1/";
 
     @GET("volumes")
     Call<Books> searchByIsbn(@Query("q") String isbn);

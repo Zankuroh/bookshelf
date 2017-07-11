@@ -133,6 +133,6 @@ public class Profil extends Fragment implements View.OnClickListener
             }
         });
     }
-    //Todo: Récupérer les restant d'info du user
+    //Todo: Récupérer les restants d'info du user
     //Todo: Rechercher un user ?
 }

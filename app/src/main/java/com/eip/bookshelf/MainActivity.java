@@ -14,9 +14,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         WISHSHELF,
         SEARCH
     }
-    private SignIn _signFrag;
     private static Dialog _loading;
     static private MainActivity _this;
 
@@ -65,8 +64,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         defineNameToolBar("Bibliothèque");
         _loading = new Dialog(this);
         _loading.setContentView(R.layout.loading);
-        _loading.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        _loading.setCancelable(false);;
+        Window w = _loading.getWindow();
+        if (w != null) {
+            w.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+        _loading.setCancelable(false);
     }
 
     @Override
@@ -91,17 +93,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Log.d("Select", "...");
 
         switch (id) {
             case R.id.nav_biblio:
                 defineNameToolBar("Bibliothèque");
                 if (MainActivity.co) {
+                    // A GARDER TAB POUR SHELF
 //                    Bundle arg = setArgs(shelfType.MAINSHELF);
 //                    ShelfTab shelfFrag = new ShelfTab();
 //                    shelfFrag.setArguments(arg);
 //                    fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
-//                    Log.d("Select biblio", "PUTAIN !");
 //                    fragmentTransaction.commit();
                     Bundle arg = setArgs(shelfType.MAINSHELF);
                     ShelfContainer shelfFrag = new ShelfContainer();
@@ -167,8 +168,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     MenuItemCo = item;
                     MenuItemBiblio = ((NavigationView)findViewById(R.id.nav_view)).getMenu().findItem(R.id.nav_biblio);
                     defineNameToolBar("Connexion");
-                    _signFrag = new SignIn();
-                    fragmentTransaction.replace(R.id.fragment_container, _signFrag);
+                    SignIn signFrag = new SignIn();
+                    fragmentTransaction.replace(R.id.fragment_container, signFrag);
                     fragmentTransaction.commit();
                 } else {
                     MainActivity.co = false;

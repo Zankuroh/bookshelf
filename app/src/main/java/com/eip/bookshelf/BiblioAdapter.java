@@ -32,7 +32,7 @@ class BiblioAdapter
         this._id = id;
     }
 
-    public String get_isbn() {
+    String get_isbn() {
         return _isbn;
     }
 

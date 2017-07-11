@@ -8,7 +8,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -165,17 +164,18 @@ public class InfoBook extends AppCompatActivity
             c = _req.readPrimaryInfo(isbns);
             _inWish = c.getCount() != 0;
             c.close();
+        } else {
+            findViewById(R.id.BReview).setVisibility(View.GONE);
         }
     }
 
     private void setAdapters()
     {
-        customAdapterCom _adapterCom = new customAdapterCom(this, _modelListCom);
-        _lvCom.setAdapter(_adapterCom);
-        //Todo: Récupérer les vrais commentaires :|
-        getReview();
-        //_modelListCom.add(new ComAdapter("Maxime", "23/02/2016 à 13h42", "Super livre !"));
-        //getTotalHeightofListView();
+        if (MainActivity.co) {
+            customAdapterCom _adapterCom = new customAdapterCom(this, _modelListCom);
+            _lvCom.setAdapter(_adapterCom);
+            getReview();
+        }
     }
 
     private void moreDataBook()
@@ -184,7 +184,6 @@ public class InfoBook extends AppCompatActivity
         TextView tvt = (TextView) findViewById(R.id.TVTitreBook);
         TextView tvr = (TextView) findViewById(R.id.TVResum);
         ImageView iv = (ImageView) findViewById(R.id.IVBook);
-        Log.d("_isbn", _isbn);
         Thread t = new Thread(new Runnable() {
             public void run() {
                 _vi = ShelfContainer.getInfoBook(_isbn);
@@ -206,8 +205,7 @@ public class InfoBook extends AppCompatActivity
 
         if (_vi.getPublishedDate() != null) {
             SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = null;
-            Log.d("date", _vi.getPublishedDate());
+            Date date;
             try {
                 date = dt.parse(_vi.getPublishedDate());
             } catch (ParseException e) {
@@ -296,14 +294,6 @@ public class InfoBook extends AppCompatActivity
 
     public void onClickReview(View v)
     {
-//        EditText et = (EditText) findViewById(R.id.ETCom);
-//        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH'h'mm", Locale.FRANCE);
-//        String currentDateandTime = sdf.format(new Date());
-//        _modelListCom.add(new ComAdapter("Nicolas", currentDateandTime, et.getText().toString()));
-//        et.setText("");
-//        MainActivity.hideSoftKeyboard(InfoBook.this);
-//        getTotalHeightofListView();
-
         final Dialog dial = new Dialog(this);
         dial.setContentView(R.layout.review_popup);
         dial.setTitle("Votre critique");
@@ -327,7 +317,6 @@ public class InfoBook extends AppCompatActivity
                     changeReview(_myId, et.getText().toString(), String.valueOf(rb.getRating()));
                 }
                 dial.dismiss();
-                //TODO: requete set review
             }
         });
         dial.show();
@@ -343,8 +332,6 @@ public class InfoBook extends AppCompatActivity
 
     public void addToBookShelf()
     {
-        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
-        Log.i("ADDBOOK", _isbn);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -355,7 +342,7 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
                 if (response.isSuccessful()) {
-                    ModifBook modif = response.body();
+                    //ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été ajouté à votre bibliothèque", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
@@ -384,7 +371,6 @@ public class InfoBook extends AppCompatActivity
 
     public void deleteToBookShelf()
     {
-        Log.i("DELBOOK", _isbn);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -395,7 +381,7 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
                 if (response.isSuccessful()) {
-                    ModifBook modif = response.body();
+                    //ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre bibliothèque", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     _req.deletePrimaryInfo(_isbn, MainActivity.shelfType.MAINSHELF);
@@ -422,9 +408,8 @@ public class InfoBook extends AppCompatActivity
         });
     }
 
-    public void addToWishList(){
-        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
-        Log.i("ADDBOOK", _isbn);
+    public void addToWishList()
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -435,7 +420,7 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
                 if (response.isSuccessful()) {
-                    ModifBook modif = response.body();
+                    //ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été ajouté à votre liste de souhait", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
@@ -460,9 +445,8 @@ public class InfoBook extends AppCompatActivity
         });
     }
 
-    public void deleteToWishList(){
-        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
-        Log.i("DELBOOK", _isbn);
+    public void deleteToWishList()
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -473,7 +457,7 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
                 if (response.isSuccessful()) {
-                    ModifBook modif = response.body();
+                    //ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre liste de souhaits", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     _req.deletePrimaryInfo(_isbn, MainActivity.shelfType.WISHSHELF);
@@ -501,7 +485,6 @@ public class InfoBook extends AppCompatActivity
 
     private void getReview()
     {
-        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -515,7 +498,6 @@ public class InfoBook extends AppCompatActivity
                     Reviews rev = response.body();
                     List<Review> list_reviews = rev.getData().getReviews();
                     for (Review r : list_reviews) {
-                        Log.i("content review", r.getCanEdit());
                         if (Boolean.parseBoolean(r.getCanEdit())) {
                             _myId = r.getId();
                             _myCom = r.getContent();
@@ -548,7 +530,6 @@ public class InfoBook extends AppCompatActivity
 
     public void addReview(String content, String rate)
     {
-        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -559,7 +540,7 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifReview> call, Response<ModifReview> response) {
                 if (response.isSuccessful()) {
-                    ModifReview add = response.body();
+                    //ModifReview add = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le commentaire a bien été ajouté", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     updateDisplayedReviews();
@@ -585,8 +566,8 @@ public class InfoBook extends AppCompatActivity
         });
     }
 
-    public void changeReview(int reviewId, String content, String rate){
-        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
+    public void changeReview(int reviewId, String content, String rate)
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -597,7 +578,7 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifReview> call, Response<ModifReview> response) {
                 if (response.isSuccessful()) {
-                    ModifReview modif = response.body();
+                    //ModifReview modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le commentaire a bien été modifié", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     updateDisplayedReviews();
@@ -623,8 +604,8 @@ public class InfoBook extends AppCompatActivity
         });
     }
 
-    public void deleteReview(int reviewId){
-        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
+    public void deleteReview(int reviewId)
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -635,7 +616,7 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifReview> call, Response<ModifReview> response) {
                 if (response.isSuccessful()) {
-                    ModifReview modif = response.body();
+                    //ModifReview modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le commentaire a bien été supprimé", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     _myId = -1;
