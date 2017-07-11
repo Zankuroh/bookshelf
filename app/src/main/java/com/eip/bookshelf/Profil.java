@@ -79,7 +79,7 @@ public class Profil extends Fragment implements View.OnClickListener
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         if (requestCode == 4242 && resultCode == RESULT_OK) { // EditProfil for delete
-            MainActivity.co = false;
+            MainActivity.token = null;
             MainActivity.MenuItemCo.setTitle("Connexion");
             MainActivity.MenuItemBiblio.setChecked(true);
             MainActivity.defineNameToolBar("Bibliothèque");

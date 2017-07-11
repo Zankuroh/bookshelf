@@ -21,7 +21,6 @@ import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
 {
-    public static boolean co = false;
     public static String token = null;
     public static String userID = null;
     public static String provider = null;
@@ -97,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.nav_biblio:
                 defineNameToolBar("Bibliothèque");
-                if (MainActivity.co) {
+                if (MainActivity.token != null) {
                     // A GARDER TAB POUR SHELF
 //                    Bundle arg = setArgs(shelfType.MAINSHELF);
 //                    ShelfTab shelfFrag = new ShelfTab();
@@ -121,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_propo:
                 defineNameToolBar("Propositions");
-                if (MainActivity.co) {
+                if (MainActivity.token != null) {
                     Bundle arg = setArgs(shelfType.PROPOSHELF);
                     ShelfContainer shelfFrag = new ShelfContainer();
                     shelfFrag.setArguments(arg);
@@ -133,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_wish:
                 defineNameToolBar("Liste de souhaits");
-                if (MainActivity.co) {
+                if (MainActivity.token != null) {
                     Bundle arg = setArgs(shelfType.WISHSHELF);
                     ShelfContainer shelfFrag = new ShelfContainer();
                     shelfFrag.setArguments(arg);
@@ -145,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_author:
                 defineNameToolBar("Auteurs suivis");
-                if (MainActivity.co) {
+                if (MainActivity.token != null) {
                     FollowAuthor authorFrag = new FollowAuthor();
                     fragmentTransaction.replace(R.id.fragment_container, authorFrag);
                     fragmentTransaction.commit();
@@ -155,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_profil:
                 defineNameToolBar("Profil");
-                if (MainActivity.co) {
+                if (MainActivity.token != null) {
                     Profil profilFrag = new Profil();
                     fragmentTransaction.replace(R.id.fragment_container, profilFrag);
                     fragmentTransaction.commit();
@@ -164,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
             case R.id.nav_co:
-                if (!MainActivity.co) {
+                if (MainActivity.token == null) {
                     MenuItemCo = item;
                     MenuItemBiblio = ((NavigationView)findViewById(R.id.nav_view)).getMenu().findItem(R.id.nav_biblio);
                     defineNameToolBar("Connexion");
@@ -172,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fragmentTransaction.replace(R.id.fragment_container, signFrag);
                     fragmentTransaction.commit();
                 } else {
-                    MainActivity.co = false;
+                    MainActivity.token = null;
                     MainActivity.provider = null;
                     item.setTitle("Connexion");
                     accessDenied(_this);

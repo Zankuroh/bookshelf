@@ -128,7 +128,7 @@ public class InfoBook extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         _menu = menu;
 
-        if (MainActivity.co) {
+        if (MainActivity.token != null) {
             if (_inMain) {
                 menu.findItem(R.id.IAddBookBiblio).setVisible(false);
             } else {
@@ -152,7 +152,7 @@ public class InfoBook extends AppCompatActivity
 
     private void setButtons()
     {
-        if (MainActivity.co) {
+        if (MainActivity.token != null) {
             _req = new RequestDBLocal(MainActivity.shelfType.MAINSHELF, this);
             ArrayList<String> isbns = new ArrayList<>();
             isbns.add(_isbn);
@@ -171,7 +171,7 @@ public class InfoBook extends AppCompatActivity
 
     private void setAdapters()
     {
-        if (MainActivity.co) {
+        if (MainActivity.token != null) {
             customAdapterCom _adapterCom = new customAdapterCom(this, _modelListCom);
             _lvCom.setAdapter(_adapterCom);
             getReview();

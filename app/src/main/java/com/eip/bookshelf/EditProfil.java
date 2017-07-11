@@ -165,7 +165,6 @@ public class EditProfil extends AppCompatActivity
                 if (response.isSuccessful()) {
                     //ProfileModification modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Modification réussie !", Snackbar.LENGTH_LONG);
-                    MainActivity.co = true;
                     snackbar.show();
                 } else {
                     try {

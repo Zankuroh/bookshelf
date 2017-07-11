@@ -219,7 +219,6 @@ public class SignIn extends Fragment implements View.OnClickListener
                     MainActivity.userID = auth.getData().getUserId();
                     MainActivity.token = "bearer " + token;
                     Snackbar snackbar = Snackbar.make(v, "Connexion réussie !", Snackbar.LENGTH_LONG);
-                    MainActivity.co = true;
                     snackbar.show();
                     switchFragment();
                 } else {
@@ -265,7 +264,6 @@ public class SignIn extends Fragment implements View.OnClickListener
                     MainActivity.userID = auth.getData().getUserId();
                     MainActivity.token = "bearer " + token;
                     Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
-                    MainActivity.co = true;
                     snackbar.show();
                     switchFragment();
                 } else {
