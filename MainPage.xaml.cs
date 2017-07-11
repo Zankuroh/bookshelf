@@ -39,8 +39,7 @@ namespace BookShelf
                 string result = await Req.PostRequest(requestContent, "application/x-www-form-urlencoded");
                 JsonObject jsonRes;
                 JsonObject.TryParse(result, out jsonRes);
-                //if (!jsonRes.ContainsKey("errors"))
-                if (jsonRes["errors"].ToString() == "null")
+                if (jsonRes.ContainsKey("errors") && jsonRes["errors"].ToString() == "null")
                 {
                     JsonObject test = jsonRes["data"].GetObject();
                     string tk = test["token"].ToString();
@@ -52,6 +51,7 @@ namespace BookShelf
                     }
                     else
                     {
+                        BookShelf.App.socialAuthLogged = true;
                         App.Token = tk;
                         //App.Token = Req.findResponse("token");
                         Frame.Navigate(typeof(MainFrame));
@@ -100,7 +100,7 @@ namespace BookShelf
                 JsonObject jsonRes;
                 JsonObject.TryParse(result, out jsonRes);
                 //if (!jsonRes.ContainsKey("errors"))
-                if (jsonRes["errors"].ToString() == "null")
+                if (jsonRes.ContainsKey("errors") && jsonRes["errors"].ToString() == "null")
                 {
                     JsonObject test = jsonRes["data"].GetObject();
                     string tk = test["token"].ToString();

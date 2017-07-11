@@ -115,7 +115,7 @@ namespace BookShelf
         public async Task<string> DeletetRequest(string requestContent)
         {
             //Send the DELETE request asynchronously and retrieve the response as a string.
-            HttpResponseMessage httpResponse = new HttpResponseMessage();
+            HttpResponseMessage httpResponse = new Windows.Web.Http.HttpResponseMessage();
             string httpResponseBody = "";
             string stringResponse = null;
 
