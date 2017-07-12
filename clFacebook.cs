@@ -38,7 +38,7 @@ namespace BookShelf
             {
                 //Login failed
                 System.Diagnostics.Debug.WriteLine("Fb Login Failure");
-                var msg = new Windows.UI.Popups.MessageDialog("Login Failure");
+                var msg = new Windows.UI.Popups.MessageDialog("Erreur de la connection Facebook");
                 await msg.ShowAsync();
                 return null;
             }
