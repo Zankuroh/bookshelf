@@ -24,6 +24,7 @@ namespace BookShelf
     /// </summary>
     public sealed partial class createAccount : Page
     {
+
         public createAccount()
         {
             this.InitializeComponent();
@@ -98,7 +99,7 @@ namespace BookShelf
                 res = await Req.PostRequest(requestContent, "application/x-www-form-urlencoded");
                 JsonObject jsonRes;
                 JsonObject.TryParse(res, out jsonRes);
-                if (jsonRes["errors"].ToString() == "null")
+                if (jsonRes.ContainsKey("errors") && jsonRes["errors"].ToString() == "null")
                 {
                     //placer une MsgBox ici
                     string msg = null;

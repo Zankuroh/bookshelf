@@ -22,6 +22,8 @@ namespace BookShelf
     /// </summary>
     public sealed partial class MainFrame : Page
     {
+        
+
         public MainFrame()
         {
             this.InitializeComponent();

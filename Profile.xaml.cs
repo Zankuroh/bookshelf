@@ -105,41 +105,47 @@ namespace BookShelf
 
         private async void btDeleteProf_Click(object sender, RoutedEventArgs e)
         {
-            cdEnterPsswd dialog = new cdEnterPsswd();
-            string pwd = null;
-            ContentDialogResult dialres = await dialog.ShowAsync();
-            if (dialres == ContentDialogResult.Primary)
+            string pwd = "";
+
+            if (!BookShelf.App.socialAuthLogged)
             {
-                pwd = dialog.Passwd;
-                string reqParam = "?password=" + pwd + "&delete=yes";
-                clRequestAPI Req = new clRequestAPI("/api/profile");
-                Req.addAuthorization("Bearer", App.Token);
-                Req.addHeader("application/x-www-form-urlencoded");
-
-                string res = await Req.DeletetRequest(reqParam);
-
-                JsonObject jsonRes;
-                JsonObject.TryParse(res, out jsonRes);
-                if (jsonRes["errors"].ToString() != "null")
+                cdEnterPsswd dialog = new cdEnterPsswd();
+                ContentDialogResult dialres = await dialog.ShowAsync();
+                if (dialres == ContentDialogResult.Primary)
                 {
-                    //placer une MsgBox ici
-                    string msg = null;
-                    msg += "Le profil n'a pas été éffacé\n" + jsonRes["errors"].ToString() + " ";
-                    if (jsonRes.ContainsKey("title"))
-                        msg += jsonRes["title"].ToString();
-                    Windows.UI.Popups.MessageDialog dial = new Windows.UI.Popups.MessageDialog(msg);
-                    await dial.ShowAsync();
-                }
-                else
-                {
-                    string msg = null;
-                    msg += "Le profil a bien été éffacé\n" + jsonRes["errors"].ToString() + " ";
-                    Windows.UI.Popups.MessageDialog dial = new Windows.UI.Popups.MessageDialog(msg);
-                    await dial.ShowAsync();
-                    App.Token = null;
-                    var frame = Window.Current.Content as Frame;
-                    frame.Navigate(typeof(MainPage));
-                }
+                    pwd = dialog.Passwd;
+                }   
+            }
+
+            string reqParam = "?password=" + pwd + "&delete=yes";
+            clRequestAPI Req = new clRequestAPI("/api/profile");
+            Req.addAuthorization("Bearer", App.Token);
+            Req.addHeader("application/x-www-form-urlencoded");
+            
+            System.Diagnostics.Debug.WriteLine("Profile Delete : URI = " + reqParam);
+            string res = await Req.DeletetRequest(reqParam);
+
+            JsonObject jsonRes;
+            JsonObject.TryParse(res, out jsonRes);
+            if (jsonRes["errors"].ToString() != "null")
+            {
+                //placer une MsgBox ici
+                string msg = null;
+                msg += "Le profil n'a pas été éffacé\n" + jsonRes["errors"].ToString() + " ";
+                if (jsonRes.ContainsKey("title"))
+                    msg += jsonRes["title"].ToString();
+                Windows.UI.Popups.MessageDialog dial = new Windows.UI.Popups.MessageDialog(msg);
+                await dial.ShowAsync();
+            }
+            else
+            {
+                string msg = null;
+                msg += "Le profil a bien été éffacé\n" + jsonRes["errors"].ToString() + " ";
+                Windows.UI.Popups.MessageDialog dial = new Windows.UI.Popups.MessageDialog(msg);
+                await dial.ShowAsync();
+                App.Token = null;
+                var frame = Window.Current.Content as Frame;
+                frame.Navigate(typeof(MainPage));
             }
         }
     }
