@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,7 @@ public class SignIn extends Fragment implements View.OnClickListener
     private View _v;
     private CallbackManager _callbackManager;
     private GoogleApiClient mGoogleApiClient;
+    private LoginButton loginButton;
 
     public SignIn()
     {
@@ -61,7 +63,7 @@ public class SignIn extends Fragment implements View.OnClickListener
         _v.findViewById(R.id.btnCreateAccount).setOnClickListener(this);
 
         _callbackManager = CallbackManager.Factory.create();
-        LoginButton loginButton = (LoginButton) _v.findViewById(R.id.fConnect);
+        loginButton = (LoginButton) _v.findViewById(R.id.fConnect);
         loginButton.setReadPermissions("public_profile email");
         // If using in a fragment
         loginButton.setFragment(this);
@@ -70,17 +72,8 @@ public class SignIn extends Fragment implements View.OnClickListener
             public void onSuccess(LoginResult loginResult) {
 
                 AccessToken accessToken = loginResult.getAccessToken();
-               /* GraphRequestAsyncTask request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject user, GraphResponse graphResponse) {
-                        Log.i("FACEBOOK EMAIL",user.optString("email"));
-                        Log.i("FACEBOOK NAME",user.optString("name"));
-                        Log.i("FACEBOOK ID",user.optString("id"));
-                    }
-                }).executeAsync();*/
                 MainActivity.provider = "FB";
                 connectOauth(accessToken.getToken(), "facebook");
-
             }
 
             @Override
@@ -94,36 +87,6 @@ public class SignIn extends Fragment implements View.OnClickListener
         });
 
         SignInButton mGoogleSignInButton = (SignInButton)_v.findViewById(R.id.gConnect);
-        /*if (MainActivity.token != null) {
-            for (int i = 0; i < mGoogleSignInButton.getChildCount(); i++) {
-                View v = mGoogleSignInButton.getChildAt(i);
-
-                // if the view is instance of TextView then change the text SignInButton
-                if (v instanceof TextView) {
-                    TextView tv = (TextView) v;
-                    tv.setText("Se déconnecter");
-                    //TODO faire la déconnexion si l'envie t'en prend @nicolas
-                }
-            }
-        }*/
-
-        mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signInWithGoogle();
-            }
-        });
-
-        return _v;
-    }
-
-    private static final int RC_SIGN_IN = 9001;
-
-    private void signInWithGoogle()
-    {
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
-        }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.EMAIL))
@@ -135,6 +98,23 @@ public class SignIn extends Fragment implements View.OnClickListener
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        mGoogleApiClient.connect();
+        mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signInWithGoogle();
+            }
+        });
+
+        deconnection();
+
+        return _v;
+    }
+
+    private static final int RC_SIGN_IN = 9001;
+
+    private void signInWithGoogle()
+    {
         final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -309,5 +289,32 @@ public class SignIn extends Fragment implements View.OnClickListener
         shelfFrag.setArguments(arg);
         fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
         fragmentTransaction.commit();
+    }
+
+    public void deconnection() {
+        if (MainActivity.provider == "FB" && MainActivity.token != null)
+        {
+            loginButton.performClick();
+        }
+        else if (MainActivity.provider == "Google" && MainActivity.token != null) {
+            Log.i("DECO", "GOGOLE");
+            //mGoogleApiClient.connect();
+            /*Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                        }
+                    });*/
+            /*Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                        }
+                    });*/
+        }
+        if (MainActivity.token != null) {
+            MainActivity.token = null;
+            MainActivity.provider = null;
+        }
     }
 }

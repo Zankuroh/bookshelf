@@ -171,10 +171,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fragmentTransaction.replace(R.id.fragment_container, signFrag);
                     fragmentTransaction.commit();
                 } else {
-                    MainActivity.token = null;
-                    MainActivity.provider = null;
+                    SignIn signFrag = new SignIn();
+                    fragmentTransaction.replace(R.id.fragment_container, signFrag);
+                    fragmentTransaction.commit();
                     item.setTitle("Connexion");
-                    accessDenied(_this);
+                    //accessDenied(_this);
                 }
                 break;
             case R.id.nav_param:
