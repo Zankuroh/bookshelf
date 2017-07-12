@@ -61,6 +61,7 @@ public class InfoBook extends AppCompatActivity
     private String _myCom = "";
     private float _myRate = 0.0f;
     private int _myId = -1;
+    private boolean _isValid = true;
 
     public InfoBook()
     {
@@ -128,7 +129,7 @@ public class InfoBook extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         _menu = menu;
 
-        if (MainActivity.token != null) {
+        if (MainActivity.token != null && _isValid) {
             if (_inMain) {
                 menu.findItem(R.id.IAddBookBiblio).setVisible(false);
             } else {
@@ -141,13 +142,19 @@ public class InfoBook extends AppCompatActivity
                 menu.findItem(R.id.IRemoveBookWish).setVisible(false);
             }
         } else {
-            menu.findItem(R.id.IRemoveBookBiblio).setVisible(false);
-            menu.findItem(R.id.IAddBookBiblio).setVisible(false);
-            menu.findItem(R.id.IAddBookWish).setVisible(false);
-            menu.findItem(R.id.IRemoveBookWish).setVisible(false);
+            hideButtons();
         }
 
         return true;
+    }
+
+    private void hideButtons()
+    {
+        _menu.findItem(R.id.IRemoveBookBiblio).setVisible(false);
+        _menu.findItem(R.id.IAddBookBiblio).setVisible(false);
+        _menu.findItem(R.id.IAddBookWish).setVisible(false);
+        _menu.findItem(R.id.IRemoveBookWish).setVisible(false);
+        findViewById(R.id.BReview).setVisibility(View.GONE);
     }
 
     private void setButtons()
@@ -164,8 +171,6 @@ public class InfoBook extends AppCompatActivity
             c = _req.readPrimaryInfo(isbns);
             _inWish = c.getCount() != 0;
             c.close();
-        } else {
-            findViewById(R.id.BReview).setVisibility(View.GONE);
         }
     }
 
@@ -196,6 +201,7 @@ public class InfoBook extends AppCompatActivity
             e.printStackTrace();
         }
         if (_vi == null) {
+            _isValid = false;
             Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + "Le livre n'a pas été trouvé", Snackbar.LENGTH_LONG);
             snackbar.show();
             return;
