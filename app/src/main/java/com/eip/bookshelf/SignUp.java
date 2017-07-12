@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.Register.Register;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -92,6 +93,12 @@ public class SignUp extends AppCompatActivity
                 }
                 errors += "Le mots de passe doit contenir 5 caractères ou plus.";
             }
+            if (name.getText().toString().length() < 5) {
+                if (!errors.equals("")) {
+                    errors += "\n";
+                }
+                errors += "Le nom doit contenir 5 caractères ou plus.";
+            }
             if (!SignUp.checkPassword(password.getText().toString(), password2.getText().toString())) {
                 if (!errors.equals("")) {
                     errors += "\n";
@@ -129,8 +136,26 @@ public class SignUp extends AppCompatActivity
                     finish();
                 } else {
                     try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(_lp, "Erreur : " + jObjError.getString("error"), Snackbar.LENGTH_LONG);
+                        JSONObject jObj = new JSONObject(response.errorBody().string());
+                        JSONObject jObjError = jObj.getJSONObject("errors");
+                        String error = "";
+                        error = jObj.getString("title");
+                        JSONArray password;
+                        JSONArray email;
+                        JSONArray name;
+                        try {
+                            name = jObjError.getJSONArray("name");
+                            error += "\n" + name.getString(0);
+                        } catch (Exception e) {}
+                        try {
+                            email = jObjError.getJSONArray("email");
+                            error += "\n" + email.getString(0);
+                        } catch (Exception e) {}
+                        try {
+                            password = jObjError.getJSONArray("password");
+                            error += "\n" + password.getString(0);
+                        } catch (Exception e) {}
+                        Snackbar snackbar = Snackbar.make(_lp, "Erreur : " + error, Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
                         Snackbar snackbar = Snackbar.make(_lp, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
