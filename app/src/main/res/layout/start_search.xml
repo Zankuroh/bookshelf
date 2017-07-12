@@ -8,7 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/searchField"
-        android:hint="Titre, auteur, genre..."
+        android:hint="ISBN"
         android:layout_above="@+id/searchApn"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
