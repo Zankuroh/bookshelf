@@ -13,6 +13,7 @@ import android.widget.EditText;
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.AuthLocal.AuthLocal;
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -63,6 +64,19 @@ public class SignIn extends Fragment implements View.OnClickListener
         _v.findViewById(R.id.btnCreateAccount).setOnClickListener(this);
 
         _callbackManager = CallbackManager.Factory.create();
+
+        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken,
+                                                       AccessToken currentAccessToken) {
+                if (currentAccessToken == null) {
+                    Log.d("LOGOUT", "onLogout catched");
+                    MainActivity.token = null;
+                    MainActivity.provider = null;
+                }
+            }
+        };
+
         loginButton = (LoginButton) _v.findViewById(R.id.fConnect);
         loginButton.setReadPermissions("public_profile email");
         // If using in a fragment
@@ -85,6 +99,7 @@ public class SignIn extends Fragment implements View.OnClickListener
             public void onError(FacebookException exception) {
             }
         });
+        accessTokenTracker.startTracking();
 
         SignInButton mGoogleSignInButton = (SignInButton)_v.findViewById(R.id.gConnect);
 
@@ -303,6 +318,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                     new ResultCallback<Status>() {
                         @Override
                         public void onResult(Status status) {
+
                         }
                     });*/
             /*Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
@@ -311,8 +327,10 @@ public class SignIn extends Fragment implements View.OnClickListener
                         public void onResult(Status status) {
                         }
                     });*/
+            MainActivity.token = null;
+            MainActivity.provider = null;
         }
-        if (MainActivity.token != null) {
+        else if (MainActivity.token != null) {
             MainActivity.token = null;
             MainActivity.provider = null;
         }
