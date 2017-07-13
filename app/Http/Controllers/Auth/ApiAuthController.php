@@ -38,6 +38,7 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
 
                 if ($request->input("redirect_uri"))
                 {
+                    Log::debug("set new redirect uri " . $request->input('redirect_uri'));
                     $driver->redirectUrl($request->input('redirect_uri'));
                 }
 
