@@ -36,8 +36,8 @@ return [
     ],
 
     'facebook' => [
-        'client_id' => '758818420378-kcg3p2or8bm0faha8vubpp4b7vsipsv0.apps.googleusercontent.com',
-        'client_secret' => 'ymzSbZHLKm6awCRsuiKyVTZQ',
+        'client_id' => '223852384693149',
+        'client_secret' => 'b0b7723c1d20ab41846ab00f376f3232',
         'redirect' => '',
     ],    
 
