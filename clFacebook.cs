@@ -13,7 +13,8 @@ namespace BookShelf
         public async Task<string> FBLogin()
         {
             FBSession sess = FBSession.ActiveSession;
-            sess.FBAppId = "223894524688935";
+            //await sess.LogoutAsync();
+            sess.FBAppId = "223852384693149";
             string SID = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString();
             sess.WinAppId = "s-1-15-2-2310251261-1648190076-1477656121-1768191773-3255972441-953421133-1881343534";
             List<String> permissionList = new List<String>();
@@ -28,6 +29,7 @@ namespace BookShelf
             FBResult result = await sess.LoginAsync(permissions);
             if (result.Succeeded)
             {
+                App.fb = sess;
                 //FBUser user = sess.User;
                 //ProfilePic.UserId = sess.User.Id;
                 System.Diagnostics.Debug.WriteLine("Fb Login Success");

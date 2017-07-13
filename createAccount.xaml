@@ -31,8 +31,8 @@
             <Button x:Name="btcreatAcc" Content="Créer son Compte" HorizontalAlignment="Center" Margin="59,2,61.667,2" VerticalAlignment="Bottom"  Width="160" Foreground="Black" Click="btcreatAcc_Click"/>
         </StackPanel>
         <StackPanel x:Name="stpnSocialAccount" Grid.Row="3" Grid.Column="1" Background="Beige" Margin="2,2">
-            <Button x:Name="btFBcreate" Content="FaceBook" HorizontalAlignment="Center" Margin="59,2,61.667,2" VerticalAlignment="Bottom"  Width="160" Foreground="Black" Click="btFBcreate_Click"/>
-            <Button x:Name="btGooglecreate" Content="Google" HorizontalAlignment="Center" Margin="59,2,61.667,2" VerticalAlignment="Bottom"  Width="160" Foreground="Black" Click="btcreatAcc_Click"/>
+            <Button x:Name="btFBcreate" Content="FaceBook" HorizontalAlignment="Center" Margin="59,2,61.667,2" VerticalAlignment="Bottom"  Width="160" Foreground="Black" Click="btFBcreate_Click" Visibility="Collapsed"/>
+            <Button x:Name="btGooglecreate" Content="Google" HorizontalAlignment="Center" Margin="59,2,61.667,2" VerticalAlignment="Bottom"  Width="160" Foreground="Black" Click="btcreatAcc_Click" Visibility="Collapsed"/>
         </StackPanel>
     </Grid>
 </Page>

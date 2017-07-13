@@ -38,16 +38,23 @@ namespace BookShelf
                 Req.addAuthorization("Bearer", App.Token);
 
                 res = await Req.GetRequest();
-                //JsonObject jsonRes;
-                //JsonObject.TryParse(res, out jsonRes);
-                //JsonArray j =  jsonRes["data"].GetArray();
-                List<string> lst = Req.findResponseS("isbn");
-                foreach (string str in lst)
+                JsonObject jsonRes;
+                JsonObject.TryParse(res, out jsonRes);
+                JsonArray j = jsonRes["data"].GetArray();
+                foreach (IJsonValue obj in j)
                 {
-                    clBook bk = await clISBNsearch.SearchISBNclBook(str);
+                    JsonObject it = obj.GetObject();
+                    clBook bk = await clISBNsearch.SearchISBNclBook(it["isbn"].GetString());
                     ucBook child = new ucBook(bk);
                     wgrdLibrary.Children.Add(new ucBook(bk));
                 }
+                //List<string> lst = Req.findResponseS("isbn");
+                //foreach (string str in lst)
+                //{
+                //    clBook bk = await clISBNsearch.SearchISBNclBook(str);
+                //    ucBook child = new ucBook(bk);
+                //    wgrdLibrary.Children.Add(new ucBook(bk));
+                //}
             }
             catch (Exception ex)
             {

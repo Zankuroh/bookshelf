@@ -120,7 +120,7 @@ namespace BookShelf
                 else
                 {
                     //placer une MsgBox ici
-                    string msg = null;
+                    string msg = "Echec : la connexion a echoué\n" ;
                     msg += jsonRes["errors"].ToString() + " ";
                     if (jsonRes.ContainsKey("title"))
                         msg += jsonRes["title"].ToString();
@@ -236,7 +236,7 @@ namespace BookShelf
             try
             {
                 string OutputToken = null;
-                string id = "937114642452 - ktgqm8tccij36f25u8sua7al5kga3ued.apps.googleusercontent.com";
+                string id = "758818420378-05bhrq3ks8sbk49pbs3blf8h85sd7uuf.apps.googleusercontent.com";
                 string callbackurl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString();
                 String GoogleURL = "https://accounts.google.com/o/oauth2/auth?client_id=" + Uri.EscapeDataString(id) + "&redirect_uri=" + Uri.EscapeDataString(callbackurl) + "&response_type=code&scope=" + Uri.EscapeDataString("http://picasaweb.google.com/data");
 

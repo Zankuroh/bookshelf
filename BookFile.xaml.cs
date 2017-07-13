@@ -144,7 +144,7 @@ namespace BookShelf
             if (jsonRes["errors"].ToString() != "null")
             {
                 //placer une MsgBox ici
-                string msg = null;
+                string msg = "Echec ; le livre n'a pas pu être ajouté à la bibliothèque\n";
                 msg += jsonRes["errors"].ToString() + " ";
                 if (jsonRes.ContainsKey("title"))
                     msg += jsonRes["title"].ToString();
@@ -172,7 +172,7 @@ namespace BookShelf
             if (jsonRes["errors"].ToString() != "null")
             {
                 //placer une MsgBox ici
-                string msg = null;
+                string msg = "Echec ; le livre n'a pas pu être ajouté à la liste de souhaits\n"; ;
                 msg += jsonRes["errors"].ToString() + " ";
                 if (jsonRes.ContainsKey("title"))
                     msg += jsonRes["title"].ToString();
@@ -181,7 +181,7 @@ namespace BookShelf
             }
             else
             {
-                Windows.UI.Popups.MessageDialog dial = new Windows.UI.Popups.MessageDialog("Succés : le livre est ajouté à la bibliothèque");
+                Windows.UI.Popups.MessageDialog dial = new Windows.UI.Popups.MessageDialog("Succés : le livre est ajouté à la liste de souhaits");
                 await dial.ShowAsync();
             }
         }
@@ -206,7 +206,7 @@ namespace BookShelf
             if (jsonRes["errors"].ToString() != "null")
             {
                 //placer une MsgBox ici
-                string msg = null;
+                string msg = "Echec ; le livre n'a pas pu être retiré de la bibliothèque\n";
                 msg += jsonRes["errors"].ToString() + " ";
                 if (jsonRes.ContainsKey("title"))
                     msg += jsonRes["title"].ToString();
@@ -235,7 +235,7 @@ namespace BookShelf
             if (jsonRes["errors"].ToString() != "null")
             {
                 //placer une MsgBox ici
-                string msg = null;
+                string msg = "Echec ; le livre n'a pas pu être retiré de la liste de souhait\n"; ;
                 msg += jsonRes["errors"].ToString() + " ";
                 if (jsonRes.ContainsKey("title"))
                     msg += jsonRes["title"].ToString();

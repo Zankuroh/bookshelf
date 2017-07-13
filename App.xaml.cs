@@ -32,6 +32,7 @@ namespace BookShelf
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         static public string Token = "";
+        static public winsdkfb.FBSession fb = null;
         public App()
         {
             this.InitializeComponent();

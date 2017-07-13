@@ -38,13 +38,13 @@
                 </Grid.RowDefinitions>
                 <Image  x:Name="imgBook" Grid.Row="0" Stretch="Fill" Source="Assets/StoreLogo.png" Height="Auto" HorizontalAlignment="Left" Width="Auto"></Image>
                 <StackPanel x:Name="stpnlBook" Grid.Row="1" >
-                    <TextBlock x:Name="txblTitle" Text="unknown" TextAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="txblAuthor" Text="unknown" TextAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="txblGenre" Text="unknown" TextAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="txblLanguage" Text="unknown" TextAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="txblPublisher" Text="unknown" TextAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txblTitle" Text="Titre inconnu" TextAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txblAuthor" Text="Auteur inconnu" TextAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txblGenre" Text="Genre inconnu" TextAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txblLanguage" Text="Langue inconnue" TextAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txblPublisher" Text="Editeur inconnu" TextAlignment="Center" VerticalAlignment="Center"/>
                 </StackPanel>
-                <TextBlock x:Name="txblSynopsis" Grid.Row="2" Text="unknown" TextAlignment="Center" Margin="2,0" TextWrapping="Wrap"/>
+                <TextBlock x:Name="txblSynopsis" Grid.Row="2" Text="Pas de Synopsis" TextAlignment="Center" Margin="2,0" TextWrapping="Wrap"/>
                 <Grid x:Name="grdUsrReview" Grid.Row="3">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

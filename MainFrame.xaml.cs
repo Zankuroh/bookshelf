@@ -115,11 +115,16 @@ namespace BookShelf
                 ((Frame)ShellSplitView.Content).Navigate(typeof(HomePage));
         }
 
-        private void Deconnection_Click(object sender, RoutedEventArgs e)
+        private async void Deconnection_Click(object sender, RoutedEventArgs e)
         {
             App.Token = null;
             var frame = Window.Current.Content as Frame;
             frame.Navigate(typeof(MainPage));
+            if (App.fb != null)
+            {
+                await App.fb.LogoutAsync();
+                App.fb = null;
+            }
         }
         //private void OnSettingsButtonChecked(object sender, RoutedEventArgs e)
         //{

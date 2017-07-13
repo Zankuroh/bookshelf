@@ -87,41 +87,41 @@ namespace BookShelf
         }
 
 
-        private async void btFBcreate_Click(object sender, RoutedEventArgs e)
+        private void btFBcreate_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                string res = null;
-                clFacebook fb = new clFacebook();
-                winsdkfb.FBSession sess = await fb.FBgetSession();
-                clRequestAPI Req = new clRequestAPI("/api/register");
-                string requestContent = "email=" + sess.User.Email + "&password=" + "123456789" + "&name=" + sess.User.FirstName;
-                res = await Req.PostRequest(requestContent, "application/x-www-form-urlencoded");
-                JsonObject jsonRes;
-                JsonObject.TryParse(res, out jsonRes);
-                if (jsonRes.ContainsKey("errors") && jsonRes["errors"].ToString() == "null")
-                {
-                    //placer une MsgBox ici
-                    string msg = null;
-                    msg += "Le profil a été crée avec succés";
-                    Windows.UI.Popups.MessageDialog dial = new Windows.UI.Popups.MessageDialog(msg);
-                    await dial.ShowAsync();
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-                    var frame = Window.Current.Content as Frame;
-                    frame.Navigate(typeof(MainPage));
-                }
-                else
-                {
-                    string msg = null;
-                    msg += "création de profil a echoué\n" + jsonRes["errors"].ToString() + " ";
-                    Windows.UI.Popups.MessageDialog dial = new Windows.UI.Popups.MessageDialog(msg);
-                    await dial.ShowAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                clErrorHandling.ErrorMessage("btFBcreate_Click(object sender, RoutedEventArgs e)", ex);
-            }
+            //try
+            //{
+            //    string res = null;
+            //    clFacebook fb = new clFacebook();
+            //    winsdkfb.FBSession sess = await fb.FBgetSession();
+            //    clRequestAPI Req = new clRequestAPI("/api/register");
+            //    string requestContent = "email=" + sess.User.Email + "&password=" + "123456789" + "&name=" + sess.User.FirstName;
+            //    res = await Req.PostRequest(requestContent, "application/x-www-form-urlencoded");
+            //    JsonObject jsonRes;
+            //    JsonObject.TryParse(res, out jsonRes);
+            //    if (jsonRes.ContainsKey("errors") && jsonRes["errors"].ToString() == "null")
+            //    {
+            //        //placer une MsgBox ici
+            //        string msg = null;
+            //        msg += "Le profil a été crée avec succés";
+            //        Windows.UI.Popups.MessageDialog dial = new Windows.UI.Popups.MessageDialog(msg);
+            //        await dial.ShowAsync();
+            //        SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            //        var frame = Window.Current.Content as Frame;
+            //        frame.Navigate(typeof(MainPage));
+            //    }
+            //    else
+            //    {
+            //        string msg = null;
+            //        msg += "création de profil a echoué\n" + jsonRes["errors"].ToString() + " ";
+            //        Windows.UI.Popups.MessageDialog dial = new Windows.UI.Popups.MessageDialog(msg);
+            //        await dial.ShowAsync();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    clErrorHandling.ErrorMessage("btFBcreate_Click(object sender, RoutedEventArgs e)", ex);
+            //}
         }
     }
 }

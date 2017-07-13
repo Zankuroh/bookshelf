@@ -26,10 +26,10 @@
                 <RowDefinition Height="15*"/>
             </Grid.RowDefinitions>
             <Image x:Name="imgThumb" Margin="2,2,2,2" Source="Assets/StoreLogo.png" Stretch="Fill"/>
-            <TextBlock x:Name="txblNameBook" Grid.Row="1" TextWrapping="Wrap" Text="Unknown" Margin="1,1,1,1" TextAlignment="Center" VerticalAlignment="Center"/>
-            <TextBlock x:Name="txblAuthBook" Grid.Row="2" TextWrapping="Wrap" Text="Unknown" Margin="1,1,1,1" TextAlignment="Center" VerticalAlignment="Center"/>
-            <TextBlock x:Name="txblGenreBook" Grid.Row="3" TextWrapping="Wrap" Text="Unknown" Margin="1,1,1,1" TextAlignment="Center" VerticalAlignment="Center"/>
-            <TextBlock x:Name="txblPublisher" Grid.Row="4" TextWrapping="Wrap" Text="Unknown" Margin="1,1,1,1" TextAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock x:Name="txblNameBook" Grid.Row="1" TextWrapping="Wrap" Text="Nom inconnu" Margin="1,1,1,1" TextAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock x:Name="txblAuthBook" Grid.Row="2" TextWrapping="Wrap" Text="Auteur inconnu" Margin="1,1,1,1" TextAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock x:Name="txblGenreBook" Grid.Row="3" TextWrapping="Wrap" Text="Genre inconnu" Margin="1,1,1,1" TextAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock x:Name="txblPublisher" Grid.Row="4" TextWrapping="Wrap" Text="Editeur inconnu" Margin="1,1,1,1" TextAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
     </Button>
 </UserControl>

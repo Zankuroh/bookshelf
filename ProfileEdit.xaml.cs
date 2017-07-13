@@ -60,7 +60,7 @@ namespace BookShelf
             cdEnterPsswd dialog = new cdEnterPsswd();
             string pwd = null;
             ContentDialogResult dialres = await dialog.ShowAsync();
-            bool success = false;
+            bool success = true;
             if (dialres == ContentDialogResult.Primary)
             {
                 pwd = dialog.Passwd;
@@ -117,7 +117,7 @@ namespace BookShelf
                         string res = null;
                         Req.addHeader("application/x-www-form-urlencoded");
                         Req.addAuthorization("Bearer", App.Token);
-                        res = await Req.PostRequest("password=" + pwd + "&new_password=" + pwd, "application/x-www-form-urlencoded");
+                        res = await Req.PostRequest("password=" + pwd + "&new_password=" + pwdbxUsr.Password, "application/x-www-form-urlencoded");
 
 
                         JsonObject jsonRes;
