@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,7 +69,6 @@ public class SignIn extends Fragment implements View.OnClickListener
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken,
                                                        AccessToken currentAccessToken) {
                 if (currentAccessToken == null) {
-                    Log.d("LOGOUT", "onLogout catched");
                     MainActivity.token = null;
                     MainActivity.provider = null;
                 }
@@ -155,8 +153,8 @@ public class SignIn extends Fragment implements View.OnClickListener
                     Authcode = acct.getServerAuthCode();
                 }
 
-                Snackbar snackbar = Snackbar.make(_v, Authcode, 5000);
-                snackbar.show();
+//                Snackbar snackbar = Snackbar.make(_v, Authcode, 5000);
+//                snackbar.show();
                 MainActivity.provider = "Google";
                 connectOauth(Authcode, "google");
 
@@ -312,7 +310,6 @@ public class SignIn extends Fragment implements View.OnClickListener
             loginButton.performClick();
         }
         else if (MainActivity.provider == "Google" && MainActivity.token != null) {
-            Log.i("DECO", "GOGOLE");
             //mGoogleApiClient.connect();
             /*Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                     new ResultCallback<Status>() {

@@ -59,6 +59,7 @@ public class EditProfil extends AppCompatActivity
             findViewById(R.id.ETPassword).setVisibility(View.INVISIBLE);
             findViewById(R.id.ETPasswordVerif).setVisibility(View.INVISIBLE);
             findViewById(R.id.BDelete).setVisibility(View.INVISIBLE);
+            findViewById(R.id.ETPseudo).setVisibility(View.INVISIBLE);
         }
         //Todo: set les autres champs
     }

@@ -95,6 +95,7 @@ public class Profil extends Fragment implements View.OnClickListener
     }
 
     public void getInfo(){
+        MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -122,6 +123,7 @@ public class Profil extends Fragment implements View.OnClickListener
                         e.printStackTrace();
                     }
                 }
+                MainActivity.stopLoading();
             }
 
             @Override
@@ -130,6 +132,7 @@ public class Profil extends Fragment implements View.OnClickListener
                 Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
+                MainActivity.stopLoading();
             }
         });
     }
