@@ -251,10 +251,10 @@ public class EditProfil extends AppCompatActivity
                 } else {
                     try {
                         JSONObject jObj = new JSONObject(response.errorBody().string());
-                        JSONObject jObjError = jObj.getJSONObject("errors");
+                        //JSONObject jObjError = jObj.getJSONObject("errors");
                         String error = "";
                         error = jObj.getString("title");
-                        JSONArray password;
+                        /*JSONArray password;
                         JSONArray deleted;
                         try {
                             password = jObjError.getJSONArray("password");
@@ -263,7 +263,7 @@ public class EditProfil extends AppCompatActivity
                         try {
                             deleted = jObjError.getJSONArray("delete");
                             error += "\n" + deleted.getString(0);
-                        } catch (Exception e) {}
+                        } catch (Exception e) {}*/
                         Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + error, Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
