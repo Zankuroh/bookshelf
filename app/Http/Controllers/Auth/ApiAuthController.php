@@ -109,7 +109,7 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
             {
                 $response = $this->getDefaultFailureJsonResponse();
                 $response->setOptionnalFields(['title' => 'Connexion with ' . $providerName . ' is impossible - try again']);
-                Log::debug('Uh oh! ' . $ex->getResponse()->getBody(true)->getContents());
+                Log::debug('Uh oh! ' . $e->getResponse()->getBody(true)->getContents());
             }
 
         }
