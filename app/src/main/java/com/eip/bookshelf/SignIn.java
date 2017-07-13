@@ -154,9 +154,6 @@ public class SignIn extends Fragment implements View.OnClickListener
                 if (acct != null) {
                     Authcode = acct.getServerAuthCode();
                 }
-
-                Snackbar snackbar = Snackbar.make(_v, Authcode, 5000);
-                snackbar.show();
                 MainActivity.provider = "Google";
                 connectOauth(Authcode, "google");
 
