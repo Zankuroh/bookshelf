@@ -34,6 +34,7 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
                 $providerName = $request->input('provider');
                 $token = $request->input('token');
 
+                Log::debug(" RECEVEID : token=" . $token . " providername =" . $providername);
                 $driver = Socialite::driver($providerName);
 
                 if ($request->input("redirect_uri"))
