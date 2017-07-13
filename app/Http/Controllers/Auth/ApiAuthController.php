@@ -35,6 +35,12 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
                 $token = $request->input('token');
 
                 $driver = Socialite::driver($providerName);
+
+                if ($request->input("redirect_uri"))
+                {
+                    $driver->redirectUrl($request->input('redirect_uri'));
+                }
+
                 if (strtolower($providerName) == "google")
                 {
                     $accessData = $driver->getAccessTokenResponse($token);
