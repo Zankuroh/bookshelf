@@ -21,11 +21,11 @@
             <AppBarButton Icon="Add"  Label="Add" Click="btAddBook_Click"/>
             <AppBarButton Icon="Delete" Label="Delete" Click="btDeleteLib_Click"/>
             <CommandBar.SecondaryCommands>
-                <AppBarButton Icon="Bookmarks"  Label="Add to Wishlist" Click="btAddtoWhishlst"/>
-                <AppBarButton Icon="Bookmarks"  Label="Remove from Wishlist" Click="btDeleteWish_Click"/>
+                <AppBarButton Icon="Bookmarks"  Label="Ajout Liste de souhait" Click="btAddtoWhishlst"/>
+                <AppBarButton Icon="Bookmarks"  Label="Retrait liste de souhait" Click="btDeleteWish_Click"/>
             </CommandBar.SecondaryCommands>
             <CommandBar.Content>
-                <TextBlock Text="A Book" />
+                <TextBlock Text="" />
             </CommandBar.Content>
         </CommandBar>
         <ScrollViewer x:Name="scviSynopsis"  HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" Height="600">
