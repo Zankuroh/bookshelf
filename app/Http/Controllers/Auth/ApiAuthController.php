@@ -35,7 +35,7 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
                 $token = $request->input('token');
 
                 Log::debug(" RECEVEID : token=" . $token . " providername =" . $providerName);
-                
+
                 $driver = Socialite::driver($providerName);
 
                 if ($request->input("redirect_uri"))
@@ -109,7 +109,7 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
             {
                 $response = $this->getDefaultFailureJsonResponse();
                 $response->setOptionnalFields(['title' => 'Connexion with ' . $providerName . ' is impossible - try again']);
-                Log::debug('Uh oh! ');
+                Log::debug('Uh oh! ' . $ex->getResponse()->getBody(true)->getContents());
             }
 
         }
