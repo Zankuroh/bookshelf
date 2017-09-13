@@ -93,12 +93,6 @@ public class SignUp extends AppCompatActivity
                 }
                 errors += "Le mots de passe doit contenir 5 caractères ou plus.";
             }
-            if (name.getText().toString().length() < 5) {
-                if (!errors.equals("")) {
-                    errors += "\n";
-                }
-                errors += "Le nom doit contenir 5 caractères ou plus.";
-            }
             if (!SignUp.checkPassword(password.getText().toString(), password2.getText().toString())) {
                 if (!errors.equals("")) {
                     errors += "\n";

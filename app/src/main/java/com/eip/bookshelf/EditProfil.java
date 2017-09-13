@@ -35,6 +35,7 @@ public class EditProfil extends AppCompatActivity
 {
     private RelativeLayout _rl;
     private String _login;
+    private String _email;
 
     public EditProfil()
     {
@@ -48,6 +49,7 @@ public class EditProfil extends AppCompatActivity
         setContentView(R.layout.edit_profil);
         _rl = (RelativeLayout)findViewById(R.id.RLEditProfil);
         _login = Profil.prof.getName();
+        _email = Profil.prof.getEmail();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
@@ -55,6 +57,7 @@ public class EditProfil extends AppCompatActivity
             ab.setDisplayHomeAsUpEnabled(true);
         }
         ((EditText)findViewById(R.id.ETPseudo)).setText(Profil.prof.getName());
+        ((EditText)findViewById(R.id.ETEmail)).setText(_email);
         if (MainActivity.provider != null) {
             findViewById(R.id.ETPassword).setVisibility(View.INVISIBLE);
             findViewById(R.id.ETPasswordVerif).setVisibility(View.INVISIBLE);
@@ -128,9 +131,14 @@ public class EditProfil extends AppCompatActivity
                 changeName(mdp, pseudo);
             }
         } else if (pseudo.equals("")) {
-            error_msg += "Les champs pseudo ne peuvent pas être vide";
+            error_msg += "Le champs pseudo ne peut pas être vide";
         }
-
+        String email = ((EditText)findViewById(R.id.ETEmail)).getText().toString();
+        if (!email.equals("") && !email.equals(_email)) {
+            changeEmail(mdp, email);
+        } else if (pseudo.equals("")) {
+            error_msg += "Le champs email ne peut pas être vide";
+        }
         String mdp1 = ((EditText)findViewById(R.id.ETPassword)).getText().toString();
         String mdp2 = ((EditText)findViewById(R.id.ETPasswordVerif)).getText().toString();
         if (!mdp1.equals(mdp2)) {
@@ -204,6 +212,46 @@ public class EditProfil extends AppCompatActivity
                 if (response.isSuccessful()) {
                     //ProfileModification modif = response.body();
                     _login = newName;
+                    Snackbar snackbar = Snackbar.make(_rl, "Modification réussie !", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProfileModification> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void changeEmail(String oldPassword, final String newEmail)
+    {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ProfileModification> call = bookshelfApi.ChangeEmail(MainActivity.token, oldPassword, newEmail);
+        call.enqueue(new Callback<ProfileModification>() {
+            @Override
+            public void onResponse(Call<ProfileModification> call, Response<ProfileModification> response) {
+                if (response.isSuccessful()) {
+                    //ProfileModification modif = response.body();
+                    _email = newEmail;
                     Snackbar snackbar = Snackbar.make(_rl, "Modification réussie !", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
