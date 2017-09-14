@@ -54,15 +54,15 @@ class ProfileController extends \App\Http\Controllers\ApiController
      *   ChangerUserName function
      *   It able to change the current user's email
      * In order to change, we need password field
-     * 
+     *
      * @param Request $request
      */
     public function changeUserName(Request $request)
     {
         $response = $this->getDefaultJsonResponse();
         if ($this->_ARV->validate($request,
-            ['name' => 'required|string|between:5,30',
-            'password' => 'required|string|between:5,30']))
+            ['name' => 'required|string|between:3,30',
+            'password' => 'required|string|between:3,30']))
         {
             $currentUser = JWTAuth::toUser(JWTAuth::getToken());
             \Illuminate\Support\Facades\Log::alert("CURRENT USER PASSWORD" . $currentUser->password . ' and name ' . $currentUser->name);
@@ -99,7 +99,7 @@ class ProfileController extends \App\Http\Controllers\ApiController
     {
         $response = $this->getDefaultJsonResponse();
 
-        if ($this->_ARV->validate($request, 
+        if ($this->_ARV->validate($request,
             ['password' => 'required|string|between:5,30',
             'email' => 'required|email|between:5,30|unique:users,email']
             ))
@@ -137,7 +137,7 @@ class ProfileController extends \App\Http\Controllers\ApiController
     {
         $response = $this->getDefaultJsonResponse();
 
-        if ($this->_ARV->validate($request, 
+        if ($this->_ARV->validate($request,
             ['password' => 'required|string|between:5,30',
             'new_password' => 'required|string|between:5,30']
             ))
@@ -166,7 +166,7 @@ class ProfileController extends \App\Http\Controllers\ApiController
     /**
      * deleteProfile
      * Delete the user from the app
-     * 
+     *
      * Mandatory fields :
      *     - 'delete' => yes|1|true
      *     - 'password' => string
@@ -175,7 +175,7 @@ class ProfileController extends \App\Http\Controllers\ApiController
     public function deleteProfile(Request $request)
     {
         $response = $this->getDefaultJsonResponse();
-        if ($this->_ARV->validate($request, 
+        if ($this->_ARV->validate($request,
             ['delete' => 'required|accepted']
             ))
         {
@@ -192,7 +192,7 @@ class ProfileController extends \App\Http\Controllers\ApiController
                 {
                     $response = $this->_ARV->getFailureJson();
                     $response->setOptionnalFields(['title' => 'Bad credentials.']);
-                }   
+                }
             }
             else
             {

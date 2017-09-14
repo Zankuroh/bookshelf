@@ -11,8 +11,8 @@ class RegisterController extends \App\Http\Controllers\ApiController
 {
     /**
      * Register a new user.
-     * 
-     * @example 
+     *
+     * @example
      *     Mandatory fields:
      *         - 'email' => email format && between 5 and 30 character
      *         - 'password' => string format && between 5 and 30 character
@@ -27,7 +27,7 @@ class RegisterController extends \App\Http\Controllers\ApiController
         if ($this->_ARV->validate($request, [
             'email' => 'required|email|between:5,30|unique:users,email',
             'password' => 'required|string|between:5,30',
-            'name' => 'required|string|between:5,30']
+            'name' => 'required|string|between:3,30']
             ))
         {
             $newUserEmail = $request->input('email');
