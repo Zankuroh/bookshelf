@@ -95,6 +95,7 @@ public class ShelfContainer extends Fragment
         } else {
             ShelfTab.in_use = true;
         }
+        MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -131,6 +132,7 @@ public class ShelfContainer extends Fragment
                         e.printStackTrace();
                     }
                 }
+                MainActivity.stopLoading();
                 ShelfTab.in_use = false;
             }
 
@@ -140,17 +142,21 @@ public class ShelfContainer extends Fragment
                 Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
+                MainActivity.stopLoading();
             }
         });
     }
 
     private void propoShelf()
     {
+        //MainActivity.startLoading();
         //Todo: Appel à la BDD pour recup les vrais PROPOS
+        //MainActivity.stopLoading();
     }
 
     private void wishShelf()
     {
+        MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -187,6 +193,7 @@ public class ShelfContainer extends Fragment
                         e.printStackTrace();
                     }
                 }
+                MainActivity.stopLoading();
                 ShelfTab.in_use = false;
             }
 
@@ -196,6 +203,7 @@ public class ShelfContainer extends Fragment
                 Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
+                MainActivity.stopLoading();
             }
         });
     }
