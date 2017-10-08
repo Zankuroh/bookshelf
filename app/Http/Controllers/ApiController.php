@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -49,5 +49,13 @@ class ApiController extends Controller
     public function getDefaultFailureJsonResponse($optsErrorsFields = true)
     {
         return $this->_ARV->getFailureJson($optsErrorsFields);
+    }
+
+    /**
+    * Get default json response string
+    */
+    public function getRawJsonResponse()
+    {
+      return $this->response->getJson();
     }
 }
