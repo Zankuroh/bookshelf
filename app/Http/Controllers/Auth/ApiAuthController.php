@@ -29,9 +29,11 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
   * with errors message otherwise the a new token of JWAuth is returned
   * into the response.
   *
+  * @param $profile The fetched profile from driver (created inside the driver)
+  * 
   * @return User or null
   */
-  private function ($profile)
+  private function loadUserFromDriver($profile)
   {
     $success = true;
 
@@ -39,7 +41,7 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
     {
       //$user = User::where('email', '=', $profile->getEmail())->first();
 
-      $user = User:getByEmailOrCreate($email);
+      $user = User::getByEmailOrCreate($email);
       if (is_null($user))
       {
         $user->email = $email;
@@ -51,7 +53,6 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
 
         // NOT EXISTING WE CREATE USER
         Log::debug("NEW USER HAS BEEN CREATED FOR EMAIL : " . $user->email);
-
       }
       else
       {
@@ -147,7 +148,7 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
         $profile = $this->loadDataFromSocialProvider();
         //check if the profile is completely filled and also created or already
         // a loaded from the existing Database
-        if (!is_null($profile) && $this->createOrLoadUser($profile))
+        if (!is_null($profile) && $this->loadUserFromDriver($profile))
         {
           $this->authenticate($request, true);
         }
@@ -244,7 +245,7 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
     }
     $this->response->setOptionnalFields($failureAuthenticationReasons);
 
-    return $this->getRawJsonResponse;
+    return $this->getRawJsonResponse();
   }
 
   public function setRequest(Request $request)

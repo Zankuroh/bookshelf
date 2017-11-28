@@ -27,7 +27,7 @@ Route::group(['namespace' => 'Auth'], function() {
 
 /**
  * Api features namespace
- *   
+ *
  */
 Route::group(['namespace' => 'Api'], function() {
 
@@ -85,7 +85,7 @@ Route::group(['namespace' => 'Api'], function() {
                  * Get all wish list of books of user
                  */
                 Route::get('/', 'WishBookController@index');
-                
+
                 /** Store a new book into the wishlist */
                 Route::post('/', 'WishBookController@store');
 
@@ -95,8 +95,12 @@ Route::group(['namespace' => 'Api'], function() {
 
         });
 
+        Route::group(["prefix" => "notifications"], function()
+        {
 
-        
+        });
+
+
         /** Profile group */
         Route::group(['prefix' => 'profile'], function() {
 

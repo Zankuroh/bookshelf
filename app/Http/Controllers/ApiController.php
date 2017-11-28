@@ -32,7 +32,15 @@ class ApiController extends Controller
 
         if (JWTAuth::getToken())
         {
-            $this->_currentUser = JWTAuth::toUser(JWTAuth::getToken());
+            Log::debug("ApiController JWTAuth->getToken = " . JWTAuth::getToken());
+            try
+            {
+                $this->_currentUser = JWTAuth::toUser(JWTAuth::getToken());
+            }
+            catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $expToken)
+            {
+                Log::debug("ApiController JWTAuth expired token");
+            }
         }
     }
 
