@@ -40,14 +40,18 @@ class customAdapterAuthor extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent)
     {
+        View v;
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) _c.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.author_adapter, parent, false);
-
-            String iadapt = _als.get(position);
-            TextView tv = (TextView) convertView.findViewById(R.id.TVAutor);
-            tv.setText(iadapt);
+            v = mInflater.inflate(R.layout.author_adapter, parent, false);
+        } else {
+            v = convertView;
         }
-        return convertView;
+
+        String iadapt = _als.get(position);
+        TextView tv = (TextView) v.findViewById(R.id.TVAutor);
+        tv.setText(iadapt);
+
+        return v;
     }
 }

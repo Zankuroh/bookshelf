@@ -82,20 +82,16 @@ public class SignIn extends Fragment implements View.OnClickListener
         loginButton.registerCallback(_callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-
                 AccessToken accessToken = loginResult.getAccessToken();
                 MainActivity.provider = "FB";
                 connectOauth(accessToken.getToken(), "facebook");
             }
 
             @Override
-            public void onCancel() {
-
-            }
+            public void onCancel() { }
 
             @Override
-            public void onError(FacebookException exception) {
-            }
+            public void onError(FacebookException exception) { }
         });
         accessTokenTracker.startTracking();
 
@@ -291,22 +287,22 @@ public class SignIn extends Fragment implements View.OnClickListener
         Bundle arg = new Bundle();
         arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
         // A GARDER (TAB DANS SHELF)
-//        ShelfTab shelfFrag = new ShelfTab();
-//        shelfFrag.setArguments(arg);
-//        fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
-//        fragmentTransaction.commit();
-        ShelfContainer shelfFrag = new ShelfContainer();
+        ShelfTab shelfFrag = new ShelfTab(); //ShelfTab
         shelfFrag.setArguments(arg);
         fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
         fragmentTransaction.commit();
+//        ShelfContainer shelfFrag = new ShelfContainer();
+//        shelfFrag.setArguments(arg);
+//        fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
+//        fragmentTransaction.commit();
     }
 
     public void deconnection() {
-        if (MainActivity.provider == "FB" && MainActivity.token != null)
+        if (MainActivity.provider.equals("FB") && MainActivity.token != null)
         {
             loginButton.performClick();
         }
-        else if (MainActivity.provider == "Google" && MainActivity.token != null) {
+        else if (MainActivity.provider.equals("Google") && MainActivity.token != null) {
             //mGoogleApiClient.connect();
             /*Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                     new ResultCallback<Status>() {

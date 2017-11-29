@@ -98,16 +98,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 defineNameToolBar("Bibliothèque");
                 if (MainActivity.token != null) {
                     // A GARDER TAB POUR SHELF
-//                    Bundle arg = setArgs(shelfType.MAINSHELF);
-//                    ShelfTab shelfFrag = new ShelfTab();
-//                    shelfFrag.setArguments(arg);
-//                    fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
-//                    fragmentTransaction.commit();
                     Bundle arg = setArgs(shelfType.MAINSHELF);
-                    ShelfContainer shelfFrag = new ShelfContainer();
+                    ShelfTab shelfFrag = new ShelfTab();
                     shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
                     fragmentTransaction.commit();
+//                    Bundle arg = setArgs(shelfType.MAINSHELF);
+//                    ShelfContainer shelfFrag = new ShelfContainer();
+//                    shelfFrag.setArguments(arg);
+//                    fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
+//                    fragmentTransaction.commit();
                 } else {
                     accessDenied(_this);
                 }
@@ -247,7 +247,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         View current_focus = activity.getCurrentFocus();
         if (current_focus != null) {
-            inputMethodManager.hideSoftInputFromWindow(current_focus.getWindowToken(), 0);
+            if (inputMethodManager != null) {
+                inputMethodManager.hideSoftInputFromWindow(current_focus.getWindowToken(), 0);
+            }
         }
     }
 
