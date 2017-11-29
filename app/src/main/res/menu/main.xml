@@ -24,4 +24,16 @@
         android:orderInCategory="100"
         android:title="Retirer de ma liste de souhait"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/IAddFriend"
+        android:orderInCategory="100"
+        android:title="Ajouter dans ma liste d'amis"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/IRemoveFriend"
+        android:orderInCategory="100"
+        android:title="Retirer de ma liste d'amis"
+        app:showAsAction="never" />
 </menu>

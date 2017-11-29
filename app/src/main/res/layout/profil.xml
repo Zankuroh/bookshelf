@@ -74,7 +74,7 @@
         android:text="Date de dernière connexion: "
         android:layout_marginTop="30dp"
         android:layout_below="@+id/TVLabDateCrea"
-        android:layout_alignStart="@+id/TVLabDateCrea" />
+        android:layout_alignStart="@+id/TVLabDateCrea"/>
 
     <Button
         android:id="@+id/BEditProfil"
@@ -85,7 +85,20 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
         android:text="Modifier les informations personnelles"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/BFShelf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/TVLabDateLast"
+        android:layout_below="@+id/TVLabDateLast"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:text="Regarder la liste de souhait"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/TVPseudo"

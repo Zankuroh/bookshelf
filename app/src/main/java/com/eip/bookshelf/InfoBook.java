@@ -3,6 +3,7 @@ package com.eip.bookshelf;
 import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -130,6 +131,8 @@ public class InfoBook extends AppCompatActivity
         _menu = menu;
 
         if (MainActivity.token != null && _isValid) {
+            menu.findItem(R.id.IAddFriend).setVisible(false);
+            menu.findItem(R.id.IRemoveFriend).setVisible(false);
             if (_inMain) {
                 menu.findItem(R.id.IAddBookBiblio).setVisible(false);
             } else {
@@ -154,6 +157,8 @@ public class InfoBook extends AppCompatActivity
         _menu.findItem(R.id.IAddBookBiblio).setVisible(false);
         _menu.findItem(R.id.IAddBookWish).setVisible(false);
         _menu.findItem(R.id.IRemoveBookWish).setVisible(false);
+        _menu.findItem(R.id.IAddFriend).setVisible(false);
+        _menu.findItem(R.id.IRemoveFriend).setVisible(false);
         findViewById(R.id.BReview).setVisibility(View.GONE);
     }
 
@@ -335,6 +340,15 @@ public class InfoBook extends AppCompatActivity
         }
     }
 
+    public void onClickBuy(View v)
+    {
+        TextView tvt = (TextView) findViewById(R.id.TVTitreBook);
+
+        String url = "https://www.amazon.fr/s/ref=nb_sb_noss_1?__mk_fr_FR=ÅMÅŽÕÑ&url=search-alias=aps&field-keywords=" + tvt.getText();
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+    }
 
     public void addToBookShelf()
     {

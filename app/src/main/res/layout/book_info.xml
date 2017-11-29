@@ -14,6 +14,7 @@
         <RelativeLayout
             android:orientation="vertical" android:layout_width="fill_parent"
             android:layout_height="wrap_content" android:id="@+id/RLBook">
+
             <TextView
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
@@ -85,8 +86,19 @@
                 android:id="@+id/VLine"/>
 
             <Button
+                android:id="@+id/BBuy"
                 style="?android:attr/buttonStyleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/VLine"
+                android:layout_marginLeft="50dip"
+                android:layout_marginRight="50dip"
+                android:onClick="onClickBuy"
+                android:text="@string/btn_buy" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_below="@id/BBuy"
                 android:layout_width="match_parent"
                 android:text="@string/btn_review"
                 android:layout_height="wrap_content"

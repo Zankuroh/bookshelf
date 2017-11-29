@@ -118,6 +118,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragmentTransaction.replace(R.id.fragment_container, searchFrag);
                 fragmentTransaction.commit();
                 break;
+            case R.id.nav_amis:
+                if (MainActivity.token != null) {
+                    defineNameToolBar("Mes Amis");
+                    FriendsContainer friendContainer = new FriendsContainer();
+                    fragmentTransaction.replace(R.id.fragment_container, friendContainer);
+                    fragmentTransaction.commit();
+                } else {
+                    accessDenied(_this);
+                }
+                break;
             case R.id.nav_propo:
                 defineNameToolBar("Propositions");
                 if (MainActivity.token != null) {
