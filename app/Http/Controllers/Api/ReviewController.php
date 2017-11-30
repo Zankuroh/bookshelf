@@ -22,14 +22,13 @@ class ReviewController extends \App\Http\Controllers\ApiController
      */
     public function index(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
         if (!$this->_ARV->validate($request,
             [
             'isbn' => 'required|between:9,13'
             ]
             ))
         {
-            $response = $this->getDefaultFailureJsonResponse();
+            $this->setDefaultFailureJsonResponse();
         }
         else
         {
@@ -52,10 +51,10 @@ class ReviewController extends \App\Http\Controllers\ApiController
             }
 
 
-            $response->setData(['reviews' => $reviews]);
+            $this->getJsonResponse()->setData(['reviews' => $reviews]);
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 
     /**
@@ -80,9 +79,7 @@ class ReviewController extends \App\Http\Controllers\ApiController
      */
     public function store(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
         $request->merge(['rate' => intval($request->input('rate'))]);
-
         if (!$this->_ARV->validate($request,
             [
             'isbn' => 'required|between:9,13',
@@ -91,7 +88,7 @@ class ReviewController extends \App\Http\Controllers\ApiController
             ]
             ))
         {
-            $response = $this->_ARV->getFailureJson();
+            $this->setDefaultFailureJsonResponse();
         }
         else
         {
@@ -105,8 +102,8 @@ class ReviewController extends \App\Http\Controllers\ApiController
                 ])->get()->isNotEmpty())
             {
                 $failureReasons = ['title' => 'Review on this book already exist'];
-                $response = $this->_ARV->getFailureJson();
-                $response->setOptionnalFields($failureReasons);
+                $this->setDefaultFailureJsonResponse();
+                $this->getJsonResponse()->setOptionnalFields($failureReasons);
             }
             else
             {
@@ -118,12 +115,11 @@ class ReviewController extends \App\Http\Controllers\ApiController
                     'rate' => is_null($request->input('rate')) ? DEFAULT_RATE : $request->input('rate')
                     ]);
 
-                $response->setData(['review' => $newReview]);
+                $this->getJsonResponse()->setData(['review' => $newReview]);
             }
         }
 
-        return $response->getJson();
-        //
+        return $this->getRawJsonResponse();
     }
 
     /**
@@ -134,11 +130,10 @@ class ReviewController extends \App\Http\Controllers\ApiController
      */
     public function show($id)
     {
-        $response = $this->getDefaultJsonResponse();
         $review = Review::where('id', $id)->get()->all();
-        $response->setData($review);
+        $this->getJsonResponse()->setData($review);
 
-        return $response->getJson();
+        return $this->getJsonResponse();
     }
 
     /**
@@ -161,14 +156,12 @@ class ReviewController extends \App\Http\Controllers\ApiController
      */
     public function update(Request $request, $id)
     {
-        $response = $this->getDefaultJsonResponse();
         $request->merge(['rate' => intval($request->input('rate'))]);
         $review = Review::find($id);
-
         if (is_null($review))
         {
-            $response = $this->getDefaultFailureJsonResponse(false);
-            $response->setOptionnalFields(['title' => 'Review not exist']);
+            $this->setDefaultFailureJsonResponse(false);
+            $this->getJsonResponse()->setOptionnalFields(['title' => 'Review not exist']);
 
         }
         else
@@ -179,7 +172,7 @@ class ReviewController extends \App\Http\Controllers\ApiController
                 'rate' => 'integer|between:0,5'
                 ]))
             {
-                $response = $this->getDefaultFailureJsonResponse();
+                $this->setDefaultFailureJsonResponse();
             }
             else
             {
@@ -188,18 +181,18 @@ class ReviewController extends \App\Http\Controllers\ApiController
                     $review->content = $request->input('content');
                     $review->rate = is_null($request->input('rate')) ? DEFAULT_RATE : $request->input('rate');
                     $review->save();
-                    $response->setData(['review' => $review]);
+                    $this->getJsonResponse()->setData(['review' => $review]);
                 }
                 else
                 {
-                    $response = $this->getDefaultFailureJsonResponse(false);
                     $failureReasons = ['title' => 'This review is not belongs to user'];
-                    $response->setOptionnalFields($failureReasons);
+                    $this->setDefaultFailureJsonResponse(false);
+                    $this->getJsonResponse()->setOptionnalFields($failureReasons);
                 }
             }
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
         //
     }
 
@@ -211,37 +204,35 @@ class ReviewController extends \App\Http\Controllers\ApiController
      */
     public function destroy(Request $request, $id)
     {
-        $response = $this->getDefaultJsonResponse();
-
         if (!$this->_ARV->validate($request, ['validation' => 'required|accepted']))
         {
-            $response = $this->getDefaultFailureJsonResponse();
+            $this->setDefaultFailureJsonResponse();
         }
         else
         {
             $review = Review::find($id);
             if (is_null($review))
             {
-                $response = $this->getDefaultFailureJsonResponse(false);
                 $failureReasons = ['title' => 'Review does not exist.'];
-                $response->setOptionnalFields($failureReasons);
+                $this->setDefaultFailureJsonResponse(false);
+                $this->getJsonResponse()->setOptionnalFields($failureReasons);
             }
             else
             {
                 if ($review->user_id == $this->getCurrentUser()->id)
                 {
-                    $response->setData(['review' => $review]);
+                    $this->getJsonResponse()->setData(['review' => $review]);
                     $review->delete();
                 }
                 else
                 {
-                    $response = $this->getDefaultFailureJsonResponse(false);
                     $failureReasons = ['title' => 'This review is not belongs to user'];
-                    $response->setOptionnalFields($failureReasons);
+                    $this->setDefaultFailureJsonResponse(false);
+                    $this->getJsonResponse()->setOptionnalFields($failureReasons);
                 }
             }
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 }

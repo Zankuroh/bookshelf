@@ -6,7 +6,7 @@ use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-
+use Log;
 class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
@@ -63,9 +63,9 @@ class User extends Authenticatable
     * Search the user by email
     * @return user or null
     */
-    public function getByEmail($email)
+    public static function getByEmail($email)
     {
-      return self::where("email", "=", $email)->first();
+      return User::where("email", "=", $email)->first();
     }
 
     /**
@@ -74,10 +74,11 @@ class User extends Authenticatable
     * The user will not be saved physically
     * @return user or null
     */
-    public function getByEmailOrCreate($email)
+    public static function getByEmailOrCreate($email)
     {
-      $user = $this->getByEmail($email);
+        Log::debug("GET BY EMAIL OR CREATE");
+      $user = User::getByEmail($email);
 
-      return $user == null ? new User() : $user;
+      return $user;
     }
 }

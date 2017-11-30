@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateNotificationsAuthor extends Migration
+class CreateAuthorNovelsNotificationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,11 @@ class CreateNotificationsAuthor extends Migration
      */
     public function up()
     {
-        Schema::create('notifications_author', function (Blueprint $table) {
+        Schema::create('author_novels_notifications', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('notification_id');
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('novel_id'); //Novel id where the publication of author has been made
             $table->timestamps();
-
-            /**
-            *  notification belongs to the author will be expired
-            * usually the expiration date is a date
-            */
-            $table->date('expiration');
         });
     }
 
@@ -33,6 +28,6 @@ class CreateNotificationsAuthor extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('notifications_author');
+        Schema::dropIfExists('author_novels_notifications');
     }
 }

@@ -48,10 +48,43 @@ Route::group(['namespace' => 'Api'], function() {
          **/
         Route::resource('review', 'ReviewController');
 
-        Route::get('author', 'AuthorController@index'); // List all authors
-        Route::post('author', 'AuthorController@store'); // Store a new authors, need to be confirmed before to be active (by voting system)
-        Route::delete('author', 'AuthorController@destroy');
+        Route::group(['prefix' => 'author'], function()
+        {
 
+            Route::get('/', 'AuthorController@index'); // List all authors
+            
+            /*
+            * Store a new authors, need to be confirmed before to be active (by voting system)
+            */
+            Route::post('/', 'AuthorController@store');
+            
+            Route::delete('/', 'AuthorController@destroy');
+
+            /**
+             * New novels (notifications to users)
+             **/
+            Route::group(['prefix' => 'novels'], function()
+            {
+                Route::get('/', 'AuthorNovelsController@index');
+                Route::post('/', 'AuthorNovelsController@newNovel');
+                Route::delete('/', 'AuthorNovelsController@deleteNovel');
+
+                Route::group(['prefix' => 'notifications'], function()
+                {
+                    Route::get('/', 'AuthorNovelsController@checkNewNovels');
+                });
+                
+            });
+
+            Route::group(['prefix' => 'subscription'], function()
+            {
+                Route::post('/', 'AuthorSubscriptionController@subscribe');
+                Route::delete('/', 'AuthorSubscriptionController@unSubscribe');
+                Route::get('/', 'AuthorSubscriptionController@index');
+            });
+
+        });
+        
         // Route::get('wishlist', 'WishlistController@index');
         // Route::post('wishlist', 'WishlistController@store');
         // Route::delete('wishlist', 'WishlistController@destroy');

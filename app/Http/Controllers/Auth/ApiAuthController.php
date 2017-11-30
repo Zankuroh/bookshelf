@@ -19,7 +19,6 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
   {
     $this->middleware('guest', ['except' => 'getLogout']);
     parent::__construct();
-    $this->response = $this->getDefaultJsonResponse();
   }
 
   /**
@@ -33,7 +32,7 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
   * 
   * @return User or null
   */
-  private function loadUserFromDriver($profile)
+  private function storeOrRetrieveUserFromSocialProfile($profile)
   {
     $success = true;
 
@@ -41,11 +40,12 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
     {
       //$user = User::where('email', '=', $profile->getEmail())->first();
 
-      $user = User::getByEmailOrCreate($email);
+      $user = User::getByEmailOrCreate($profile->email);
       if (is_null($user))
       {
-        $user->email = $email;
-        $user->name = $name;
+        $user = new User();
+        $user->email = $profile->email;
+        $user->name = $profile->name;
         $user->password = null; //we force to laravel db
 
         $user->setSocialNetworkFlag();
@@ -66,13 +66,12 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
       $this->request['email'] = $user->email;
       $this->request['password'] = null;
 
-      Log::debug(print_r($profile));
       Log::debug($profile->getEmail());
     }
     else
     {
       $success = false;
-      $response->setOptionnalFields(['title' => 'Connexion with ' . $providerName . ' is impossible - try again']);
+      $this->getJsonResponse()->setOptionnalFields(['title' => 'Connexion with ' . $providerName . ' is impossible - try again']);
     }
 
     return $success;
@@ -87,10 +86,11 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
   * in the case where false is returned we will build the json response
   * with errors message
   */
-  public function loadDataFromSocialProvider()
+  public function loadDataFromSocialProvider($request)
   {
-    $providerName = $request->input('provider');
-    $token = $request->input('token');
+    $providerName = $request->provider;
+    $token = $request->token;
+
     $driver = Socialite::driver($providerName);
     $profile = null;
 
@@ -100,26 +100,38 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
       * Handle google's redirect uri mandatory parameter
       * otherwise the auth will not pass
       */
-      if ($request->input("redirect_uri"))
+      if ($request->has("redirect_uri"))
       {
+        $redirectUri = $request->input("redirect_uri");
+    
         Log::debug("set new redirect uri " . $request->input('redirect_uri'));
         $driver->redirectUrl($request->input('redirect_uri'));
+
+        $accessData = $driver->getAccessTokenResponse($token);
+        $accessToken = $accessData['access_token'];
+
+        $profile = $driver->userFromToken($accessToken);
       }
-
-      $accessData = $driver->getAccessTokenResponse($token);
-      $accessToken = $accessData['access_token'];
-
-      $profile = $driver->userFromToken($accessToken);
+      else
+      {
+        Log::debug("Redirect uri parameter has not been suplied");
+        $this->setDefaultFailureJsonResponse(false);
+        $this->getJsonResponse()->setData(['errors' => 'redirect_uri_missing']);
+        $this->getJsonResponse()->setOptionnalFields(['title' => 'Redirect uri missing is missing.']);
+      }      
     }
     else if (strtolower($providerName) == "facebook")
     {
-      $this->profile = $driver->userFromToken($token);
+      Log::debug("Loading profile from Facebook");
+      $profile = $driver->userFromToken($token);
+      Log::debug("Profile : ");
+      Log::debug("Email loaded is : " . $profile->email);
     }
     else
     {
-      $response = $this->getDefaultFailureJsonResponse();
-      $response->setData(['errors' => 'provider not exist']);
-      $response->setOptionnalFields(['title' => 'The provider : ' . $providerName . ' is not supported, please try to connect with another social network.']);
+      $this->setDefaultFailureJsonResponse(false);
+      $this->getJsonResponse()->setData(['errors' => 'provider not exist']);
+      $this->getJsonResponse()->setOptionnalFields(['title' => 'The provider : ' . $providerName . ' is not supported, please try to connect with another social network.']);
     }
 
     return $profile;
@@ -132,7 +144,6 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
   */
   public function oAuthenticate(Request $request)
   {
-    $response = $this->getDefaultJsonResponse();
     $this->setRequest($request);
 
     Log::debug("SOCIALITE PHASE");
@@ -142,36 +153,44 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
     {
       try
       {
-        Log::debug(" RECEVEID : token=" . $token . " providername =" . $providerName);
-
         //load profile from fetched social provider data
-        $profile = $this->loadDataFromSocialProvider();
+        $profile = $this->loadDataFromSocialProvider($request);
         //check if the profile is completely filled and also created or already
         // a loaded from the existing Database
-        if (!is_null($profile) && $this->loadUserFromDriver($profile))
+        if (!is_null($profile) && $this->storeOrRetrieveUserFromSocialProfile($profile))
         {
+          $request->request->add(['email' => $profile->email]);
+          Log::debug("OAuthSteps passed, next step of classical authentication begin");
           $this->authenticate($request, true);
+        }
+        else
+        {
+          Log::debug("Should not be in this step, failure during loading user from social driver");
         }
       }
       catch (Exception $e)
       {
-        $response = $this->getDefaultFailureJsonResponse();
-        $response->setOptionnalFields(['title' => 'Connexion with ' . $providerName . ' is impossible - try again']);
+        $this->setDefaultFailureJsonResponse(false);
+        $this->getJsonResponse()->setOptionnalFields(['title' => 'Connexion with ' . $providerName . ' is impossible - try again']);
       }
       catch (\Guzzle\Http\Exception\BadResponseException $e)
       {
-        $response = $this->getDefaultFailureJsonResponse();
-        $response->setOptionnalFields(['title' => 'Connexion with ' . $providerName . ' is impossible - try again']);
+        $this->setDefaultFailureJsonResponse(false);
+        $this->getJsonResponse()->setOptionnalFields(['title' => 'Connexion with ' . $providerName . ' is impossible - try again']);
         Log::debug('Uh oh! ' . $e->getMessage());
       }
       catch (\GuzzleHttp\Exception\ClientException $e)
       {
-        $response = $this->getDefaultFailureJsonResponse();
-        $response->setOptionnalFields(['title' => 'Connexion with ' . $providerName . ' is impossible - try again']);
+        $this->setDefaultFailureJsonResponse(false);
+        $this->getJsonResponse()->setOptionnalFields(['title' => 'Connexion with ' . $request->provider . ' is impossible - try again']);
         Log::debug('Uh oh! ' . $e->getResponse()->getBody(true)->getContents());
         Log::debug('Uh oh! ' . $e->getResponse()->getStatusCode());
       }
 
+    }
+    else
+    {
+      $this->setDefaultFailureJsonResponse();
     }
     Log::debug("fuck1");
 
@@ -185,24 +204,23 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
   */
   public function authenticate(Request $request, $socialAuth = false)
   {
-    $response = $this->getDefaultJsonResponse();
     $authenticated = true;
     $failureAuthenticationReasons = null;
+    $requiredFields = array('email' => 'required|email'); // default for all kind of loggin
+    
+    if (!$socialAuth)
+    {
+      array_push($requiredFields, ['password' => 'required|string']);
+    }
 
-    if ($this->_ARV->validate($request,
-    ['email' => 'required|email',
-    'password' => 'required|string']
-    ))
+    if ($this->_ARV->validate($request,$requiredFields))
     {
       $token = null;
-      $credentials = $request->only('email', 'password');
-
       try
       {
-
         if ($socialAuth)
         {
-          $user = User::getByEmail($email);
+          $user = User::getByEmail($request->email);
           if (!is_null($user))
           {
             $token = JWTAuth::fromUser($user);
@@ -211,10 +229,11 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
           {
             $authenticated = false;
           }
-          Log::debug("JWT AUTH SOCIAL AUTH : TOKEN : " . $token);
+          Log::debug("JWT AUTH SOCIAL AUTH : TOKEN : " . $token . " Request email : " . $request->email);
         }
         else
         {
+          $credentials = $request->only('email', 'password');
           $token = JWTAuth::attempt($credentials);
         }
         if (is_null($token) || $token == false)
@@ -232,18 +251,19 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
       if ($authenticated)
       {
         $user = JWTAuth::toUser($token);
-        $this->response->setData(['token' => $token, 'user_id' => $user->id]);
+
+        $this->getJsonResponse()->setData(['token' => $token, 'user_id' => $user->id]);
       }
       else
       {
-        $this->response = $this->_ARV->getFailureJson();
+        $this->setDefaultFailureJsonResponse();
       }
     }
     else
     {
-      $this->response = $this->_ARV->getFailureJson();
+      $this->setDefaultFailureJsonResponse();
     }
-    $this->response->setOptionnalFields($failureAuthenticationReasons);
+    $this->getJsonResponse()->setOptionnalFields($failureAuthenticationReasons);
 
     return $this->getRawJsonResponse();
   }

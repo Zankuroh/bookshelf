@@ -20,21 +20,18 @@ class BookController extends \App\Http\Controllers\ApiController
      */
     public function index(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
-
-        
         // if ($this->useSecondDB)
         // {
         //     $books = DB::connection('mysql2')->select('select * from books where active = 1');
         // }
         // else
         // {
-            $books = $this->getCurrentUser()->books()->get();
+        $books = $this->getCurrentUser()->books()->get();
         // }
-        $response->setData($books);
+        // 
+        $this->getJsonResponse()->setData($books);
 
-
-        return ($response->getJson());
+        return ($this->getRawJsonResponse());
     }
 
     /**
@@ -47,8 +44,6 @@ class BookController extends \App\Http\Controllers\ApiController
      */
     public function store(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
-
         if ($this->_ARV->validate($request, 
             ['isbn' => 'required|string|between:5,20']))
         {
@@ -58,7 +53,8 @@ class BookController extends \App\Http\Controllers\ApiController
             {
                 \Illuminate\Support\Facades\Log::alert('THE BOOK EXISTS');
                 $response = $this->_ARV->getFailureJson(false);
-                $response->setOptionnalFields(['title' => 'Book already exist.']);
+                $this->setDefaultFailureJsonResponse();
+                $this->getJsonResponse()->setOptionnalFields(['title' => 'Book already exist.']);
             }
             else
             {
@@ -66,15 +62,15 @@ class BookController extends \App\Http\Controllers\ApiController
                 $newBook = \App\Models\Book::create(['user_id' => $this->getCurrentUser()->id,
                     'isbn' => $request->input('isbn')]);
                 $newBook->save();
-                $response->setData($newBook);
+                $this->getJsonResponse()->setData($newBook);
             }
         }
         else
         {
-            $response = $this->_ARV->getFailureJson();
+            $this->setDefaultFailureJsonResponse();
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 
     /**
@@ -87,8 +83,6 @@ class BookController extends \App\Http\Controllers\ApiController
      */
     public function destroy(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
-
         if ($this->_ARV->validate($request, 
             ['isbn' => 'required|string|between:5,20',
             'deleted' => 'required|string|accepted']))
@@ -100,19 +94,19 @@ class BookController extends \App\Http\Controllers\ApiController
                 \Illuminate\Support\Facades\Log::alert('THE BOOK EXISTS');
                 $deleteBook = \App\Models\Book::where(['user_id' => $this->getCurrentUser()->id,
                     'isbn' => $request->input('isbn')])->first();
-                $response->setData($deleteBook);
                 \Illuminate\Support\Facades\Log::alert($deleteBook);
                 $deleteBook->delete();
+                $this->getJsonResponse()->setData($deleteBook);
             }
             else
             {
-                $response = $this->_ARV->getFailureJson(false);
-                $response->setOptionnalFields(['title' => 'Book not exist.']);
+                $this->setDefaultFailureJsonResponse();
+                $this->getJsonResponse()->setOptionnalFields(['title' => 'Book not exist.']);
             }
         }
         else
         {
-            $response = $this->_ARV->getFailureJson();
+            $this->setDefaultFailureJsonResponse();
         }
 
         return $response->getJson();

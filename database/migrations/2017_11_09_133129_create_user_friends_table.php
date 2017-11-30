@@ -20,9 +20,9 @@ class CreateUserFriendsTable extends Migration
     {
         Schema::create('user_friends', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsigned_integer("user_id'");
-            $table->unsigned_integer("friend_id");
-            $table->unsigned_byte("status");
+            $table->unsignedInteger("user_id'");
+            $table->unsignedInteger("friend_id");
+            $table->unsignedTinyInteger("status");
             $table->integer("common_nbr_friends"); // TODO maybe create a new table to handle this context
 
             $table->timestamps();

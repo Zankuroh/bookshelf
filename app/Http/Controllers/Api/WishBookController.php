@@ -27,10 +27,9 @@ class WishBookController extends \App\Http\Controllers\ApiController
      */
     public function index(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
-        $response->setData($this->getCurrentUser()->wishBooks()->get());
+        $this->getJsonResponse()->setData($this->getCurrentUser()->wishBooks()->get());
         
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 
     /**
@@ -54,8 +53,6 @@ class WishBookController extends \App\Http\Controllers\ApiController
      */
     public function store(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
-
         if ($this->_ARV->validate($request, 
             ['isbn' => 'required|string|between:5,20']))
         {
@@ -64,8 +61,8 @@ class WishBookController extends \App\Http\Controllers\ApiController
                 ->exists())
             {
                 \Illuminate\Support\Facades\Log::alert('THE WISH BOOK EXISTS');
-                $response = $this->_ARV->getFailureJson(false);
-                $response->setOptionnalFields(['title' => 'Book already exist in wish list.']);
+                $this->setDefaultFailureJsonResponse(false);
+                $this->getJsonResponse()->setOptionnalFields(['title' => 'Book already exist in wish list.']);
             }
             else
             {
@@ -73,15 +70,15 @@ class WishBookController extends \App\Http\Controllers\ApiController
                 $newWishBook = \App\Models\WishBook::create(['user_id' => $this->getCurrentUser()->id,
                     'isbn' => $request->input('isbn')]);
                 $newWishBook->save();
-                $response->setData($newWishBook);
+                $this->getJsonResponse()->setData($newWishBook);
             }
         }
         else
         {
-            $response = $this->_ARV->getFailureJson();
+            $this->setDefaultFailureJsonResponse();
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 
     /**
@@ -129,8 +126,6 @@ class WishBookController extends \App\Http\Controllers\ApiController
      */
     public function destroy(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
-
         if ($this->_ARV->validate($request, 
             ['isbn' => 'required|string|between:5,20',
             'deleted' => 'required|string|accepted']))
@@ -148,15 +143,15 @@ class WishBookController extends \App\Http\Controllers\ApiController
             }
             else
             {
-                $response = $this->_ARV->getFailureJson(false);
-                $response->setOptionnalFields(['title' => 'Book not exist.']);
+                $this->setDefaultFailureJsonResponse(false);
+                $this->getJsonResponse()->setOptionnalFields(['title' => 'Book not exist.']);
             }
         }
         else
         {
-            $response = $this->_ARV->getFailureJson();
+            $this->setDefaultFailureJsonResponse();
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 }

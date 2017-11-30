@@ -28,7 +28,7 @@ class ApiController extends Controller
          **/
         $this->_ARV = new \App\Http\Requests\ApiRequestValidation();
 
-        $this->_response = $this->_ARV->getSuccessJson();
+        $this->setDefaultSuccessJsonResponse();
 
         if (JWTAuth::getToken())
         {
@@ -49,14 +49,29 @@ class ApiController extends Controller
         return $this->_currentUser;
     }
 
-    public function getDefaultJsonResponse()
+    //public function getDefaultJsonResponse()
+    //{
+    //    return $this->_response;
+    //}
+
+    public function getJsonResponse()
     {
         return $this->_response;
     }
 
-    public function getDefaultFailureJsonResponse($optsErrorsFields = true)
+    public function setDefaultFailureJsonResponse($optsErrorsFields = true)
     {
-        return $this->_ARV->getFailureJson($optsErrorsFields);
+        $this->_response = $this->_ARV->getFailureJson($optsErrorsFields);
+    }
+
+    public function setManualJsonResponse($response)
+    {
+        $this->_response = $response;
+    }
+
+    public function setDefaultSuccessJsonResponse()
+    {
+        $this->_response = $this->_ARV->getSuccessJson();
     }
 
     /**
@@ -64,6 +79,6 @@ class ApiController extends Controller
     */
     public function getRawJsonResponse()
     {
-      return $this->response->getJson();
+      return $this->_response->getJson();
     }
 }

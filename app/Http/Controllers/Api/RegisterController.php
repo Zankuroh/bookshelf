@@ -22,8 +22,6 @@ class RegisterController extends \App\Http\Controllers\ApiController
      */
     public function registerNewUser(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
-
         if ($this->_ARV->validate($request, [
             'email' => 'required|email|between:5,30|unique:users,email',
             'password' => 'required|string|between:5,30',
@@ -39,20 +37,20 @@ class RegisterController extends \App\Http\Controllers\ApiController
                 $newUser->name = $request->input('name');
                 $newUser->password = Hash::make($request->input('password'));
                 $newUser->save();
-                $response->setData($newUser);
+                $this->getJsonResponse()->setData($newUser);
             }
             else
             {
-                $response = $this->_ARV->getFailureJson();
-                $response->setOptionnalFields(['title' => 'Email already exist.']);
+                $this->setDefaultFailureJsonResponse();
+                $this->getJsonResponse()->setOptionnalFields(['title' => 'Email already exist.']);
             }
         }
         else
         {
-            $response = $this->_ARV->getFailureJson();
+            $this->setDefaultFailureJsonResponse();
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 
 }
