@@ -119,8 +119,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragmentTransaction.commit();
                 break;
             case R.id.nav_amis:
+                defineNameToolBar("Mes Amis");
                 if (MainActivity.token != null) {
-                    defineNameToolBar("Mes Amis");
                     FriendsContainer friendContainer = new FriendsContainer();
                     fragmentTransaction.replace(R.id.fragment_container, friendContainer);
                     fragmentTransaction.commit();

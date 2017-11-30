@@ -298,11 +298,9 @@ public class SignIn extends Fragment implements View.OnClickListener
     }
 
     public void deconnection() {
-        if (MainActivity.provider.equals("FB") && MainActivity.token != null)
-        {
+        if (MainActivity.provider != null  && MainActivity.provider.equals("FB") && MainActivity.token != null) {
             loginButton.performClick();
-        }
-        else if (MainActivity.provider.equals("Google") && MainActivity.token != null) {
+        } else if (MainActivity.provider != null && MainActivity.provider.equals("Google") && MainActivity.token != null) {
             //mGoogleApiClient.connect();
             /*Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                     new ResultCallback<Status>() {
@@ -319,8 +317,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                     });*/
             MainActivity.token = null;
             MainActivity.provider = null;
-        }
-        else if (MainActivity.token != null) {
+        } else if (MainActivity.token != null) {
             MainActivity.token = null;
             MainActivity.provider = null;
         }
