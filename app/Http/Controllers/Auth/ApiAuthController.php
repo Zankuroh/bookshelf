@@ -103,22 +103,12 @@ class ApiAuthController extends \App\Http\Controllers\ApiController
       if ($request->has("redirect_uri"))
       {
         $redirectUri = $request->input("redirect_uri");
-    
         Log::debug("set new redirect uri " . $request->input('redirect_uri'));
         $driver->redirectUrl($request->input('redirect_uri'));
-
-        $accessData = $driver->getAccessTokenResponse($token);
-        $accessToken = $accessData['access_token'];
-
-        $profile = $driver->userFromToken($accessToken);
       }
-      else
-      {
-        Log::debug("Redirect uri parameter has not been suplied");
-        $this->setDefaultFailureJsonResponse(false);
-        $this->getJsonResponse()->setData(['errors' => 'redirect_uri_missing']);
-        $this->getJsonResponse()->setOptionnalFields(['title' => 'Redirect uri missing is missing.']);
-      }      
+      $accessData = $driver->getAccessTokenResponse($token);
+      $accessToken = $accessData['access_token'];
+      $profile = $driver->userFromToken($accessToken);
     }
     else if (strtolower($providerName) == "facebook")
     {
