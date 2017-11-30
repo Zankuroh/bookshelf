@@ -13,10 +13,11 @@ class CreateBookCustomsTable extends Migration
      */
     public function up()
     {
-        Schema::create('book_customs', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamps();
-        });
+        Schema::create('book_customs', function (Blueprint $table)
+            {
+                $table->increments('id');
+                $table->timestamps();
+            });
     }
 
     /**

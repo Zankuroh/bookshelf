@@ -31,9 +31,9 @@ class AuthorController extends \App\Http\Controllers\ApiController
      */
     public function index(Request $request)
     {
-        $this->_response->setData(\App\Models\Author::all());
+        $this->getJsonResponse()->setData(\App\Models\Author::all());
 
-        return $this->_response->getJson();
+        return $this->getRawJsonResponse();
     }
 
     /**
@@ -52,13 +52,12 @@ class AuthorController extends \App\Http\Controllers\ApiController
      */
     public function store(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
         if (!$this->_ARV->validate($request, [
                 'first_name' => 'required|alpha_num|between:5,30|unique:authors,first_name',
                 'last_name' => 'required|alpha_num|between:5,30|unique:authors,last_name'])
             )
         {
-            $response = $this->_ARV->getFailureJson();
+            $this->setDefaultFailureJsonResponse();
         }
         else
         {
@@ -67,10 +66,10 @@ class AuthorController extends \App\Http\Controllers\ApiController
                     'first_name' => $request->input('first_name'),
                     'added_by' => JWTAuth::toUser(JWTAuth::getToken())->id
             ]);
-            $response->setData($newAuthor);
+            $this->getJsonResponse()->setData($newAuthor);
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 
 
@@ -82,29 +81,28 @@ class AuthorController extends \App\Http\Controllers\ApiController
      **/
     public function destroy(Request $request)
     {
-        $response = $this->_response;
         if (!$this->_ARV->validate($request,
                     ['id' => 'required|numeric']
             ))
         {
-            $response = $this->_ARV->getFailureJson();
+            $this->setDefaultFailureJsonResponse();
         }
         else
         {
             $author = Author::find($request->input(('id')));
             if ($author != null)
             {
-                $response->setData($author);
+                $this->getJsonResponse()->setData($author);
                 $author->delete();
             }
             else
             {
-                $response = $this->_ARV->getFailureJson();
                 $failureReasons = ['title' => 'Author not exist.'];
-                $response->setOptionnalFields($failureReasons);
+                $this->setDefaultFailureJsonResponse();
+                $this->getJsonResponse()->setOptionnalFields($failureReasons);
             }
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 }

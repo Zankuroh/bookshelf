@@ -15,13 +15,11 @@ class ProfileController extends \App\Http\Controllers\ApiController
      */
     public function index(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
         $currentUser = JWTAuth::toUser(JWTAuth::getToken());
-
         if (is_null($currentUser))
         {
-            $response = $this->_ARV->getFailureJson();
-            $response->setOptionnalFields(['title' => 'Something went wrong, contact an admin please.']);
+            $this->setDefaultFailureJsonResponse();
+            $this->getJsonResponse()->setOptionnalFields(['title' => 'Something went wrong, contact an admin please.']);
         }
         else
         {
@@ -33,10 +31,10 @@ class ProfileController extends \App\Http\Controllers\ApiController
             /** @var array user's profile data */
             $currentUserInformation['profile'] = $currentUser->toArray();
 
-            $response->setData($currentUserInformation);
+            $this->getJsonResponse()->setData($currentUserInformation);
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 
     /** Built an array of profile data by given user
@@ -59,7 +57,6 @@ class ProfileController extends \App\Http\Controllers\ApiController
      */
     public function changeUserName(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
         if ($this->_ARV->validate($request,
             ['name' => 'required|string|between:3,30',
             'password' => 'required|string|between:3,30']))
@@ -72,20 +69,20 @@ class ProfileController extends \App\Http\Controllers\ApiController
             {
                 $currentUser->name = $request->input('name');
                 $currentUser->save();
-                $response->setData($this->getUserProfileData($currentUser));
+                $this->getJsonResponse()->setData($this->getUserProfileData($currentUser));
             }
             else
             {
-                $response = $this->_ARV->getFailureJson();
-                $response->setOptionnalFIelds(['title' => 'Bad password.']);
+                $this->setDefaultFailureJsonResponse();
+                $this->getJsonResponse()->setOptionnalFields(['title' => 'Bad password.']);
             }
         }
         else
         {
-            $response = $this->_ARV->getFailureJson();
+            $this->setDefaultFailureJsonResponse();
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 
     /**
@@ -97,8 +94,6 @@ class ProfileController extends \App\Http\Controllers\ApiController
      */
     public function changeEmail(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
-
         if ($this->_ARV->validate($request,
             ['password' => 'required|string|between:5,30',
             'email' => 'required|email|between:5,30|unique:users,email']
@@ -109,20 +104,20 @@ class ProfileController extends \App\Http\Controllers\ApiController
             {
                 $currentUser->email = $request->input('email');
                 $currentUser->save();
-                $response->setData($this->getUserProfileData($currentUser));
+                $this->getJsonResponse()->setData($this->getUserProfileData($currentUser));
             }
             else
             {
-                $response = $this->_ARV->getFailureJson();
-                $respone->setOptionnalFields(['title' => 'Bad credentials.']);
+                $this->setDefaultFailureJsonResponse();
+                $this->getJsonResponse()->setOptionnalFields(['title' => 'Bad credentials.']);
             }
         }
         else
         {
-            $response = $this->_ARV->getFailureJson();
+            $this->setDefaultFailureJsonResponse();
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 
     /**
@@ -135,8 +130,6 @@ class ProfileController extends \App\Http\Controllers\ApiController
      */
     public function changePassword(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
-
         if ($this->_ARV->validate($request,
             ['password' => 'required|string|between:5,30',
             'new_password' => 'required|string|between:5,30']
@@ -147,20 +140,20 @@ class ProfileController extends \App\Http\Controllers\ApiController
             {
                 $currentUser->password = \Illuminate\Support\Facades\Hash::make($request->input('new_password'));
                 $currentUser->save();
-                $response->setData($this->getUserProfileData($currentUser));
+                $this->getJsonResponse()->setData($this->getUserProfileData($currentUser));
             }
             else
             {
-                $response = $this->_ARV->getFailureJson();
-                $response->setOptionnalFields(['title' => 'Bad credentials.']);
+                $this->setDefaultFailureJsonResponse();
+                $this->getJsonResponse()->setOptionnalFields(['title' => 'Bad credentials.']);
             }
         }
         else
         {
-            $response = $this->_ARV->getFailureJson();
+            $this->setDefaultFailureJsonResponse();
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 
     /**
@@ -174,7 +167,6 @@ class ProfileController extends \App\Http\Controllers\ApiController
      */
     public function deleteProfile(Request $request)
     {
-        $response = $this->getDefaultJsonResponse();
         if ($this->_ARV->validate($request,
             ['delete' => 'required|accepted']
             ))
@@ -190,21 +182,21 @@ class ProfileController extends \App\Http\Controllers\ApiController
                 }
                 else
                 {
-                    $response = $this->_ARV->getFailureJson();
-                    $response->setOptionnalFields(['title' => 'Bad credentials.']);
+                    $this->setDefaultFailureJsonResponse();
+                    $this->getJsonResponse()->setOptionnalFields(['title' => 'Bad credentials.']);
                 }
             }
             else
             {
                 $currentUser->delete();
-                $response->setData(['deleted' => 'true']);
+                $this->getJsonResponse()->setData(['deleted' => 'true']);
             }
         }
         else
         {
-            $response = $this->_ARV->getFailureJson();
+            $this->setDefaultFailureJsonResponse();
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 }

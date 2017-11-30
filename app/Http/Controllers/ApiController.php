@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -28,11 +28,19 @@ class ApiController extends Controller
          **/
         $this->_ARV = new \App\Http\Requests\ApiRequestValidation();
 
-        $this->_response = $this->_ARV->getSuccessJson();
+        $this->setDefaultSuccessJsonResponse();
 
         if (JWTAuth::getToken())
         {
-            $this->_currentUser = JWTAuth::toUser(JWTAuth::getToken());
+            Log::debug("ApiController JWTAuth->getToken = " . JWTAuth::getToken());
+            try
+            {
+                $this->_currentUser = JWTAuth::toUser(JWTAuth::getToken());
+            }
+            catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $expToken)
+            {
+                Log::debug("ApiController JWTAuth expired token");
+            }
         }
     }
 
@@ -41,13 +49,36 @@ class ApiController extends Controller
         return $this->_currentUser;
     }
 
-    public function getDefaultJsonResponse()
+    //public function getDefaultJsonResponse()
+    //{
+    //    return $this->_response;
+    //}
+
+    public function getJsonResponse()
     {
         return $this->_response;
     }
 
-    public function getDefaultFailureJsonResponse($optsErrorsFields = true)
+    public function setDefaultFailureJsonResponse($optsErrorsFields = true)
     {
-        return $this->_ARV->getFailureJson($optsErrorsFields);
+        $this->_response = $this->_ARV->getFailureJson($optsErrorsFields);
+    }
+
+    public function setManualJsonResponse($response)
+    {
+        $this->_response = $response;
+    }
+
+    public function setDefaultSuccessJsonResponse()
+    {
+        $this->_response = $this->_ARV->getSuccessJson();
+    }
+
+    /**
+    * Get default json response string
+    */
+    public function getRawJsonResponse()
+    {
+      return $this->_response->getJson();
     }
 }
