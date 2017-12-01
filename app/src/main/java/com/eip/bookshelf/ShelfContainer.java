@@ -6,10 +6,14 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -41,6 +45,8 @@ public class ShelfContainer extends Fragment
     private MainActivity.shelfType _type;
     private customAdapterBiblio _adapterBiblio;
     private RequestDBLocal _req;
+    private boolean _currentTab = false;
+    private TextWatcher _tWatcher = null;
 
     public ShelfContainer()
     {
@@ -61,17 +67,20 @@ public class ShelfContainer extends Fragment
         if (_type == MainActivity.shelfType.MAINSHELF) {
             _v = inflater.inflate(R.layout.shelf_container, container, false); //Anciennement shelf_container !
             setAdapters();
-            //mainShelf();
-            loadMain();
+            if (_currentTab) {
+                setTextWatcher();
+            }
         } else if (_type == MainActivity.shelfType.PROPOSHELF) {
             _v = inflater.inflate(R.layout.shelf_simple, container, false);
+            setTextWatcher();
             setAdapters();
-            propoShelf();
         } else if (_type == MainActivity.shelfType.WISHSHELF) {
             _v = inflater.inflate(R.layout.shelf_simple, container, false);
+            setTextWatcher();
             setAdapters();
-            wishShelf();
         }
+
+        Log.d("why", "entrance");
         return _v;
     }
 
@@ -82,7 +91,9 @@ public class ShelfContainer extends Fragment
         _modelListBiblio.clear();
         _adapterBiblio.notifyDataSetChanged();
         if (_type == MainActivity.shelfType.MAINSHELF) {
-            mainShelf();
+            if (_currentTab) {
+                mainShelf();
+            }
         } else if (_type == MainActivity.shelfType.PROPOSHELF) {
             propoShelf();
         } else if (_type == MainActivity.shelfType.WISHSHELF) {
@@ -90,33 +101,80 @@ public class ShelfContainer extends Fragment
         }
     }
 
-    private void loadMain()
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser)
     {
-        if (ShelfTab.in_use) {
-            return;
+        super.setUserVisibleHint(isVisibleToUser);
+        _currentTab = isVisibleToUser;
+        if (isVisibleToUser && _v != null) {
+            setTextWatcher();
+            mainShelf();
         } else {
-            ShelfTab.in_use = true;
+            unsetTextWatcher();
         }
-        TabLayout tabLayout = (TabLayout)getActivity().findViewById(R.id.TLTab);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                mainShelf();
-                // Appeler seulement la BDD au lieu de la full request.
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
-        });
-        mainShelf();
+        Log.d("current tab", String.valueOf(_currentTab));
     }
+
+    private void setTextWatcher()
+    {
+        if (getActivity() != null) {
+            EditText field = (EditText) getActivity().findViewById(R.id.ETkeyword);
+            if (field == null) {
+                field = (EditText) _v.findViewById(R.id.ETkeyword);
+            }
+            _tWatcher = new TextWatcher() {
+                @Override
+                public void afterTextChanged(Editable s) {}
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    Log.d("text", s.toString());
+                }
+            };
+            field.addTextChangedListener(_tWatcher);
+        }
+    }
+
+    private void unsetTextWatcher()
+    {
+        if (_tWatcher != null && getActivity() != null) {
+            EditText field = (EditText) getActivity().findViewById(R.id.ETkeyword);
+            field.removeTextChangedListener(_tWatcher);
+        }
+    }
+
+//    private void loadMain()
+//    {
+//        if (ShelfTab.in_use) {
+//            return;
+//        } else {
+//            ShelfTab.in_use = true;
+//        }
+//        TabLayout tabLayout = (TabLayout)getActivity().findViewById(R.id.TLTab);
+//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//            @Override
+//            public void onTabSelected(TabLayout.Tab tab) {
+//                Log.d("shelf", "loadmain");
+//                mainShelf();
+//                // Appeler seulement la BDD au lieu de la full request.
+//
+//            }
+//
+//            @Override
+//            public void onTabUnselected(TabLayout.Tab tab) {}
+//
+//            @Override
+//            public void onTabReselected(TabLayout.Tab tab) {}
+//        });
+//        //mainShelf();
+//    }
 
     private void mainShelf()
     {
+        Log.d("Entrée !", "chargement mainShelf !");
         MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
