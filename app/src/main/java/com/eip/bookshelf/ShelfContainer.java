@@ -4,14 +4,18 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.eip.utilities.api.BookshelfApi;
@@ -39,10 +43,11 @@ public class ShelfContainer extends Fragment
 {
     private ArrayList<BiblioAdapter> _modelListBiblio = new ArrayList<>();
     private View _v;
-    private RelativeLayout _rl;
     private MainActivity.shelfType _type;
     private customAdapterBiblio _adapterBiblio;
     private RequestDBLocal _req;
+    private boolean _currentTab = false;
+    private TextWatcher _tWatcher = null;
 
     public ShelfContainer()
     {
@@ -61,29 +66,128 @@ public class ShelfContainer extends Fragment
         _req = new RequestDBLocal(_type, getContext());
 //        _req.deletePrimaryInfo(null, null);
         if (_type == MainActivity.shelfType.MAINSHELF) {
-            _v = inflater.inflate(R.layout.shelf_container, container, false);
+            _v = inflater.inflate(R.layout.shelf_container, container, false); //Anciennement shelf_container !
             setAdapters();
-            mainShelf();
+            if (_currentTab) {
+                setTextWatcher();
+            }
         } else if (_type == MainActivity.shelfType.PROPOSHELF) {
             _v = inflater.inflate(R.layout.shelf_simple, container, false);
+            setTextWatcher();
             setAdapters();
-            propoShelf();
         } else if (_type == MainActivity.shelfType.WISHSHELF) {
             _v = inflater.inflate(R.layout.shelf_simple, container, false);
+            setTextWatcher();
             setAdapters();
-            wishShelf();
         }
-        _rl = (RelativeLayout)_v.findViewById(R.id.RLShelf);
         return _v;
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        _modelListBiblio.clear();
+        _adapterBiblio.notifyDataSetChanged();
+        EditText field = (EditText) getActivity().findViewById(R.id.ETkeyword);
+        if (field == null) {
+            field = (EditText) _v.findViewById(R.id.ETkeyword);
+        }
+        field.setText("");
+        if (_type == MainActivity.shelfType.MAINSHELF) {
+            if (_currentTab) {
+                mainShelf();
+            }
+        } else if (_type == MainActivity.shelfType.PROPOSHELF) {
+            propoShelf();
+        } else if (_type == MainActivity.shelfType.WISHSHELF) {
+            wishShelf();
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser)
+    {
+        super.setUserVisibleHint(isVisibleToUser);
+        _currentTab = isVisibleToUser;
+        if (isVisibleToUser && _v != null) {
+            setTextWatcher();
+            mainShelf();
+        } else {
+            unsetTextWatcher();
+        }
+    }
+
+    private void setTextWatcher()
+    {
+        if (getActivity() != null) {
+            EditText field = (EditText) getActivity().findViewById(R.id.ETkeyword);
+            if (field == null) {
+                field = (EditText) _v.findViewById(R.id.ETkeyword);
+            }
+            _tWatcher = new TextWatcher() {
+                @Override
+                public void afterTextChanged(Editable s) {}
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    String typeSearch = "";
+                    String content = s.toString();
+                    if (!content.equals("")) {
+                        Spinner sp = (Spinner) getActivity().findViewById(R.id.Stype);
+                        if (sp == null) {
+                            sp = (Spinner) _v.findViewById(R.id.Stype);
+                        }
+                        typeSearch = sp.getSelectedItem().toString();
+                    }
+                    _modelListBiblio.clear();
+                    searchBookInShelf(typeSearch, content);
+                }
+            };
+            field.addTextChangedListener(_tWatcher);
+        }
+    }
+
+    private void unsetTextWatcher()
+    {
+        if (_tWatcher != null && getActivity() != null) {
+            EditText field = (EditText) getActivity().findViewById(R.id.ETkeyword);
+            field.removeTextChangedListener(_tWatcher);
+        }
+    }
+
+//    private void loadMain()
+//    {
+//        if (ShelfTab.in_use) {
+//            return;
+//        } else {
+//            ShelfTab.in_use = true;
+//        }
+//        TabLayout tabLayout = (TabLayout)getActivity().findViewById(R.id.TLTab);
+//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//            @Override
+//            public void onTabSelected(TabLayout.Tab tab) {
+//                Log.d("shelf", "loadmain");
+//                mainShelf();
+//                // Appeler seulement la BDD au lieu de la full request.
+//
+//            }
+//
+//            @Override
+//            public void onTabUnselected(TabLayout.Tab tab) {}
+//
+//            @Override
+//            public void onTabReselected(TabLayout.Tab tab) {}
+//        });
+//        //mainShelf();
+//    }
+
     private void mainShelf()
     {
-        if (ShelfTab.in_use) {
-            return;
-        } else {
-            ShelfTab.in_use = true;
-        }
+        MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -104,37 +208,47 @@ public class ShelfContainer extends Fragment
                         com.eip.utilities.model.BooksLocal.Book book = it.next();
                         isbns.add(book.getIsbn());
                     }
-                    searchBookInShelf(isbns);
+                    if (!isbns.isEmpty())
+                        getBackBookInShelf(isbns);
+                    else {
+                        Snackbar snackbar = Snackbar.make(_v, "Votre bibliothèque est vide", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }
                 }
+                MainActivity.stopLoading();
                 ShelfTab.in_use = false;
             }
 
             @Override
             public void onFailure(Call<BooksLocal> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
+                MainActivity.stopLoading();
             }
         });
     }
 
     private void propoShelf()
     {
+        //MainActivity.startLoading();
         //Todo: Appel à la BDD pour recup les vrais PROPOS
+        //MainActivity.stopLoading();
     }
 
     private void wishShelf()
     {
+        MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -155,26 +269,33 @@ public class ShelfContainer extends Fragment
                         com.eip.utilities.model.BooksLocal.Book book = it.next();
                         isbns.add(book.getIsbn());
                     }
-                    searchBookInShelf(isbns);
+                    if (!isbns.isEmpty())
+                        getBackBookInShelf(isbns);
+                    else {
+                        Snackbar snackbar = Snackbar.make(_v, "Votre liste de souhaits est vide", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }
                 }
+                MainActivity.stopLoading();
                 ShelfTab.in_use = false;
             }
 
             @Override
             public void onFailure(Call<BooksLocal> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
+                MainActivity.stopLoading();
             }
         });
     }
@@ -199,7 +320,30 @@ public class ShelfContainer extends Fragment
         });
     }
 
-    private void searchBookInShelf(final ArrayList<String> isbns)
+    private void searchBookInShelf(final String typeSearch, final String content)
+    {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                Cursor cursor = _req.readFromSearch(typeSearch, content);
+                while(cursor.moveToNext()) {
+                    String isbn = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_ISBN));
+                    String title = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_TITLE));
+                    String pic = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_PIC));
+                    _modelListBiblio.add(new BiblioAdapter(title, pic, isbn));
+                }
+                cursor.close();
+            }
+        });
+        t.start();
+        try {
+            t.join();
+            _adapterBiblio.notifyDataSetChanged();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getBackBookInShelf(final ArrayList<String> isbns)
     {
         Thread t = new Thread(new Runnable() {
             public void run() {
@@ -210,11 +354,9 @@ public class ShelfContainer extends Fragment
                     String pic = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_PIC));
                     _modelListBiblio.add(new BiblioAdapter(title, pic, isbn));
                     isbns.remove(isbn);
-                    Log.d("local BDD", isbn);
                 }
                 cursor.close();
                 for (String isbn : isbns) {
-                    Log.d("GBook BDD", isbn);
                     VolumeInfo vi = getInfoBook(isbn);
                     String img;
                     if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
@@ -222,8 +364,16 @@ public class ShelfContainer extends Fragment
                     } else {
                         img = vi.getImageLinks().getThumbnail();
                     }
+                    String genre = null;
+                    String authors = null;
+                    if (vi.getAuthors() != null) {
+                        authors = TextUtils.join(", ", vi.getAuthors());
+                    }
+                    if (vi.getCategories() != null) {
+                        genre = TextUtils.join(", ", vi.getCategories());
+                    }
                     _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, isbn));
-                    _req.writePrimaryInfo(vi.getTitle(), img, isbn);
+                    _req.writePrimaryInfo(vi.getTitle(), img, isbn, authors, genre);
                 }
             }
         });
@@ -250,7 +400,7 @@ public class ShelfContainer extends Fragment
             Books b = call.execute().body();
             if (b.getTotalItems() > 0) {
                 Item item = b.getItems().get(0);
-                return item.getVolumeInfo();
+                vi = item.getVolumeInfo();
             }
         } catch (IOException e) {
             e.printStackTrace();

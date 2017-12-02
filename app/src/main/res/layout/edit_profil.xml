@@ -46,9 +46,9 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:hint="Genre préféré"
-        android:layout_below="@+id/ETBirth"
-        android:layout_alignStart="@+id/ETBirth" />
-
+        android:layout_below="@+id/ETEmail"
+        android:layout_alignStart="@+id/ETEmail" />
+<!--
     <EditText
         android:id="@+id/ETBirth"
         android:layout_width="wrap_content"
@@ -56,9 +56,9 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:hint="Anniversaire"
-        android:layout_below="@+id/ETPseudo"
-        android:layout_alignStart="@+id/ETPseudo"
-        android:layout_marginTop="10dp" />
+        android:layout_below="@+id/ETEmail"
+        android:layout_alignStart="@+id/ETEmail"
+        android:layout_marginTop="10dp" />-->
 
     <EditText
         android:id="@+id/ETPseudo"
@@ -69,6 +69,17 @@
         android:inputType="textPersonName"
         android:hint="Pseudo"
         android:layout_below="@+id/TVTitle"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/ETEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:inputType="textEmailAddress"
+        android:hint="email"
+        android:layout_below="@+id/ETPseudo"
         android:layout_centerHorizontal="true" />
 
     <EditText
@@ -109,9 +120,9 @@
         android:textColor="#FFFFFF"
         android:background="@color/colorAccent"
         android:onClick="onClickDelete"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="5dp"
-        android:layout_alignEnd="@+id/BCancel"
-        android:layout_alignStart="@+id/BValid" />
+        android:layout_below="@+id/BValid"
+        android:layout_alignStart="@+id/BValid"
+        android:layout_marginTop="15dp"
+        android:layout_alignEnd="@+id/BCancel" />
 
 </RelativeLayout>

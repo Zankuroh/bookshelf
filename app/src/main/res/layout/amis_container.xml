@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/RLFriend">
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/appBarLayout">
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    </android.support.design.widget.AppBarLayout>
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchFieldFriend"
+        android:hint="Adresse mail"
+        android:layout_below="@+id/appBarLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/okSearchFriend"
+        android:layout_toStartOf="@+id/okSearchFriend" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rechercher"
+        android:id="@+id/okSearchFriend"
+        android:layout_alignBottom="@+id/searchFieldFriend"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <GridView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/GVFriend"
+        android:numColumns="auto_fit"
+        android:columnWidth="120dp"
+        android:layout_below="@+id/searchFieldFriend"
+        android:layout_alignParentStart="true" />
+
+
+</RelativeLayout>

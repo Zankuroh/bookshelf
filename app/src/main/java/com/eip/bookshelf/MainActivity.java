@@ -2,27 +2,28 @@ package com.eip.bookshelf;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-
-import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
 {
-    public static boolean co = false;
     public static String token = null;
+    public static String userID = null;
+    public static String provider = null;
     public static MenuItem MenuItemCo;
     public static MenuItem MenuItemBiblio;
     enum shelfType {
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         WISHSHELF,
         SEARCH
     }
-    private SignIn _signFrag;
+    private static Dialog _loading;
     static private MainActivity _this;
 
     @Override
@@ -60,6 +61,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setItemIconTintList(null);
 
         defineNameToolBar("Bibliothèque");
+        _loading = new Dialog(this);
+        _loading.setContentView(R.layout.loading);
+        Window w = _loading.getWindow();
+        if (w != null) {
+            w.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+        _loading.setCancelable(false);
     }
 
     @Override
@@ -84,20 +92,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Log.d("Select", "...");
 
         switch (id) {
             case R.id.nav_biblio:
                 defineNameToolBar("Bibliothèque");
-                if (MainActivity.co) {
+                if (MainActivity.token != null) {
+                    // A GARDER TAB POUR SHELF
                     Bundle arg = setArgs(shelfType.MAINSHELF);
                     ShelfTab shelfFrag = new ShelfTab();
                     shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
-                    Log.d("Select biblio", "PUTAIN !");
                     fragmentTransaction.commit();
+//                    Bundle arg = setArgs(shelfType.MAINSHELF);
+//                    ShelfContainer shelfFrag = new ShelfContainer();
+//                    shelfFrag.setArguments(arg);
+//                    fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
+//                    fragmentTransaction.commit();
                 } else {
-                    accessDenied();
+                    accessDenied(_this);
                 }
                 break;
             case R.id.nav_search:
@@ -106,62 +118,74 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragmentTransaction.replace(R.id.fragment_container, searchFrag);
                 fragmentTransaction.commit();
                 break;
+            case R.id.nav_amis:
+                defineNameToolBar("Mes Amis");
+                if (MainActivity.token != null) {
+                    FriendsContainer friendContainer = new FriendsContainer();
+                    fragmentTransaction.replace(R.id.fragment_container, friendContainer);
+                    fragmentTransaction.commit();
+                } else {
+                    accessDenied(_this);
+                }
+                break;
             case R.id.nav_propo:
                 defineNameToolBar("Propositions");
-                if (MainActivity.co) {
+                if (MainActivity.token != null) {
                     Bundle arg = setArgs(shelfType.PROPOSHELF);
                     ShelfContainer shelfFrag = new ShelfContainer();
                     shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
                     fragmentTransaction.commit();
                 } else {
-                    accessDenied();
+                    accessDenied(_this);
                 }
                 break;
             case R.id.nav_wish:
                 defineNameToolBar("Liste de souhaits");
-                if (MainActivity.co) {
+                if (MainActivity.token != null) {
                     Bundle arg = setArgs(shelfType.WISHSHELF);
                     ShelfContainer shelfFrag = new ShelfContainer();
                     shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
                     fragmentTransaction.commit();
                 } else {
-                    accessDenied();
+                    accessDenied(_this);
                 }
                 break;
             case R.id.nav_author:
                 defineNameToolBar("Auteurs suivis");
-                if (MainActivity.co) {
+                if (MainActivity.token != null) {
                     FollowAuthor authorFrag = new FollowAuthor();
                     fragmentTransaction.replace(R.id.fragment_container, authorFrag);
                     fragmentTransaction.commit();
                 } else {
-                    accessDenied();
+                    accessDenied(_this);
                 }
                 break;
             case R.id.nav_profil:
                 defineNameToolBar("Profil");
-                if (MainActivity.co) {
+                if (MainActivity.token != null) {
                     Profil profilFrag = new Profil();
                     fragmentTransaction.replace(R.id.fragment_container, profilFrag);
                     fragmentTransaction.commit();
                 } else {
-                    accessDenied();
+                    accessDenied(_this);
                 }
                 break;
             case R.id.nav_co:
-                if (!MainActivity.co) {
+                if (MainActivity.token == null) {
                     MenuItemCo = item;
                     MenuItemBiblio = ((NavigationView)findViewById(R.id.nav_view)).getMenu().findItem(R.id.nav_biblio);
                     defineNameToolBar("Connexion");
-                    _signFrag = new SignIn();
-                    fragmentTransaction.replace(R.id.fragment_container, _signFrag);
+                    SignIn signFrag = new SignIn();
+                    fragmentTransaction.replace(R.id.fragment_container, signFrag);
                     fragmentTransaction.commit();
                 } else {
-                    MainActivity.co = false;
+                    SignIn signFrag = new SignIn();
+                    fragmentTransaction.replace(R.id.fragment_container, signFrag);
+                    fragmentTransaction.commit();
                     item.setTitle("Connexion");
-                    accessDenied();
+                    //accessDenied(_this);
                 }
                 break;
             case R.id.nav_param:
@@ -186,15 +210,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return args;
     }
 
-    private void accessDenied()
+    static void accessDenied(FragmentActivity act)
     {
         Disconnected decoFrag = new Disconnected();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = act.getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, decoFrag);
         fragmentTransaction.commit();
     }
 
-    static public void defineNameToolBar(String title)
+    static void defineNameToolBar(String title)
     {
         Toolbar tb = (Toolbar) _this.findViewById(R.id.toolbar);
         _this.setSupportActionBar(tb);
@@ -218,12 +242,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         builder.show();
     }
 
-    public static void hideSoftKeyboard(Activity activity)
+    static void hideSoftKeyboard(Activity activity)
     {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         View current_focus = activity.getCurrentFocus();
         if (current_focus != null) {
-            inputMethodManager.hideSoftInputFromWindow(current_focus.getWindowToken(), 0);
+            if (inputMethodManager != null) {
+                inputMethodManager.hideSoftInputFromWindow(current_focus.getWindowToken(), 0);
+            }
         }
+    }
+
+    static void startLoading()
+    {
+        _loading.show();
+    }
+
+    static void stopLoading()
+    {
+        _loading.dismiss();
     }
 }

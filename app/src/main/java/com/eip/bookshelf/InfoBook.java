@@ -1,30 +1,32 @@
 package com.eip.bookshelf;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eip.utilities.api.BookshelfApi;
-import com.eip.utilities.api.GoogleBooksApi;
-import com.eip.utilities.model.Books;
-import com.eip.utilities.model.IndustryIdentifier;
-import com.eip.utilities.model.Item;
+import com.eip.utilities.model.ModifReview.ModifReview;
 import com.eip.utilities.model.ModifBook.ModifBook;
+import com.eip.utilities.model.Reviews.Review;
+import com.eip.utilities.model.Reviews.Reviews;
 import com.eip.utilities.model.VolumeInfo;
 import com.squareup.picasso.Picasso;
 
@@ -34,10 +36,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,6 +59,10 @@ public class InfoBook extends AppCompatActivity
     private boolean _inWish;
     private Menu _menu;
     private RequestDBLocal _req;
+    private String _myCom = "";
+    private float _myRate = 0.0f;
+    private int _myId = -1;
+    private boolean _isValid = true;
 
     public InfoBook()
     {
@@ -126,42 +129,63 @@ public class InfoBook extends AppCompatActivity
     {
         getMenuInflater().inflate(R.menu.main, menu);
         _menu = menu;
-        if (_inMain) {
-            menu.findItem(R.id.IAddBookBiblio).setVisible(false);
+
+        if (MainActivity.token != null && _isValid) {
+            menu.findItem(R.id.IAddFriend).setVisible(false);
+            menu.findItem(R.id.IRemoveFriend).setVisible(false);
+            if (_inMain) {
+                menu.findItem(R.id.IAddBookBiblio).setVisible(false);
+            } else {
+                menu.findItem(R.id.IRemoveBookBiblio).setVisible(false);
+            }
+
+            if (_inWish) {
+                menu.findItem(R.id.IAddBookWish).setVisible(false);
+            } else {
+                menu.findItem(R.id.IRemoveBookWish).setVisible(false);
+            }
         } else {
-            menu.findItem(R.id.IRemoveBookBiblio).setVisible(false);
+            hideButtons();
         }
 
-        if (_inWish) {
-            menu.findItem(R.id.IAddBookWish).setVisible(false);
-        } else {
-            menu.findItem(R.id.IRemoveBookWish).setVisible(false);
-        }
         return true;
+    }
+
+    private void hideButtons()
+    {
+        _menu.findItem(R.id.IRemoveBookBiblio).setVisible(false);
+        _menu.findItem(R.id.IAddBookBiblio).setVisible(false);
+        _menu.findItem(R.id.IAddBookWish).setVisible(false);
+        _menu.findItem(R.id.IRemoveBookWish).setVisible(false);
+        _menu.findItem(R.id.IAddFriend).setVisible(false);
+        _menu.findItem(R.id.IRemoveFriend).setVisible(false);
+        findViewById(R.id.BReview).setVisibility(View.GONE);
     }
 
     private void setButtons()
     {
-        _req = new RequestDBLocal(MainActivity.shelfType.MAINSHELF, this);
-        ArrayList<String> isbns = new ArrayList<>();
-        isbns.add(_isbn);
+        if (MainActivity.token != null) {
+            _req = new RequestDBLocal(MainActivity.shelfType.MAINSHELF, this);
+            ArrayList<String> isbns = new ArrayList<>();
+            isbns.add(_isbn);
 
-        Cursor c = _req.readPrimaryInfo(isbns);
-        _inMain = c.getCount() != 0;
-        c.close();
-        _req.setType(MainActivity.shelfType.WISHSHELF);
-        c = _req.readPrimaryInfo(isbns);
-        _inWish = c.getCount() != 0;
-        c.close();
+            Cursor c = _req.readPrimaryInfo(isbns);
+            _inMain = c.getCount() != 0;
+            c.close();
+            _req.setType(MainActivity.shelfType.WISHSHELF);
+            c = _req.readPrimaryInfo(isbns);
+            _inWish = c.getCount() != 0;
+            c.close();
+        }
     }
 
     private void setAdapters()
     {
-        customAdapterCom _adapterCom = new customAdapterCom(this, _modelListCom);
-        _lvCom.setAdapter(_adapterCom);
-        //Todo: Récupérer les vrais commentaires :|
-        _modelListCom.add(new ComAdapter("Maxime", "23/02/2016 à 13h42", "Super livre !"));
-        getTotalHeightofListView();
+        if (MainActivity.token != null) {
+            customAdapterCom _adapterCom = new customAdapterCom(this, _modelListCom);
+            _lvCom.setAdapter(_adapterCom);
+            getReview();
+        }
     }
 
     private void moreDataBook()
@@ -170,7 +194,6 @@ public class InfoBook extends AppCompatActivity
         TextView tvt = (TextView) findViewById(R.id.TVTitreBook);
         TextView tvr = (TextView) findViewById(R.id.TVResum);
         ImageView iv = (ImageView) findViewById(R.id.IVBook);
-        Log.d("_isbn", _isbn);
         Thread t = new Thread(new Runnable() {
             public void run() {
                 _vi = ShelfContainer.getInfoBook(_isbn);
@@ -183,6 +206,9 @@ public class InfoBook extends AppCompatActivity
             e.printStackTrace();
         }
         if (_vi == null) {
+            _isValid = false;
+            Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + "Le livre n'a pas été trouvé", Snackbar.LENGTH_LONG);
+            snackbar.show();
             return;
         }
 
@@ -190,8 +216,7 @@ public class InfoBook extends AppCompatActivity
 
         if (_vi.getPublishedDate() != null) {
             SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = null;
-            Log.d("date", _vi.getPublishedDate());
+            Date date;
             try {
                 date = dt.parse(_vi.getPublishedDate());
             } catch (ParseException e) {
@@ -251,6 +276,13 @@ public class InfoBook extends AppCompatActivity
         }
     }
 
+    private void updateDisplayedReviews()
+    {
+        _modelListCom.clear();
+        getReview();
+        getTotalHeightofListView();
+    }
+
     private void getTotalHeightofListView()
     {
         ListAdapter mAdapter = _lvCom.getAdapter();
@@ -271,22 +303,55 @@ public class InfoBook extends AppCompatActivity
         _lvCom.requestLayout();
     }
 
-    public void onClickSendCom(View v)
+    public void onClickReview(View v)
     {
-        EditText et = (EditText) findViewById(R.id.ETCom);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH'h'mm", Locale.FRANCE);
-        String currentDateandTime = sdf.format(new Date());
-        _modelListCom.add(new ComAdapter("Nicolas", currentDateandTime, et.getText().toString()));
-        et.setText("");
-        MainActivity.hideSoftKeyboard(InfoBook.this);
-        getTotalHeightofListView();
+        final Dialog dial = new Dialog(this);
+        dial.setContentView(R.layout.review_popup);
+        dial.setTitle("Votre critique");
+        Button btnDelete = (Button)dial.findViewById(R.id.BReviewDelete);
+        Button btnConfirm = (Button)dial.findViewById(R.id.BReviewConfirm);
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteReview(_myId);
+                dial.dismiss();
+            }
+        });
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RatingBar rb = (RatingBar)dial.findViewById(R.id.ratingBar);
+                EditText et = (EditText)dial.findViewById(R.id.ETCom);
+                if (_myId == -1) {
+                    addReview(et.getText().toString(), String.valueOf(rb.getRating()));
+                } else {
+                    changeReview(_myId, et.getText().toString(), String.valueOf(rb.getRating()));
+                }
+                dial.dismiss();
+            }
+        });
+        dial.show();
+        TextView tv = (TextView)dial.findViewById(R.id.ETCom);
+        RatingBar rb = (RatingBar)dial.findViewById(R.id.ratingBar);
+        tv.setText(_myCom);
+        rb.setRating(_myRate);
+        if (_myId == -1) {
+            dial.findViewById(R.id.BReviewDelete).setVisibility(View.GONE);
+        }
     }
 
+    public void onClickBuy(View v)
+    {
+        TextView tvt = (TextView) findViewById(R.id.TVTitreBook);
 
-    public void addToBookShelf(){
+        String url = "https://www.amazon.fr/s/ref=nb_sb_noss_1?__mk_fr_FR=ÅMÅŽÕÑ&url=search-alias=aps&field-keywords=" + tvt.getText();
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+    }
 
-        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
-        Log.i("ADDBOOK", _isbn);
+    public void addToBookShelf()
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -297,7 +362,7 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
                 if (response.isSuccessful()) {
-                    ModifBook modif = response.body();
+                    //ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été ajouté à votre bibliothèque", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
@@ -324,8 +389,8 @@ public class InfoBook extends AppCompatActivity
         });
     }
 
-    public void deleteToBookShelf(){
-        Log.i("DELBOOK", _isbn);
+    public void deleteToBookShelf()
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -336,16 +401,15 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
                 if (response.isSuccessful()) {
-                    ModifBook modif = response.body();
+                    //ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre bibliothèque", Snackbar.LENGTH_LONG);
-
                     snackbar.show();
+                    _req.deletePrimaryInfo(_isbn, MainActivity.shelfType.MAINSHELF);
                 } else {
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
                         Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
                         snackbar.show();
-                        _req.deletePrimaryInfo(_isbn, MainActivity.shelfType.MAINSHELF);
                     } catch (Exception e) {
                         Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
@@ -364,9 +428,8 @@ public class InfoBook extends AppCompatActivity
         });
     }
 
-    public void addToWishList(){
-        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
-        Log.i("ADDBOOK", _isbn);
+    public void addToWishList()
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -377,7 +440,7 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
                 if (response.isSuccessful()) {
-                    ModifBook modif = response.body();
+                    //ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été ajouté à votre liste de souhait", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
@@ -402,9 +465,8 @@ public class InfoBook extends AppCompatActivity
         });
     }
 
-    public void deleteToWishList(){
-        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
-        Log.i("DELBOOK", _isbn);
+    public void deleteToWishList()
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -415,8 +477,8 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
                 if (response.isSuccessful()) {
-                    ModifBook modif = response.body();
-                    Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre liste de souhait", Snackbar.LENGTH_LONG);
+                    //ModifBook modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre liste de souhaits", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     _req.deletePrimaryInfo(_isbn, MainActivity.shelfType.WISHSHELF);
                 } else {
@@ -433,6 +495,168 @@ public class InfoBook extends AppCompatActivity
 
             @Override
             public void onFailure(Call<ModifBook> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void getReview()
+    {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<Reviews> call = bookshelfApi.getReview(MainActivity.token, _isbn);
+        call.enqueue(new Callback<Reviews>() {
+            @Override
+            public void onResponse(Call<Reviews> call, Response<Reviews> response) {
+                if (response.isSuccessful()) {
+                    Reviews rev = response.body();
+                    List<Review> list_reviews = rev.getData().getReviews();
+                    for (Review r : list_reviews) {
+                        if (Boolean.parseBoolean(r.getCanEdit())) {
+                            _myId = r.getId();
+                            _myCom = r.getContent();
+                            _myRate = Float.parseFloat(r.getRate());
+                        }
+                        _modelListCom.add(new ComAdapter(r.getUserName(), r.getCreatedAt(), r.getContent(), r.getRate()));
+                    }
+                    getTotalHeightofListView();
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Reviews> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void addReview(String content, String rate)
+    {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ModifReview> call = bookshelfApi.AddReview(MainActivity.token, _isbn, content, rate);
+        call.enqueue(new Callback<ModifReview>() {
+            @Override
+            public void onResponse(Call<ModifReview> call, Response<ModifReview> response) {
+                if (response.isSuccessful()) {
+                    //ModifReview add = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le commentaire a bien été ajouté", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    updateDisplayedReviews();
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModifReview> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void changeReview(int reviewId, String content, String rate)
+    {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ModifReview> call = bookshelfApi.ChangeReview(MainActivity.token, reviewId, content, rate);
+        call.enqueue(new Callback<ModifReview>() {
+            @Override
+            public void onResponse(Call<ModifReview> call, Response<ModifReview> response) {
+                if (response.isSuccessful()) {
+                    //ModifReview modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le commentaire a bien été modifié", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    updateDisplayedReviews();
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModifReview> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void deleteReview(int reviewId)
+    {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ModifReview> call = bookshelfApi.DelReview(MainActivity.token, reviewId, "true");
+        call.enqueue(new Callback<ModifReview>() {
+            @Override
+            public void onResponse(Call<ModifReview> call, Response<ModifReview> response) {
+                if (response.isSuccessful()) {
+                    //ModifReview modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le commentaire a bien été supprimé", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    _myId = -1;
+                    _myRate = 0.0f;
+                    _myCom = "";
+                    updateDisplayedReviews();
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModifReview> call, Throwable t)
             {
                 Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:id="@+id/RLReview">
+
+    <TextView
+        android:id="@+id/TVReviewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Votre critique"
+        android:layout_marginTop="15dip"
+        android:textColor="@color/colorAccent"
+        android:textSize="25dip"
+        android:textAlignment="center"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/TVReviewTitle"
+        android:layout_margin="15dip"
+        android:background="@color/colorAccent"
+        android:id="@+id/VReviewLine"/>
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="1"
+        android:scaleX="0.75"
+        android:scaleY="0.75"
+        android:layout_below="@+id/VReviewLine"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/ETCom"
+        android:layout_below="@+id/ratingBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_com"
+        android:nextFocusUp="@id/ETCom"
+        android:nextFocusLeft="@id/ETCom" />
+
+    <Button
+        android:id="@+id/BReviewConfirm"
+        android:background="#00FF"
+        android:textColor="@color/colorAccent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Valider"
+        android:layout_below="@+id/ETCom"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="14dp"/>
+
+    <Button
+        android:id="@+id/BReviewDelete"
+        android:background="#00FF"
+        android:textColor="@color/colorAccent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Supprimer"
+        android:layout_below="@+id/ETCom"
+        android:layout_alignParentStart="true"/>
+
+</RelativeLayout>

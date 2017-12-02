@@ -15,8 +15,15 @@
     <include
         layout="@layout/shelf_container"
         android:layout_below="@+id/appBarLayout"
-        android:layout_alignParentStart="true"
+        android:layout_above="@id/ISearchB"
         android:layout_height="match_parent"
         android:layout_width="match_parent"/>
+
+    <include
+        android:id="@+id/ISearchB"
+        layout="@layout/search_books"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

@@ -1,10 +1,10 @@
 package com.eip.bookshelf;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.Register.Register;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,32 +66,49 @@ public class SignUp extends AppCompatActivity
         EditText password = (EditText) findViewById(R.id.SignUpPwd);
         EditText password2 = (EditText) findViewById(R.id.SignUpPwd2);
         EditText email = (EditText) findViewById(R.id.SignUpMail);
-        Log.i("creation", email.getText().toString());
-        if (!SignUp.verifyEmail(email.getText().toString())) {
-            Snackbar snackbar = Snackbar.make(_lp, "L'adresse mail n'est pas valide !", Snackbar.LENGTH_LONG);
-            snackbar.show();
-            return ;
+        String errors = "";
+        if (name.getText().toString().equals("")) {
+            errors += "Le champ pseudo est obligatoire.";
         }
-        if (!SignUp.checkPassword(password.getText().toString(), password2.getText().toString())) {
-            Snackbar snackbar = Snackbar.make(_lp, "Les mots de passe ne sont pas identiques !", Snackbar.LENGTH_LONG);
+        if (password.getText().toString().equals("") || password2.getText().toString().equals("")) {
+            if (!errors.equals("")) {
+                errors += "\n";
+            }
+            errors += "Les champs mot de passe et validation mots de passe sont obligatoires.";
+        }
+        if (email.getText().toString().equals("")) {
+            if (!errors.equals("")) {
+                errors += "\n";
+            }
+            errors += "Le champ email est obligatoire.";
+        }
+
+        if (errors.equals("")) {
+            if (!SignUp.verifyEmail(email.getText().toString())) {
+                errors += "L'adresse mail n'est pas valide.";
+            }
+            if (password.getText().toString().length() < 5) {
+                if (!errors.equals("")) {
+                    errors += "\n";
+                }
+                errors += "Le mots de passe doit contenir 5 caractères ou plus.";
+            }
+            if (!SignUp.checkPassword(password.getText().toString(), password2.getText().toString())) {
+                if (!errors.equals("")) {
+                    errors += "\n";
+                }
+                errors += "Les mots de passe ne sont pas identiques.";
+            }
+        }
+        if (!errors.equals("")) {
+            Snackbar snackbar = Snackbar.make(_lp, errors, Snackbar.LENGTH_LONG);
             snackbar.show();
             return ;
         }
         register(name.getText().toString(), email.getText().toString(), password.getText().toString());
-//        Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            public void run()
-//            {
-//                if (MainActivity.co) {
-//                    MenuItem  mi = (MenuItem)_lp.findViewById(R.id.nav_co);
-//                    MainActivity.MenuItemCo.setTitle("Déconnexion");
-//                    //Todo: Call fragment shelf
-//                }
-//            }
-//        }, 3000);
     }
 
-    private void register(String name, String email, String password)
+    private void register(String name, final String email, final String password)
     {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
@@ -102,23 +120,42 @@ public class SignUp extends AppCompatActivity
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
                 if (response.isSuccessful()) {
-                    Register auth = response.body();
+                    //Register auth = response.body();
                     Snackbar snackbar = Snackbar.make(_lp, "Création réussie !", Snackbar.LENGTH_LONG);
-                    MainActivity.co = true;
-                    MainActivity.MenuItemCo.setTitle("Déconnexion");
-                    //Todo: Call fragment shelf
                     snackbar.show();
+                    Intent intent = new Intent();
+                    intent.putExtra("login", email);
+                    intent.putExtra("pwd", password);
+                    setResult(RESULT_OK, intent);
+                    finish();
                 } else {
                     try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(_lp, "Erreur : " + jObjError.getString("error"), Snackbar.LENGTH_LONG);
+                        JSONObject jObj = new JSONObject(response.errorBody().string());
+                        JSONObject jObjError = jObj.getJSONObject("errors");
+                        String error = "";
+                        error = jObj.getString("title");
+                        JSONArray password;
+                        JSONArray email;
+                        JSONArray name;
+                        try {
+                            name = jObjError.getJSONArray("name");
+                            error += "\n" + name.getString(0);
+                        } catch (Exception e) {}
+                        try {
+                            email = jObjError.getJSONArray("email");
+                            error += "\n" + email.getString(0);
+                        } catch (Exception e) {}
+                        try {
+                            password = jObjError.getJSONArray("password");
+                            error += "\n" + password.getString(0);
+                        } catch (Exception e) {}
+                        Snackbar snackbar = Snackbar.make(_lp, "Erreur : " + error, Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
                         Snackbar snackbar = Snackbar.make(_lp, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }
-
                 }
             }
 
@@ -141,5 +178,4 @@ public class SignUp extends AppCompatActivity
     {
         return pwd1.equals(pwd2);
     }
-
 }

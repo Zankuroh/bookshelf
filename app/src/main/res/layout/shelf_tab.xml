@@ -1,18 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout android:layout_height="match_parent"
+
+<RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<android.support.design.widget.CoordinatorLayout android:id="@+id/CLTabs"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentTop="true"
+    android:layout_above="@id/ISearchB"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.design.widget.AppBarLayout android:id="@+id/ABLTab"
-        android:layout_height="wrap_content" android:layout_width="match_parent">
-        <android.support.v7.widget.Toolbar
-            android:layout_width="match_parent" android:layout_height="wrap_content"/>
-        <!-- The Tab rests directly below the Toolbar, attached below it -->
-        <android.support.design.widget.TabLayout android:layout_height="wrap_content"
-            android:layout_width="match_parent" android:id="@+id/TLTab"/>
-    </android.support.design.widget.AppBarLayout>
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/ABLTab"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <android.support.v7.widget.Toolbar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <!-- The Tab rests directly below the Toolbar, attached below it -->
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/TLTab"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/VPTab"
@@ -21,3 +37,12 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </android.support.design.widget.CoordinatorLayout>
+
+
+    <include
+        android:id="@+id/ISearchB"
+        layout="@layout/search_books"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>

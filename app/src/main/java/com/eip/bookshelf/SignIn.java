@@ -2,26 +2,20 @@ package com.eip.bookshelf;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Handler;
 import android.widget.EditText;
 
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.AuthLocal.AuthLocal;
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphRequestAsyncTask;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -42,6 +36,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Created by Maxime on 02/12/2016.
  */
@@ -51,6 +47,7 @@ public class SignIn extends Fragment implements View.OnClickListener
     private View _v;
     private CallbackManager _callbackManager;
     private GoogleApiClient mGoogleApiClient;
+    private LoginButton loginButton;
 
     public SignIn()
     {
@@ -65,52 +62,52 @@ public class SignIn extends Fragment implements View.OnClickListener
         _v.findViewById(R.id.btnForgetPass).setOnClickListener(this);
         _v.findViewById(R.id.btnCreateAccount).setOnClickListener(this);
 
-
         _callbackManager = CallbackManager.Factory.create();
-        LoginButton loginButton = (LoginButton) _v.findViewById(R.id.fConnect);
+
+        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken,
+                                                       AccessToken currentAccessToken) {
+                if (currentAccessToken == null) {
+                    MainActivity.token = null;
+                    MainActivity.provider = null;
+                }
+            }
+        };
+
+        loginButton = (LoginButton) _v.findViewById(R.id.fConnect);
         loginButton.setReadPermissions("public_profile email");
         // If using in a fragment
         loginButton.setFragment(this);
         loginButton.registerCallback(_callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.i("FACEBOOK", "YEAHHHH");
                 AccessToken accessToken = loginResult.getAccessToken();
-                GraphRequestAsyncTask request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject user, GraphResponse graphResponse) {
-                        Log.i("FACEBOOK EMAIL",user.optString("email"));
-                        Log.i("FACEBOOK NAME",user.optString("name"));
-                        Log.i("FACEBOOK ID",user.optString("id"));
-                    }
-                }).executeAsync();
-
-                //TODO gérer la création de compte
-                //connect("","");
-
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run()
-                    {
-                        if (MainActivity.co) {
-                            MainActivity.MenuItemCo.setTitle("Déconnexion");
-                            //Todo: launch fragment shelf
-                        }
-                    }
-                }, 3000);
+                MainActivity.provider = "FB";
+                connectOauth(accessToken.getToken(), "facebook");
             }
 
             @Override
-            public void onCancel() {
-
-            }
+            public void onCancel() { }
 
             @Override
-            public void onError(FacebookException exception) {
-            }
+            public void onError(FacebookException exception) { }
         });
+        accessTokenTracker.startTracking();
 
         SignInButton mGoogleSignInButton = (SignInButton)_v.findViewById(R.id.gConnect);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(new Scope(Scopes.EMAIL))
+                .requestEmail()
+                .requestIdToken(getString(R.string.server_client_id)) // R.string.server_client_id => nicolas // R.string.server_client_id_2 => maxime
+                .requestServerAuthCode(getString(R.string.server_client_id))// R.string.server_client_id => nicolas // R.string.server_client_id_2 => maxime
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(_v.getContext())
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        mGoogleApiClient.connect();
         mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,59 +115,43 @@ public class SignIn extends Fragment implements View.OnClickListener
             }
         });
 
+        deconnection();
+
         return _v;
     }
 
     private static final int RC_SIGN_IN = 9001;
 
-    private void signInWithGoogle() {
-        if(mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
-        }
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestScopes(new Scope(Scopes.EMAIL))
-                .requestEmail()
-                .requestIdToken(getString(R.string.server_client_id))
-                .requestServerAuthCode(getString(R.string.server_client_id))
-                .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(_v.getContext())
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
+    private void signInWithGoogle()
+    {
         final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data)
+    {
+        if (requestCode == 4242) { // SignUp successfull -> Auto connect
+            if (resultCode == RESULT_OK) {
+                String login = data.getStringExtra("login");
+                String passwd = data.getStringExtra("pwd");
+                connect(login, passwd, _v);
+            }
+        }
+
         if (requestCode == RC_SIGN_IN) {
 
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if(result.isSuccess()) {
-                Log.i("GOOGLE", "YEAHHHH");
+            if (result.isSuccess()) {
                 GoogleSignInAccount acct = result.getSignInAccount();
-                String idToken = acct.getIdToken();
-                String Authcode = acct.getServerAuthCode();
-                
-                Log.i("GOOGLE IDTOKEN", idToken);
-                Log.i("GOOGLE AUTHCODE",Authcode);
-                //connect("","");
-
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run()
-                    {
-                        if (MainActivity.co) {
-                            MainActivity.MenuItemCo.setTitle("Déconnexion");
-                            //Todo: launch fragment shelf
-                        }
-                    }
-                }, 3000);
+                String Authcode = null;
+                if (acct != null) {
+                    Authcode = acct.getServerAuthCode();
+                }
+                MainActivity.provider = "Google";
+                connectOauth(Authcode, "google");
 
             } else {
-                Log.i("GOOGLE NOT SUCCESSFULLY","COUCOU");
-
                 //handleSignInResult(...);
             }
         } else {
@@ -190,7 +171,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 snackbar.show();
                 break;
             case R.id.btnCreateAccount:
-                startActivity(new Intent(getActivity(), SignUp.class));
+                startActivityForResult(new Intent(getActivity(), SignUp.class), 4242);
                 break;
             default:
                 break;
@@ -202,22 +183,12 @@ public class SignIn extends Fragment implements View.OnClickListener
         MainActivity.hideSoftKeyboard(getActivity());
         EditText login = (EditText) _v.findViewById(R.id.ETsignInMail);
         EditText passwd = (EditText) _v.findViewById(R.id.ETsignInMdp);
-        connect(login.getText().toString(), passwd.getText().toString());
-
-//        Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            public void run()
-//            {
-//                if (MainActivity.co) {
-//                    MainActivity.MenuItemCo.setTitle("Déconnexion");
-//                    //Todo: launch fragment shelf
-//                }
-//            }
-//        }, 3000);
+        connect(login.getText().toString(), passwd.getText().toString(), _v);
     }
 
-    private void connect(String email, String pwd)
+    private void connect(String email, String pwd, final View v)
     {
+        MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -231,12 +202,58 @@ public class SignIn extends Fragment implements View.OnClickListener
                     AuthLocal auth = response.body();
 
                     String token = auth.getData().getToken();
+                    MainActivity.userID = auth.getData().getUserId();
                     MainActivity.token = "bearer " + token;
-                    Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
-                    MainActivity.co = true;
+                    Snackbar snackbar = Snackbar.make(v, "Connexion réussie !", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     switchFragment();
                 } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+                MainActivity.stopLoading();
+            }
+
+            @Override
+            public void onFailure(Call<AuthLocal> call, Throwable t) {
+                Snackbar snackbar = Snackbar.make(v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+                MainActivity.stopLoading();
+            }
+        });
+    }
+
+    private void connectOauth(String token, String provider)
+    {
+        MainActivity.startLoading();
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<AuthLocal> call = bookshelfApi.Oauth(token,provider);
+        call.enqueue(new Callback<AuthLocal>() {
+            @Override
+            public void onResponse(Call<AuthLocal> call, Response<AuthLocal> response) {
+                if (response.isSuccessful()) {
+                    AuthLocal auth = response.body();
+
+                    String token = auth.getData().getToken();
+                    MainActivity.userID = auth.getData().getUserId();
+                    MainActivity.token = "bearer " + token;
+                    Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    switchFragment();
+                } else {
+                    MainActivity.provider = null;
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
                         Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
@@ -247,6 +264,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                         e.printStackTrace();
                     }
                 }
+                MainActivity.stopLoading();
             }
 
             @Override
@@ -254,6 +272,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
+                MainActivity.stopLoading();
             }
         });
     }
@@ -264,11 +283,43 @@ public class SignIn extends Fragment implements View.OnClickListener
         MainActivity.MenuItemBiblio.setChecked(true);
         MainActivity.defineNameToolBar("Bibliothèque");
         android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+
         Bundle arg = new Bundle();
         arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
-        ShelfTab shelfFrag = new ShelfTab();
+        // A GARDER (TAB DANS SHELF)
+        ShelfTab shelfFrag = new ShelfTab(); //ShelfTab
         shelfFrag.setArguments(arg);
         fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
         fragmentTransaction.commit();
+//        ShelfContainer shelfFrag = new ShelfContainer();
+//        shelfFrag.setArguments(arg);
+//        fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
+//        fragmentTransaction.commit();
+    }
+
+    public void deconnection() {
+        if (MainActivity.provider != null  && MainActivity.provider.equals("FB") && MainActivity.token != null) {
+            loginButton.performClick();
+        } else if (MainActivity.provider != null && MainActivity.provider.equals("Google") && MainActivity.token != null) {
+            //mGoogleApiClient.connect();
+            /*Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+
+                        }
+                    });*/
+            /*Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                        }
+                    });*/
+            MainActivity.token = null;
+            MainActivity.provider = null;
+        } else if (MainActivity.token != null) {
+            MainActivity.token = null;
+            MainActivity.provider = null;
+        }
     }
 }

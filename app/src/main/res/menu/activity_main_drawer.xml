@@ -27,6 +27,11 @@
             android:id="@+id/nav_profil"
             android:icon="@mipmap/ic_user"
             android:title="Mon profil" />
+
+        <item
+            android:id="@+id/nav_amis"
+            android:icon="@mipmap/ic_amis"
+            android:title="Mes amis" />
     </group>
 
     <item android:title="Options">
