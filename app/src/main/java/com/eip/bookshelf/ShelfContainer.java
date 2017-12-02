@@ -7,14 +7,15 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.eip.utilities.api.BookshelfApi;
@@ -63,7 +64,7 @@ public class ShelfContainer extends Fragment
             _type = null;
         }
         _req = new RequestDBLocal(_type, getContext());
-        //_req.deletePrimaryInfo(null, null);
+//        _req.deletePrimaryInfo(null, null);
         if (_type == MainActivity.shelfType.MAINSHELF) {
             _v = inflater.inflate(R.layout.shelf_container, container, false); //Anciennement shelf_container !
             setAdapters();
@@ -79,8 +80,6 @@ public class ShelfContainer extends Fragment
             setTextWatcher();
             setAdapters();
         }
-
-        Log.d("why", "entrance");
         return _v;
     }
 
@@ -90,6 +89,11 @@ public class ShelfContainer extends Fragment
         super.onResume();
         _modelListBiblio.clear();
         _adapterBiblio.notifyDataSetChanged();
+        EditText field = (EditText) getActivity().findViewById(R.id.ETkeyword);
+        if (field == null) {
+            field = (EditText) _v.findViewById(R.id.ETkeyword);
+        }
+        field.setText("");
         if (_type == MainActivity.shelfType.MAINSHELF) {
             if (_currentTab) {
                 mainShelf();
@@ -112,7 +116,6 @@ public class ShelfContainer extends Fragment
         } else {
             unsetTextWatcher();
         }
-        Log.d("current tab", String.valueOf(_currentTab));
     }
 
     private void setTextWatcher()
@@ -131,7 +134,17 @@ public class ShelfContainer extends Fragment
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    Log.d("text", s.toString());
+                    String typeSearch = "";
+                    String content = s.toString();
+                    if (!content.equals("")) {
+                        Spinner sp = (Spinner) getActivity().findViewById(R.id.Stype);
+                        if (sp == null) {
+                            sp = (Spinner) _v.findViewById(R.id.Stype);
+                        }
+                        typeSearch = sp.getSelectedItem().toString();
+                    }
+                    _modelListBiblio.clear();
+                    searchBookInShelf(typeSearch, content);
                 }
             };
             field.addTextChangedListener(_tWatcher);
@@ -174,7 +187,6 @@ public class ShelfContainer extends Fragment
 
     private void mainShelf()
     {
-        Log.d("Entrée !", "chargement mainShelf !");
         MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
@@ -197,7 +209,7 @@ public class ShelfContainer extends Fragment
                         isbns.add(book.getIsbn());
                     }
                     if (!isbns.isEmpty())
-                        searchBookInShelf(isbns);
+                        getBackBookInShelf(isbns);
                     else {
                         Snackbar snackbar = Snackbar.make(_v, "Votre bibliothèque est vide", Snackbar.LENGTH_LONG);
                         snackbar.show();
@@ -258,7 +270,7 @@ public class ShelfContainer extends Fragment
                         isbns.add(book.getIsbn());
                     }
                     if (!isbns.isEmpty())
-                        searchBookInShelf(isbns);
+                        getBackBookInShelf(isbns);
                     else {
                         Snackbar snackbar = Snackbar.make(_v, "Votre liste de souhaits est vide", Snackbar.LENGTH_LONG);
                         snackbar.show();
@@ -308,7 +320,30 @@ public class ShelfContainer extends Fragment
         });
     }
 
-    private void searchBookInShelf(final ArrayList<String> isbns)
+    private void searchBookInShelf(final String typeSearch, final String content)
+    {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                Cursor cursor = _req.readFromSearch(typeSearch, content);
+                while(cursor.moveToNext()) {
+                    String isbn = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_ISBN));
+                    String title = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_TITLE));
+                    String pic = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_PIC));
+                    _modelListBiblio.add(new BiblioAdapter(title, pic, isbn));
+                }
+                cursor.close();
+            }
+        });
+        t.start();
+        try {
+            t.join();
+            _adapterBiblio.notifyDataSetChanged();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getBackBookInShelf(final ArrayList<String> isbns)
     {
         Thread t = new Thread(new Runnable() {
             public void run() {
@@ -329,8 +364,16 @@ public class ShelfContainer extends Fragment
                     } else {
                         img = vi.getImageLinks().getThumbnail();
                     }
+                    String genre = null;
+                    String authors = null;
+                    if (vi.getAuthors() != null) {
+                        authors = TextUtils.join(", ", vi.getAuthors());
+                    }
+                    if (vi.getCategories() != null) {
+                        genre = TextUtils.join(", ", vi.getCategories());
+                    }
                     _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, isbn));
-                    _req.writePrimaryInfo(vi.getTitle(), img, isbn);
+                    _req.writePrimaryInfo(vi.getTitle(), img, isbn, authors, genre);
                 }
             }
         });

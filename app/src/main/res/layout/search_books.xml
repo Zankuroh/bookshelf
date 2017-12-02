@@ -14,7 +14,7 @@
         app:layout_constraintRight_toLeftOf="@+id/guideline" />
 
     <Spinner
-        android:id="@+id/btnTwoThirds"
+        android:id="@+id/Stype"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginBottom="4dp"

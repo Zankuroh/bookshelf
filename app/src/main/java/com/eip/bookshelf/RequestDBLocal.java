@@ -71,7 +71,46 @@ class RequestDBLocal
         );
     }
 
-    void writePrimaryInfo(String title, String pic, String isbn)
+    Cursor readFromSearch(String type, String content)
+    {
+        SQLiteDatabase db = _mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                LocalDBContract.LocalDB.COLUMN_NAME_ISBN,
+                LocalDBContract.LocalDB.COLUMN_NAME_TITLE,
+                LocalDBContract.LocalDB.COLUMN_NAME_PIC
+        };
+
+        String selection = LocalDBContract.LocalDB.COLUMN_NAME_TYPE + " = ?" +
+                " AND " + LocalDBContract.LocalDB.COLUMN_NAME_USERID + " = ?";
+        switch (type) {
+            case "Auteur":
+                selection += " AND " + LocalDBContract.LocalDB.COLUMN_NAME_AUTHOR + " LIKE '%" + content + "%'";
+                break;
+            case "Titre":
+                selection += " AND " + LocalDBContract.LocalDB.COLUMN_NAME_TITLE + " LIKE '%" + content + "%'";
+                break;
+            case "Genre":
+                selection += " AND " + LocalDBContract.LocalDB.COLUMN_NAME_GENRE + " LIKE '%" + content + "%'";
+                break;
+            default:
+                break;
+        }
+
+        String[] selectionArgs = { _type, MainActivity.userID };
+
+        return db.query(
+                LocalDBContract.LocalDB.TABLE_NAME,       // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause selection
+                selectionArgs,                            // The values for the WHERE clause selectionArgs
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                      // The sort order
+        );
+    }
+
+    void writePrimaryInfo(String title, String pic, String isbn, String author, String genre)
     {
         SQLiteDatabase db = _mDbHelper.getWritableDatabase();
 
@@ -80,6 +119,8 @@ class RequestDBLocal
         values.put(LocalDBContract.LocalDB.COLUMN_NAME_ISBN, isbn);
         values.put(LocalDBContract.LocalDB.COLUMN_NAME_PIC, pic);
         values.put(LocalDBContract.LocalDB.COLUMN_NAME_TYPE, _type);
+        values.put(LocalDBContract.LocalDB.COLUMN_NAME_AUTHOR, author);
+        values.put(LocalDBContract.LocalDB.COLUMN_NAME_GENRE, genre);
         values.put(LocalDBContract.LocalDB.COLUMN_NAME_USERID, MainActivity.userID);
 
         // Insert the new row, returning the primary key value of the new row
@@ -89,7 +130,7 @@ class RequestDBLocal
     void deletePrimaryInfo(String isbn, MainActivity.shelfType t)
     {
         SQLiteDatabase db = _mDbHelper.getWritableDatabase();
-//        db.delete(LocalDBContract.LocalDB.TABLE_NAME, null, null);
+        //db.delete(LocalDBContract.LocalDB.TABLE_NAME, null, null);
         String type = "";
 
         if (t == MainActivity.shelfType.MAINSHELF) {

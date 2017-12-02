@@ -20,6 +20,8 @@ class LocalDBHelper extends SQLiteOpenHelper
                     LocalDBContract.LocalDB.COLUMN_NAME_TITLE + " TEXT," +
                     LocalDBContract.LocalDB.COLUMN_NAME_PIC + " TEXT," +
                     LocalDBContract.LocalDB.COLUMN_NAME_TYPE + " TEXT," +
+                    LocalDBContract.LocalDB.COLUMN_NAME_AUTHOR + " TEXT," +
+                    LocalDBContract.LocalDB.COLUMN_NAME_GENRE + " TEXT," +
                     LocalDBContract.LocalDB.COLUMN_NAME_USERID + " TEXT)";
 
     private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + LocalDBContract.LocalDB.TABLE_NAME;
