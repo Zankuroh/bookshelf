@@ -248,5 +248,23 @@ namespace BookShelf
                 await dial.ShowAsync();
             }
         }
+
+        private async void btBuy_Click(object sender, RoutedEventArgs e)
+        {
+            // The URI to launch
+            var uriBing = new Uri(@"https://www.amazon.fr");
+
+            // Launch the URI
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriBing);
+
+            if (success)
+            {
+                // URI launched
+            }
+            else
+            {
+                // URI launch failed
+            }
+        }
     }
 }

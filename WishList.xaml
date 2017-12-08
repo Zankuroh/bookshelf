@@ -15,9 +15,28 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid Margin="0,0,0,0" Loaded="Grid_Loaded">
-        <ScrollViewer x:Name="scviMain" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto" Background="Beige">
-            <VariableSizedWrapGrid x:Name="wgrdWishlst" Orientation="Horizontal" Visibility="Visible"/>
-        </ScrollViewer>
+    <Grid Margin="0,0,0,0" Background="Beige" Loaded="Grid_Loaded">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10*" MaxHeight="40"/>
+                <RowDefinition Height="90*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60*"/>
+                    <ColumnDefinition Width="40*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="txbxSearch" PlaceholderText="Rechercher un livre"/>
+                <ComboBox Grid.Column="1" Width="15" VerticalAlignment="Stretch">
+                    <x:String>par Titre</x:String>
+                    <x:String>par Auteur</x:String>
+                    <x:String>par Genre</x:String>
+                    <x:String>par Statut</x:String>
+                </ComboBox>
+            </Grid>
+            <ScrollViewer x:Name="scviMain" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+                <VariableSizedWrapGrid x:Name="wgrdWishlst" Orientation="Horizontal" Visibility="Visible"/>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Page>

@@ -19,42 +19,81 @@
         <!--<SplitView x:Name="ShellSplitView"
            DisplayMode="CompactOverlay"
            CompactPaneLength="48" OpenPaneLength="200" Background="#FF342114" PaneBackground="#FF3A3333">-->
-            <!--<SplitView.Pane>
+        <!--<SplitView.Pane>
                 <StackPanel>
-                    --><!-- Home button --><!--
+                    -->
+        <!-- Home button -->
+        <!--
                     <RadioButton Style="{StaticResource SplitViewMenuButtonStyle}" Click="OnMenuButtonClicked"/>
 
-                    --><!-- Bookshelf button --><!--
+                    -->
+        <!-- Bookshelf button -->
+        <!--
                     <RadioButton Tag="" Content="Ma Bibliothèque" Style="{StaticResource SplitViewNavButtonStyle}" Click="LibraryButton_Click"/>
 
-                    --><!-- Search button --><!--
+                    -->
+        <!-- Search button -->
+        <!--
                     <RadioButton Tag="" Content="Recherche"
                 Style="{StaticResource SplitViewNavButtonStyle}" Click="SearchButton_Click"/>
 
-                    --><!-- Suggestion button --><!--
+                    -->
+        <!-- Suggestion button -->
+        <!--
                     <RadioButton Tag="" Content="Suggestion" Style="{StaticResource SplitViewNavButtonStyle}"/>
 
-                    --><!-- Wishlist button --><!--
+                    -->
+        <!-- Wishlist button -->
+        <!--
                     <RadioButton Tag="" Content="Liste de Souhaits" Style="{StaticResource SplitViewNavButtonStyle}" Click="WishLstButton_Click"/>
 
-                    --><!-- Authors button --><!--
+                    -->
+        <!-- Authors button -->
+        <!--
                     <RadioButton Tag="" Content="Auteurs suivis" Style="{StaticResource SplitViewNavButtonStyle}" Click="AuthorsButton_Click"/>
 
-                    --><!--Profile button--><!--
+                    -->
+        <!--Profile button-->
+        <!--
                     <RadioButton Tag="" Content="Profil" Style="{StaticResource SplitViewNavButtonStyle}" Click="ProfileButton_Click"/>
-                    --><!-- Deconnexion button --><!--
+                    -->
+        <!-- Deconnexion button -->
+        <!--
                     <RadioButton Tag="" Content="Deconnexion" Style="{StaticResource SplitViewNavButtonStyle}"/>
 
-                    --><!-- Parameters button --><!--
+                    -->
+        <!-- Parameters button -->
+        <!--
                     <RadioButton Tag="" Content="Parametres" Style="{StaticResource SplitViewNavButtonStyle}"/>
 
-                    --><!-- About button --><!--
+                    -->
+        <!-- About button -->
+        <!--
                     <RadioButton Tag="" Content="A propos" Style="{StaticResource SplitViewNavButtonStyle}" Click="ProfileButton_Click"/>
                 </StackPanel>
             </SplitView.Pane>-->
-            <ScrollViewer x:Name="scviMain" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10*" MaxHeight="40"/>
+                <RowDefinition Height="90*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60*"/>
+                    <ColumnDefinition Width="40*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="txbxSearch" PlaceholderText="Rechercher un livre"/>
+                <ComboBox Grid.Column="1" Width="15" VerticalAlignment="Stretch">
+                    <x:String>par Titre</x:String>
+                    <x:String>par Auteur</x:String>
+                    <x:String>par Genre</x:String>
+                    <x:String>par Statut</x:String>
+                </ComboBox>
+            </Grid>
+            <ScrollViewer x:Name="scviMain" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
                 <VariableSizedWrapGrid x:Name="wgrdLibrary" Orientation="Horizontal" Visibility="Visible"/>
             </ScrollViewer>
+        </Grid>
         <!--</SplitView>-->
     </Grid>
 </Page>

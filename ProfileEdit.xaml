@@ -35,9 +35,9 @@
             <StackPanel x:Name="stpnlData" Grid.Row="1" Grid.Column="1" Background="Beige">
                 <TextBox x:Name="txbxPseudo" TextAlignment="Left" PlaceholderText="Pseudo" />
                 <TextBox x:Name="txbxEmail" TextAlignment="Left" PlaceholderText="Email" />
-                <TextBox x:Name="txbxBirthday" TextAlignment="Left" PlaceholderText="Anniversaire" />
-                <TextBox x:Name="txbxGenre" TextAlignment="Left" PlaceholderText="Genre Préféré" />
-                <TextBox x:Name="txbxBook" TextAlignment="Left" PlaceholderText="Livre Préféré" />
+                <TextBox x:Name="txbxBirthday" TextAlignment="Left" PlaceholderText="Anniversaire" Visibility="Collapsed" />
+                <TextBox x:Name="txbxGenre" TextAlignment="Left" PlaceholderText="Genre Préféré" Visibility="Collapsed"/>
+                <TextBox x:Name="txbxBook" TextAlignment="Left" PlaceholderText="Livre Préféré" Visibility="Collapsed" />
                 <PasswordBox x:Name="pwdbxUsr" Password="" PlaceholderText="Entrez nouveau Mot de Passe"/>
                 <PasswordBox x:Name="pwdbxUsrconf" Password="" PlaceholderText="Verification du Mot de Passe"/>
                 <Grid>

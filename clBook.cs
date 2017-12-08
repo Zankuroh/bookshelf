@@ -16,8 +16,10 @@ namespace BookShelf
         //string bookPublisher = "";
         //string bookLanguage = "";
         //string bookDescription = "";
+        public enum Status { AchetéLu = 0, EmpruntéLu, NonLu };
         Volume bookData = null;
         string bookISBN = "";
+        Status bookStatus;
 
         public Volume BookData
         {
@@ -49,6 +51,19 @@ namespace BookShelf
         {
             BookISBN = isbn;
             bookData = data;
+        }
+
+        public Status BookStatus
+        {
+            get
+            {
+                return bookStatus;
+            }
+
+            set
+            {
+                bookStatus = value;
+            }
         }
         //public string BookTitle
         //{

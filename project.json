@@ -1,0 +1,20 @@
+﻿{
+  "dependencies": {
+    "Google.Apis.Books.v1": "1.19.0.643",
+    "Microsoft.Bcl.Async": "1.0.168",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
+    "winsdkfb": "0.13.20170131.2",
+    "ZXing.Net": "0.15.0"
+  },
+  "frameworks": {
+    "uap10.0": {}
+  },
+  "runtimes": {
+    "win10-arm": {},
+    "win10-arm-aot": {},
+    "win10-x86": {},
+    "win10-x86-aot": {},
+    "win10-x64": {},
+    "win10-x64-aot": {}
+  }
+}
