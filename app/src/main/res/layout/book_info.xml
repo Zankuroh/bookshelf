@@ -49,7 +49,9 @@
                 android:layout_marginTop="30dp"
                 android:layout_below="@+id/IVBook"
                 android:layout_alignStart="@+id/TVIsbnBook"
-                android:layout_alignEnd="@+id/TVIsbnBook" />
+                android:layout_alignEnd="@+id/TVIsbnBook"
+                android:clickable="true"
+                android:textColorLink="@color/colorAccent" />
 
             <TextView
                 android:id="@+id/TVIsbnBook"

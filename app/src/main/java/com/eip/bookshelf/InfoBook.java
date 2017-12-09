@@ -9,6 +9,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -237,15 +241,23 @@ public class InfoBook extends AppCompatActivity
             tv.setText("Date de sortie : -");
         }
 
+        ArrayList<ClickableSpan> spans = new ArrayList<>();
         if (_vi.getAuthors() == null || _vi.getAuthors().size() == 0) {
             tv.setText(tv.getText() + "\nAuteur : -");
         } else {
             tv.setText(tv.getText() + "\nAuteur : ");
             for (int i = 0; i < _vi.getAuthors().size(); i++) {
+                final int cloneI = i;
                 tv.setText(tv.getText() + _vi.getAuthors().get(i));
                 if (i != _vi.getAuthors().size() - 1) {
                     tv.setText(tv.getText() + ", ");
                 }
+                spans.add(new ClickableSpan() {
+                    @Override
+                    public void onClick(View view) {
+                        onClickLinks(_vi.getAuthors().get(cloneI));
+                    }
+                });
             }
         }
 
@@ -274,6 +286,26 @@ public class InfoBook extends AppCompatActivity
         if (_vi.getImageLinks() != null && _vi.getImageLinks().getThumbnail() != null) {
             Picasso.with(this).load(_vi.getImageLinks().getThumbnail()).fit().into(iv);
         }
+        this.makeLinks(tv, _vi.getAuthors(), spans);
+    }
+
+    private void makeLinks(TextView textView, List<String> links, ArrayList<ClickableSpan> clickableSpans)
+    {
+        SpannableString spannableString = new SpannableString(textView.getText());
+        for (int i = 0; i < links.size(); i++) {
+            ClickableSpan clickableSpan = clickableSpans.get(i);
+            String link = links.get(i);
+
+            int startIndexOfLink = textView.getText().toString().indexOf(link);
+            spannableString.setSpan(clickableSpan, startIndexOfLink, startIndexOfLink + link.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+        textView.setText(spannableString, TextView.BufferType.SPANNABLE);
+    }
+
+    public void onClickLinks(String author)
+    {
+        // Ici on appel la requete a l'API pour add un auteur :)
     }
 
     private void updateDisplayedReviews()

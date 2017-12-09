@@ -4,12 +4,22 @@
     android:layout_height="match_parent" android:id="@+id/RLAdaptAuthor">
 
     <TextView
+        android:id="@+id/TVAutor"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:text="New Text"
-        android:id="@+id/TVAutor"
-        android:gravity="center_vertical"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_marginStart="12dp"
+        android:gravity="center_vertical"
+        android:text="New Text" />
+
+    <ImageView
+        android:id="@+id/IVDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/TVAutor"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="18dp"
+        android:layout_marginEnd="36dp"
+        android:src="@android:drawable/ic_menu_delete"/>
 </RelativeLayout>
