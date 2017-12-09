@@ -95,60 +95,60 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BookFile.xaml.cs">
+    <Compile Include="Views\BookFile.xaml.cs">
       <DependentUpon>BookFile.xaml</DependentUpon>
     </Compile>
-    <Compile Include="cdEnterPsswd.xaml.cs">
+    <Compile Include="ContentDialogs\cdEnterPsswd.xaml.cs">
       <DependentUpon>cdEnterPsswd.xaml</DependentUpon>
     </Compile>
-    <Compile Include="clBarCode.cs" />
-    <Compile Include="clBook.cs" />
-    <Compile Include="clFacebook.cs" />
-    <Compile Include="clISBNsearch.cs" />
-    <Compile Include="clProfile.cs" />
-    <Compile Include="clErrorHandling.cs" />
-    <Compile Include="createAccount.xaml.cs">
+    <Compile Include="APIs\clBarCode.cs" />
+    <Compile Include="Models\clBook.cs" />
+    <Compile Include="APIs\clFacebook.cs" />
+    <Compile Include="APIs\clISBNsearch.cs" />
+    <Compile Include="Models\clProfile.cs" />
+    <Compile Include="APIs\clErrorHandling.cs" />
+    <Compile Include="Views\createAccount.xaml.cs">
       <DependentUpon>createAccount.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FavAuthors.xaml.cs">
+    <Compile Include="Views\FavAuthors.xaml.cs">
       <DependentUpon>FavAuthors.xaml</DependentUpon>
     </Compile>
-    <Compile Include="HomePage.xaml.cs">
+    <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Library.xaml.cs">
+    <Compile Include="Views\Library.xaml.cs">
       <DependentUpon>Library.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainFrame.xaml.cs">
+    <Compile Include="Views\MainFrame.xaml.cs">
       <DependentUpon>MainFrame.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainPage.xaml.cs">
+    <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Profile.xaml.cs">
+    <Compile Include="Views\Profile.xaml.cs">
       <DependentUpon>Profile.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ProfileEdit.xaml.cs">
+    <Compile Include="Views\ProfileEdit.xaml.cs">
       <DependentUpon>ProfileEdit.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="clRequestAPI.cs" />
-    <Compile Include="Search.xaml.cs">
+    <Compile Include="APIs\clRequestAPI.cs" />
+    <Compile Include="Views\Search.xaml.cs">
       <DependentUpon>Search.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SearchPage.xaml.cs">
+    <Compile Include="Views\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ucBook.xaml.cs">
+    <Compile Include="UserControls\ucBook.xaml.cs">
       <DependentUpon>ucBook.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ucReviewEditor.xaml.cs">
+    <Compile Include="UserControls\ucReviewEditor.xaml.cs">
       <DependentUpon>ucReviewEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ucReviews.xaml.cs">
+    <Compile Include="UserControls\ucReviews.xaml.cs">
       <DependentUpon>ucReviews.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WishList.xaml.cs">
+    <Compile Include="Views\WishList.xaml.cs">
       <DependentUpon>WishList.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -173,43 +173,43 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="BookFile.xaml">
+    <Page Include="Views\BookFile.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="cdEnterPsswd.xaml">
+    <Page Include="ContentDialogs\cdEnterPsswd.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="createAccount.xaml">
+    <Page Include="Views\createAccount.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="FavAuthors.xaml">
+    <Page Include="Views\FavAuthors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="HomePage.xaml">
+    <Page Include="Views\HomePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Library.xaml">
+    <Page Include="Views\Library.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MainFrame.xaml">
+    <Page Include="Views\MainFrame.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MainPage.xaml">
+    <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Profile.xaml">
+    <Page Include="Views\Profile.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ProfileEdit.xaml">
+    <Page Include="Views\ProfileEdit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -217,31 +217,32 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Search.xaml">
+    <Page Include="Views\Search.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SearchPage.xaml">
+    <Page Include="Views\SearchPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ucBook.xaml">
+    <Page Include="UserControls\ucBook.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ucReviewEditor.xaml">
+    <Page Include="UserControls\ucReviewEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ucReviews.xaml">
+    <Page Include="UserControls\ucReviews.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WishList.xaml">
+    <Page Include="Views\WishList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
