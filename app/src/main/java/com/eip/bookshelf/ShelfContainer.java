@@ -87,21 +87,24 @@ public class ShelfContainer extends Fragment
     public void onResume()
     {
         super.onResume();
-        _modelListBiblio.clear();
-        _adapterBiblio.notifyDataSetChanged();
-        EditText field = (EditText) getActivity().findViewById(R.id.ETkeyword);
-        if (field == null) {
-            field = (EditText) _v.findViewById(R.id.ETkeyword);
-        }
-        field.setText("");
-        if (_type == MainActivity.shelfType.MAINSHELF) {
-            if (_currentTab) {
-                mainShelf();
+        Fragment myFragment = getFragmentManager().findFragmentByTag("SHELF");
+        if (myFragment != null && myFragment.isVisible()) {
+            _modelListBiblio.clear();
+            _adapterBiblio.notifyDataSetChanged();
+            EditText field = (EditText) getActivity().findViewById(R.id.ETkeyword);
+            if (field == null) {
+                field = (EditText) _v.findViewById(R.id.ETkeyword);
             }
-        } else if (_type == MainActivity.shelfType.PROPOSHELF) {
-            propoShelf();
-        } else if (_type == MainActivity.shelfType.WISHSHELF) {
-            wishShelf();
+            field.setText("");
+            if (_type == MainActivity.shelfType.MAINSHELF) {
+                if (_currentTab) {
+                    mainShelf();
+                }
+            } else if (_type == MainActivity.shelfType.PROPOSHELF) {
+                propoShelf();
+            } else if (_type == MainActivity.shelfType.WISHSHELF) {
+                wishShelf();
+            }
         }
     }
 

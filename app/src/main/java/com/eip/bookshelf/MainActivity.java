@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Bundle arg = setArgs(shelfType.MAINSHELF);
                     ShelfTab shelfFrag = new ShelfTab();
                     shelfFrag.setArguments(arg);
-                    fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
+                    fragmentTransaction.replace(R.id.fragment_container, shelfFrag, "SHELF");
                     fragmentTransaction.commit();
 //                    Bundle arg = setArgs(shelfType.MAINSHELF);
 //                    ShelfContainer shelfFrag = new ShelfContainer();
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_search:
                 defineNameToolBar("Recherche");
                 Search searchFrag = new Search();
-                fragmentTransaction.replace(R.id.fragment_container, searchFrag);
+                fragmentTransaction.replace(R.id.fragment_container, searchFrag, "SEARCH");
                 fragmentTransaction.commit();
                 break;
             case R.id.nav_amis:
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Bundle arg = setArgs(shelfType.PROPOSHELF);
                     ShelfContainer shelfFrag = new ShelfContainer();
                     shelfFrag.setArguments(arg);
-                    fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
+                    fragmentTransaction.replace(R.id.fragment_container, shelfFrag, "SHELF");
                     fragmentTransaction.commit();
                 } else {
                     accessDenied(_this);
@@ -146,17 +146,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Bundle arg = setArgs(shelfType.WISHSHELF);
                     ShelfContainer shelfFrag = new ShelfContainer();
                     shelfFrag.setArguments(arg);
-                    fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
+                    fragmentTransaction.replace(R.id.fragment_container, shelfFrag, "SHELF");
                     fragmentTransaction.commit();
                 } else {
                     accessDenied(_this);
                 }
                 break;
             case R.id.nav_author:
-                defineNameToolBar("Auteurs suivis");
+                defineNameToolBar("Auteurs favoris");
                 if (MainActivity.token != null) {
                     FollowAuthor authorFrag = new FollowAuthor();
-                    fragmentTransaction.replace(R.id.fragment_container, authorFrag);
+                    fragmentTransaction.replace(R.id.fragment_container, authorFrag, "AUTHOR");
                     fragmentTransaction.commit();
                 } else {
                     accessDenied(_this);
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 defineNameToolBar("Profil");
                 if (MainActivity.token != null) {
                     Profil profilFrag = new Profil();
-                    fragmentTransaction.replace(R.id.fragment_container, profilFrag);
+                    fragmentTransaction.replace(R.id.fragment_container, profilFrag, "PROFIL");
                     fragmentTransaction.commit();
                 } else {
                     accessDenied(_this);
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     MenuItemBiblio = ((NavigationView)findViewById(R.id.nav_view)).getMenu().findItem(R.id.nav_biblio);
                     defineNameToolBar("Connexion");
                     SignIn signFrag = new SignIn();
-                    fragmentTransaction.replace(R.id.fragment_container, signFrag);
+                    fragmentTransaction.replace(R.id.fragment_container, signFrag, "CONNECT");
                     fragmentTransaction.commit();
                 } else {
                     SignIn signFrag = new SignIn();

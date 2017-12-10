@@ -289,7 +289,7 @@ public class SignIn extends Fragment implements View.OnClickListener
         // A GARDER (TAB DANS SHELF)
         ShelfTab shelfFrag = new ShelfTab(); //ShelfTab
         shelfFrag.setArguments(arg);
-        fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
+        fragmentTransaction.replace(R.id.fragment_container, shelfFrag, "SHELF");
         fragmentTransaction.commit();
 //        ShelfContainer shelfFrag = new ShelfContainer();
 //        shelfFrag.setArguments(arg);

@@ -22,7 +22,7 @@
         <item
             android:id="@+id/nav_author"
             android:icon="@mipmap/ic_autor"
-            android:title="Auteurs suivis" />
+            android:title="Auteurs favoris" />
         <item
             android:id="@+id/nav_profil"
             android:icon="@mipmap/ic_user"
