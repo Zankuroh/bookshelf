@@ -325,7 +325,7 @@ public class InfoBook extends AppCompatActivity
 
     public void onClickLinks(String author)
     {
-        // Ici on appel la requete a l'API pour add un auteur :)
+        // TODO: 11/12/2017 add un auteur :)
     }
 
     private void updateDisplayedReviews()

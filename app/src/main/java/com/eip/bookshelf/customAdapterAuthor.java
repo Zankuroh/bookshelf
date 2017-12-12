@@ -70,7 +70,7 @@ class customAdapterAuthor extends BaseAdapter {
                     public void onClick(DialogInterface dialog, int which) {
                         _als.remove(positionToRemove);
                         scope.notifyDataSetChanged();
-                        // Ici on supprime l'auteur avec l'API
+                        // TODO: 11/12/2017 supprime l'auteur
                     }});
                 adb.show();
             }
@@ -96,9 +96,9 @@ class customAdapterAuthor extends BaseAdapter {
                     adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             if (isChecked) {
-                                // Ici on suit l'auteur avec l'API
+                                // TODO: 11/12/2017 sub auteur
                             } else {
-                                // Ici on arrête de suivre l'auteur avec l'API
+                                // TODO: 11/12/2017 unsub auteur
                             }
                         }
                     });

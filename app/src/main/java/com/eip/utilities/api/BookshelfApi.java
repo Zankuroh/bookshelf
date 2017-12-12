@@ -8,6 +8,7 @@ import com.eip.utilities.model.BooksLocal.BooksLocal;
 import com.eip.utilities.model.DelProfile.DelProfile;
 import com.eip.utilities.model.ModifAuthor.ModifAuthor;
 import com.eip.utilities.model.ModifBook.ModifBook;
+import com.eip.utilities.model.Notification.Notifications;
 import com.eip.utilities.model.Profile.Profile;
 import com.eip.utilities.model.ProfileModification.ProfileModification;
 import com.eip.utilities.model.Register.Register;
@@ -80,6 +81,7 @@ public interface BookshelfApi
     @GET("author")
     Call<Authors> getAuthors(@Header("Authorization") String token);
 
+
     @DELETE("author/")
     Call<ModifAuthor> DelAuthor(@Header("Authorization") String token, @Query("id") String id);
 
@@ -105,4 +107,17 @@ public interface BookshelfApi
 
     @DELETE("review/{reviewId}")
     Call<ModifReview> DelReview(@Header("Authorization") String token, @Path("reviewId") int reviewId, @Query("validation") String validation);
+
+    @FormUrlEncoded
+    @POST("author/subscription")
+    Call<ModifAuthor> AddAuthorSubscription(@Header("Authorization") String token, @Field("author_id") String id);
+
+    @GET("author/subscription")
+    Call<Authors> getAuthorsSubscription(@Header("Authorization") String token);
+
+    @DELETE("author/subscription/")
+    Call<ModifAuthor> DelAuthorSubscription(@Header("Authorization") String token, @Query("author_id") String id);
+
+    @GET("author/novels/notifications")
+    Call<Notifications> getNotifications(@Header("Authorization") String token);
 }
