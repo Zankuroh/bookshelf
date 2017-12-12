@@ -123,6 +123,19 @@ public class InfoBook extends AppCompatActivity
                 _menu.findItem(R.id.IAddBookWish).setVisible(true);
                 _menu.findItem(R.id.IRemoveBookWish).setVisible(false);
                 break;
+            case R.id.ICatFav:
+                switchBookState(4);
+                break;
+            case R.id.ICatUnread:
+                switchBookState(1);
+                break;
+            case R.id.ICatRead:
+                switchBookState(0);
+                break;
+            case R.id.ICatBorrow:
+                switchBookState(3);
+                break;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -141,6 +154,7 @@ public class InfoBook extends AppCompatActivity
                 menu.findItem(R.id.IAddBookBiblio).setVisible(false);
             } else {
                 menu.findItem(R.id.IRemoveBookBiblio).setVisible(false);
+                menu.findItem(R.id.ICategories).setVisible(false);
             }
 
             if (_inWish) {
@@ -155,6 +169,11 @@ public class InfoBook extends AppCompatActivity
         return true;
     }
 
+    private void switchBookState(int state)
+    {
+        // Ici on update le status d'un livre
+    }
+
     private void hideButtons()
     {
         _menu.findItem(R.id.IRemoveBookBiblio).setVisible(false);
@@ -163,6 +182,7 @@ public class InfoBook extends AppCompatActivity
         _menu.findItem(R.id.IRemoveBookWish).setVisible(false);
         _menu.findItem(R.id.IAddFriend).setVisible(false);
         _menu.findItem(R.id.IRemoveFriend).setVisible(false);
+        _menu.findItem(R.id.ICategories).setVisible(false);
         findViewById(R.id.BReview).setVisibility(View.GONE);
     }
 

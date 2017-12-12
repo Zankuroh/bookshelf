@@ -24,6 +24,34 @@
         android:orderInCategory="100"
         android:title="Retirer de ma liste de souhait"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/ICategories"
+        android:orderInCategory="100"
+        android:title="Catégories"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/ICatFav"
+                android:orderInCategory="100"
+                android:title="Favoris"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/ICatRead"
+                android:orderInCategory="100"
+                android:title="Lu"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/ICatUnread"
+                android:orderInCategory="100"
+                android:title="Non lu"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/ICatBorrow"
+                android:orderInCategory="100"
+                android:title="Emprunté"
+                app:showAsAction="never" />
+        </menu>
+    </item>
 
     <item
         android:id="@+id/IAddFriend"
