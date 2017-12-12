@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Models\book;
+use App\Models\Book;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Tymon\JWTAuth\Exceptions\JWTExceptions;
+
+use Log;
 
 class BookController extends \App\Http\Controllers\ApiController
 {
@@ -52,7 +54,6 @@ class BookController extends \App\Http\Controllers\ApiController
                 ->exists())
             {
                 \Illuminate\Support\Facades\Log::alert('THE BOOK EXISTS');
-                $response = $this->_ARV->getFailureJson(false);
                 $this->setDefaultFailureJsonResponse();
                 $this->getJsonResponse()->setOptionnalFields(['title' => 'Book already exist.']);
             }
@@ -61,8 +62,56 @@ class BookController extends \App\Http\Controllers\ApiController
                 \Illuminate\Support\Facades\Log::alert('THE BOOK NOT EXISTS');
                 $newBook = \App\Models\Book::create(['user_id' => $this->getCurrentUser()->id,
                     'isbn' => $request->input('isbn')]);
+                if ($request->has('status'))
+                {
+                    $status = intval($request->input('status'));
+                    if (is_int($status))
+                    {
+                        Log::debug('Status ID = integer');
+                        $newBook->setStatus($status);                        
+                    }
+                    else
+                    {
+                        Log::debug('Status ID not an integer');
+                        $this->getJsonResponse()->setMeta(['Warning' => 'Status ID is not an integer']);
+                    } 
+                }
+                Log::debug('Foo1');
                 $newBook->save();
                 $this->getJsonResponse()->setData($newBook);
+            }
+        }
+        else
+        {
+            $this->setDefaultFailureJsonResponse();
+        }
+
+        return $this->getRawJsonResponse();
+    }
+
+    public function update(Request $request)
+    {
+        if ($this->_ARV->validate($request, 
+            ['status' => 'required|integer']))
+        {
+            if (\App\Models\Book::where('isbn', $request->input('isbn'))
+                ->where('user_id', $this->getCurrentUser()->id)
+                ->exists())
+            {
+                $book = Book::where(['user_id' => $this->getCurrentUser()->id,
+                    'isbn' => $request->input('isbn')])->first();
+                if ($request->has('status'))
+                {
+                    $book->status_id = $request->input('status');
+                    $book->save();
+                    $this->getJsonResponse()->setData($book);
+                    $this->getJsonResponse()->setMeta(['Field updated' => 'status']);
+                }
+            }
+            else
+            {
+                $this->setDefaultFailureJsonResponse();
+                $this->getJsonResponse()->setOptionnalFields(['title' => 'Book not exist']);
             }
         }
         else

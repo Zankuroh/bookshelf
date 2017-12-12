@@ -99,6 +99,9 @@ Route::group(['namespace' => 'Api'], function() {
 
             /** Delete a book */
             Route::delete('/', 'BookController@destroy');
+
+            /** Update a book */
+            Route::put('/', 'BookController@update');
         });
 
         /**
