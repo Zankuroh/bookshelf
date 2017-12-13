@@ -409,7 +409,7 @@ public class InfoBook extends AppCompatActivity
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<ModifBook> call = bookshelfApi.AddBook(MainActivity.token, _isbn);
+        Call<ModifBook> call = bookshelfApi.AddBook(MainActivity.token, _isbn, "1");
         call.enqueue(new Callback<ModifBook>() {
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {

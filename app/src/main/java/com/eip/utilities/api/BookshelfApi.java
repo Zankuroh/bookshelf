@@ -1,6 +1,7 @@
 package com.eip.utilities.api;
 
 
+import com.eip.utilities.model.ChangeStatus.ChangeStatus;
 import com.eip.utilities.model.ModifReview.ModifReview;
 import com.eip.utilities.model.AuthLocal.AuthLocal;
 import com.eip.utilities.model.Authors.Authors;
@@ -48,10 +49,14 @@ public interface BookshelfApi
 
     @FormUrlEncoded
     @POST("book")
-    Call<ModifBook> AddBook(@Header("Authorization") String token, @Field("isbn") String isbn);
+    Call<ModifBook> AddBook(@Header("Authorization") String token, @Field("isbn") String isbn, @Field("status") String status);
 
     @GET("book")
     Call<BooksLocal> getBookshelf(@Header("Authorization") String token);
+
+    @PUT("book")
+    Call<ChangeStatus>ChangeStatus(@Header("Authorization") String token, @Query("isbn") String isbn, @Query("status") String status);
+
 
     @DELETE("book/")
     Call<ModifBook> DelBook(@Header("Authorization") String token, @Query("isbn") String isbn, @Query("deleted") String deleted);
