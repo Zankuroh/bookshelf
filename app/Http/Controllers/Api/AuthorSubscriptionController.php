@@ -21,6 +21,7 @@ class AuthorSubscriptionController extends \App\Http\Controllers\ApiController
 	{
 		$this->getJsonResponse()->setData(
 			AuthorSubscription::where(["user_id" => $this->getCurrentUser()->id])->get());
+		//TODO JOIN THE AUTHOR TABLE TO SEND BACK THE NAME/FIRST NAME OF AUTHORS
 
 		return $this->getRawJsonResponse();
 	}

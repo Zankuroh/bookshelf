@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth as JWTAuth;
 use Log;
 
@@ -191,6 +192,39 @@ class ProfileController extends \App\Http\Controllers\ApiController
                 $currentUser->delete();
                 $this->getJsonResponse()->setData(['deleted' => 'true']);
             }
+        }
+        else
+        {
+            $this->setDefaultFailureJsonResponse();
+        }
+
+        return $this->getRawJsonResponse();
+    }
+
+    /** 
+     * Search a profile with nickname or email  
+     * 
+     */
+    public function search(Request $request)
+    {
+        if ($this->_ARV->validate($request,
+            ['keywords_search' => 'required|string']))
+        {
+            $searchingTableField = "name";
+            $keywords_search = $request->input('keywords_search');
+            if (filter_var($keywords_search, FILTER_VALIDATE_EMAIL))
+            {
+                $searchingTableField = "email";
+                Log::debug("It's an email");
+            }
+            else
+            {
+                Log::debug("It's a name");
+            }
+            $matchedUsers = User::where('users.' . $searchingTableField,
+                        'like',
+                        '%' . $keywords_search . '%')->get();
+            $this->getJsonResponse()->setData($matchedUsers);
         }
         else
         {
