@@ -1,6 +1,8 @@
 package com.eip.utilities.api;
 
 
+import com.eip.utilities.model.AuthorSubscription.SubList;
+import com.eip.utilities.model.AuthorSubscription.SubscriptionValidator;
 import com.eip.utilities.model.ChangeStatus.ChangeStatus;
 import com.eip.utilities.model.ModifReview.ModifReview;
 import com.eip.utilities.model.AuthLocal.AuthLocal;
@@ -76,12 +78,12 @@ public interface BookshelfApi
     @POST("profile/name")
     Call<ProfileModification> ChangeName(@Header("Authorization") String token, @Field("password") String password, @Field("name") String name);
 
+    @DELETE("profile/")
+    Call<DelProfile> DelProfil(@Header("Authorization") String token, @Query("password") String password, @Query("delete") String deleted);
+
     @FormUrlEncoded
     @POST("author")
     Call<ModifAuthor> AddAuthor(@Header("Authorization") String token, @Field("first_name") String first_name, @Field("last_name") String last_name);
-
-    @DELETE("profile/")
-    Call<DelProfile> DelProfil(@Header("Authorization") String token, @Query("password") String password, @Query("delete") String deleted);
 
     @GET("author")
     Call<Authors> getAuthors(@Header("Authorization") String token);
@@ -115,13 +117,13 @@ public interface BookshelfApi
 
     @FormUrlEncoded
     @POST("author/subscription")
-    Call<ModifAuthor> AddAuthorSubscription(@Header("Authorization") String token, @Field("author_id") String id);
+    Call<SubscriptionValidator> AddAuthorSubscription(@Header("Authorization") String token, @Field("author_id") String id);
 
     @GET("author/subscription")
-    Call<Authors> getAuthorsSubscription(@Header("Authorization") String token);
+    Call<SubList> getAuthorsSubscription(@Header("Authorization") String token);
 
     @DELETE("author/subscription/")
-    Call<ModifAuthor> DelAuthorSubscription(@Header("Authorization") String token, @Query("author_id") String id);
+    Call<SubscriptionValidator> DelAuthorSubscription(@Header("Authorization") String token, @Query("author_id") String id);
 
     @GET("author/novels/notifications")
     Call<Notifications> getNotifications(@Header("Authorization") String token);

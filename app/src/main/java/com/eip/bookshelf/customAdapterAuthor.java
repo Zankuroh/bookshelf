@@ -4,24 +4,40 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.eip.utilities.api.BookshelfApi;
+import com.eip.utilities.model.AuthorSubscription.SubscriptionValidator;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Maxime on 22/02/2016.
  */
 class customAdapterAuthor extends BaseAdapter {
     private Context _c;
-    private ArrayList<String> _als;
-    private boolean _acceptCall = true;
+    private RelativeLayout _rl;
+    private ArrayList<Pair<String, String>> _als;
 
-    customAdapterAuthor(Context context, ArrayList<String> modelList)
+    customAdapterAuthor(Context context, ArrayList<Pair<String, String>> modelList)
     {
         this._c = context;
         this._als = modelList;
@@ -54,60 +70,66 @@ class customAdapterAuthor extends BaseAdapter {
             v = convertView;
         }
 
-        final String iadapt = _als.get(position);
-        final TextView tv = (TextView) v.findViewById(R.id.TVAutor);
-        final Switch sw = (Switch) v.findViewById(R.id.SFollow);
+        _rl = (RelativeLayout)v.findViewById(R.id.RLAuthor);// TODO: 13/12/2017 recup un truc qui marche
+
+        final Pair<String, String> iadapt = _als.get(position);
+        final TextView tv = v.findViewById(R.id.TVAutor);
         final customAdapterAuthor scope = this;
-        tv.setText(iadapt);
+        tv.setText(iadapt.first);
         v.findViewById(R.id.IVDelete).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AlertDialog.Builder adb = new AlertDialog.Builder(v.getContext());
-                adb.setTitle("Suppression");
-                adb.setMessage("Voulez-vous supprimer l'auteur " + iadapt + " ?");
-                final int positionToRemove = position;
+                adb.setTitle("Désabonnement");
+                adb.setMessage("Voulez-vous arrêter de suivre " + iadapt.first + " ?");
                 adb.setNegativeButton("Annuler", null);
                 adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        _als.remove(positionToRemove);
+                        _als.remove(position);
                         scope.notifyDataSetChanged();
                         // TODO: 11/12/2017 supprime l'auteur
+                        deleteAuthorSub(iadapt.second);
                     }});
                 adb.show();
             }
         });
-        // set switch on or off with API
-        // sw.setChecked(true); // false
-        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-                if (_acceptCall) {
-                    String msg = "Voulez-vous arrêter de suivre l'auteur " + iadapt + " ?\nVous ne serez plus averti par notification des dernières sorties.";
-                    if (isChecked) {
-                        msg = "Voulez-vous suivre l'auteur " + iadapt + " ?\nVous serez averti par notification des dernières sorties.";
-                    }
-                    AlertDialog.Builder adb = new AlertDialog.Builder(buttonView.getContext());
-                    adb.setTitle("Suivre");
-                    adb.setMessage(msg);
-                    adb.setNegativeButton("Annuler", new AlertDialog.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            _acceptCall = false;
-                            sw.setChecked(!isChecked);
-                        }
-                    });
-                    adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (isChecked) {
-                                // TODO: 11/12/2017 sub auteur
-                            } else {
-                                // TODO: 11/12/2017 unsub auteur
-                            }
-                        }
-                    });
-                    adb.show();
+        return v;
+    }
+
+    private void deleteAuthorSub(String id) {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<SubscriptionValidator> call = bookshelfApi.DelAuthorSubscription(MainActivity.token, id);
+        call.enqueue(new Callback<SubscriptionValidator>() {
+            @Override
+            public void onResponse(Call<SubscriptionValidator> call, Response<SubscriptionValidator> response) {
+                if (response.isSuccessful()) {
+                    //SubscriptionValidator modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Vous ne serez plus notifié lors de ses prochaines sortis", Snackbar.LENGTH_LONG);
+                    snackbar.show();
                 } else {
-                    _acceptCall = true;
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " +  jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
                 }
             }
+
+            @Override
+            public void onFailure(Call<SubscriptionValidator> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
         });
-        return v;
     }
 }

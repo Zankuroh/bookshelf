@@ -1,6 +1,8 @@
 package com.eip.bookshelf;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,6 +15,8 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +31,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eip.utilities.api.BookshelfApi;
+import com.eip.utilities.model.AuthorSubscription.SubscriptionValidator;
+import com.eip.utilities.model.Authors.Author;
+import com.eip.utilities.model.Authors.Authors;
+import com.eip.utilities.model.ChangeStatus.ChangeStatus;
+import com.eip.utilities.model.ModifAuthor.ModifAuthor;
 import com.eip.utilities.model.ModifReview.ModifReview;
 import com.eip.utilities.model.ModifBook.ModifBook;
 import com.eip.utilities.model.Reviews.Review;
@@ -34,6 +43,7 @@ import com.eip.utilities.model.Reviews.Reviews;
 import com.eip.utilities.model.VolumeInfo;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.ParseException;
@@ -41,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -124,16 +135,16 @@ public class InfoBook extends AppCompatActivity
                 _menu.findItem(R.id.IRemoveBookWish).setVisible(false);
                 break;
             case R.id.ICatFav:
-                switchBookState(4);
+                switchBookState("4");
                 break;
             case R.id.ICatUnread:
-                switchBookState(1);
+                switchBookState("1");
                 break;
             case R.id.ICatRead:
-                switchBookState(0);
+                switchBookState("0");
                 break;
             case R.id.ICatBorrow:
-                switchBookState(3);
+                switchBookState("3");
                 break;
 
         }
@@ -169,9 +180,44 @@ public class InfoBook extends AppCompatActivity
         return true;
     }
 
-    private void switchBookState(int state)
+    private void switchBookState(String state)
     {
-        // Ici on update le status d'un livre
+        // TODO: 13/12/2017  update le status d'un livre DONE
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ChangeStatus> call = bookshelfApi.ChangeStatus(MainActivity.token, _isbn, state);
+        call.enqueue(new Callback<ChangeStatus>() {
+            @Override
+            public void onResponse(Call<ChangeStatus> call, Response<ChangeStatus> response) {
+                if (response.isSuccessful()) {
+                    //ChangeStatus modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Le status a bien été changé", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ChangeStatus> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
     }
 
     private void hideButtons()
@@ -325,7 +371,23 @@ public class InfoBook extends AppCompatActivity
 
     public void onClickLinks(String author)
     {
-        // TODO: 11/12/2017 add un auteur :)
+        final String fauthor = author;
+        String msg = "Voulez-vous suivre l'auteur " + author + " ?\nVous serez averti par notification des dernières sorties.";
+        AlertDialog.Builder adb = new AlertDialog.Builder(_rl.getContext());
+                    adb.setTitle("Suivre");
+                    adb.setMessage(msg);
+                    adb.setNegativeButton("Annuler", new AlertDialog.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                    });
+                    adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            getAllAuthor(fauthor);
+                        }
+                    });
+        adb.show();
+        // TODO: 11/12/2017 add un auteur :) DONE
+        /**/
     }
 
     private void updateDisplayedReviews()
@@ -716,4 +778,143 @@ public class InfoBook extends AppCompatActivity
             }
         });
     }
+
+    private void getAllAuthor(final String Author) {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<Authors> call = bookshelfApi.getAuthors(MainActivity.token);
+        call.enqueue(new Callback<Authors>() {
+            @Override
+            public void onResponse(Call<Authors> call, Response<Authors> response) {
+                if (response.isSuccessful()) {
+                    boolean check = false;
+                    Authors rep = response.body();
+                    List<Author> authors = rep.getData();
+                    ListIterator<Author> it = authors.listIterator();
+                    while (it.hasNext()) {
+                        Author author = it.next();
+                        Log.i("toto",author.getFirstName()+" "+author.getLastName()+" => "+author.getId());
+                        String comp = author.getFirstName()+" "+author.getLastName();
+                        if (comp.equals(Author)) {
+                            check = true;
+                            Log.i("Author", "EXISTE");
+                            addToSub(author.getId());
+                        }
+                    }
+                    if (check == false) {
+                        Log.i("Author", "NEED TO BE ADD");
+                        addAuthor(Author);
+                    }
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Authors> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void addAuthor(String author) {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ModifAuthor> call = bookshelfApi.AddAuthor(MainActivity.token, author, "");
+        call.enqueue(new Callback<ModifAuthor>() {
+            @Override
+            public void onResponse(Call<ModifAuthor> call, Response<ModifAuthor> response) {
+                if (response.isSuccessful()) {
+                    //ModifAuthor modif = response.body();
+                } else {
+                    /*try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        JSONObject jobj = jObjError.getJSONObject("errors");
+                        String msg = "";
+                        if (jobj.has("first_name")) {
+                            JSONArray ar = jobj.getJSONArray("first_name");
+                            msg += ar.get(0);
+                        }
+                        if (jobj.has("last_name")) {
+                            JSONArray ar = jobj.getJSONArray("first_name");
+                            msg += ar.get(0);
+                        }
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " +  jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }*/
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModifAuthor> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void addToSub(String Id) {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<SubscriptionValidator> call = bookshelfApi.AddAuthorSubscription(MainActivity.token, Id);
+        call.enqueue(new Callback<SubscriptionValidator>() {
+            @Override
+            public void onResponse(Call<SubscriptionValidator> call, Response<SubscriptionValidator> response) {
+                if (response.isSuccessful()) {
+                    //SubscriptionValidator modif = response.body();
+                    Snackbar snackbar = Snackbar.make(_rl, "Vous serez notifié lors de ses prochaines sortis", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " +  jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SubscriptionValidator> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
+        });
+    }
+
 }
+

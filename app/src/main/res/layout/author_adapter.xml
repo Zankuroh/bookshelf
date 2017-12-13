@@ -24,12 +24,12 @@
         android:src="@android:drawable/ic_menu_delete"
         android:onClick="onClickDeleteAuthor"/>
 
-    <Switch
+   <!-- <Switch
         android:id="@+id/SFollow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/IVDelete"
+        android:layout_alignBottom="@+id/TVAutor"
         android:layout_marginEnd="29dp"
-        android:layout_toStartOf="@+id/IVDelete"/>
+        android:layout_toStartOf="@+id/IVDelete"/>-->
 
 </RelativeLayout>
