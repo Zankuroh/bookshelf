@@ -53,10 +53,13 @@ public class ShelfTab extends Fragment
         tabR.setArguments(arg);
         ShelfContainer tabNR = new ShelfContainer();
         tabNR.setArguments(arg);
+        ShelfContainer tabB = new ShelfContainer();
+        tabB.setArguments(arg);
         adapter.addFrag(tabAll, "TOUS");
         adapter.addFrag(tabFav, "FAVORIS");
         adapter.addFrag(tabR, "LU");
         adapter.addFrag(tabNR, "NON LU");
+        adapter.addFrag(tabB, "PRÊTÉ");
         viewPager.setAdapter(adapter);
     }
 
