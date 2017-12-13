@@ -4,12 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-/**
- * User's friends migration class
- * Handle simply the relationship between users
- *
-**/
-class CreateUserFriendsTable extends Migration
+class CreateFriendsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -18,13 +13,12 @@ class CreateUserFriendsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_friends', function (Blueprint $table) {
+        Schema::create('friends', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger("user_id'");
+            $table->unsignedInteger("user_id");
             $table->unsignedInteger("friend_id");
-            $table->unsignedTinyInteger("status");
-            $table->integer("common_nbr_friends"); // TODO maybe create a new table to handle this context
-
+            $table->unsignedTinyInteger("status")->default(0); //optionnal
+            $table->integer("common_nbr_friends")->default(0); // TODO maybe create a new table to handle this context
             $table->timestamps();
         });
     }
@@ -36,6 +30,6 @@ class CreateUserFriendsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_friends');
+        Schema::dropIfExists('friends');
     }
 }

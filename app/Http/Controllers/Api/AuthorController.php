@@ -53,8 +53,7 @@ class AuthorController extends \App\Http\Controllers\ApiController
     public function store(Request $request)
     {
         if (!$this->_ARV->validate($request, [
-                'first_name' => 'required|alpha_num|between:5,30|unique:authors,first_name',
-                'last_name' => 'required|alpha_num|between:5,30|unique:authors,last_name'])
+                'first_name' => 'required|between:5,30'])
             )
         {
             $this->setDefaultFailureJsonResponse();
@@ -62,8 +61,8 @@ class AuthorController extends \App\Http\Controllers\ApiController
         else
         {
             $newAuthor = Author::firstOrCreate([
-                    'last_name' => $request->input('last_name'),
-                    'first_name' => $request->input('first_name'),
+                    'last_name' => $request->has('last_name') ? $request->input('last_name') : null,
+                    'first_name' =>  $request->input('first_name'),
                     'added_by' => JWTAuth::toUser(JWTAuth::getToken())->id
             ]);
             $this->getJsonResponse()->setData($newAuthor);

@@ -41,7 +41,8 @@ Route::group(['namespace' => 'Api'], function() {
     /**
      *   Calls where JWT authentication is mandatory
      */
-    Route::group(['middleware' => 'jwt.auth'], function() {
+    Route::group(['middleware' => 'jwt.auth'], function()
+    {
 
         /**
          * Review group
@@ -90,7 +91,8 @@ Route::group(['namespace' => 'Api'], function() {
         // Route::delete('wishlist', 'WishlistController@destroy');
 
         /** Book group */
-        Route::group(['prefix' => 'book'], function() {
+        Route::group(['prefix' => 'book'], function()
+        {
             /** Get books of user */
             Route::get('/', 'BookController@index');
 
@@ -112,7 +114,8 @@ Route::group(['namespace' => 'Api'], function() {
          *   - items,
          *   - etc...
          */
-        Route::group(['prefix' => 'wish'], function() {
+        Route::group(['prefix' => 'wish'], function()
+        {
 
             /** Wish book group */
             Route::group(['prefix' => 'book'], function() {
@@ -138,7 +141,8 @@ Route::group(['namespace' => 'Api'], function() {
 
 
         /** Profile group */
-        Route::group(['prefix' => 'profile'], function() {
+        Route::group(['prefix' => 'profile'], function()
+        {
 
             /** Get profile information */
             Route::get('/', 'ProfileController@index');
@@ -154,6 +158,27 @@ Route::group(['namespace' => 'Api'], function() {
 
             /** Change password */
             Route::post('password', 'ProfileController@changePassword');
+
+            /**
+             * Look for a profile
+             **/
+            Route::group(['prefix' => 'search'], function()
+            {
+                 Route::post('/', 'ProfileCOntroller@search');
+            });
+           
+        });
+
+        Route::group(['prefix' => 'friend'], function() 
+        {
+            // Get friend list
+            Route::get('/', 'FriendController@index');
+
+            // Add new friend
+            Route::post('/', 'FriendController@store');
+
+
+            Route::delete('/', 'FriendController@destroy');
         });
     });
 });

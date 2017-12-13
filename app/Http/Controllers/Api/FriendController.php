@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Models\UserFriends;
+use App\Models\Friend;
+use App\Models\User;
+use App\Http\Controllers\ApiController;
 
 /** 
  *   User's friends controller
@@ -13,11 +15,8 @@ use App\Models\UserFriends;
  * //TODO maybe for this feature we can do a cron that running the night ?
  * 
  */
-class UserFriendController extends Controller
+class FriendController extends ApiController
 {
-
-
-
     /**
      * Display a listing of the resource.
      *
@@ -34,36 +33,11 @@ class UserFriendController extends Controller
      */
     public function index()
     {
-        $response = getDefaultJsonResponse();
-        $acceptedFriendsList = array();
-        $pendingFriendsList = array();
-        $declinedFriendsList = array();
+        $user = User::find($this->getCurrentUser()->id);
 
-        $rawList = UserFriends::where(['user_id' => get_current_user()->id]);
+        $this->getJsonResponse()->setData($user->getFriends());
 
-        foreach($rawList as $row)
-        {
-            if ($row->status == UserFriends::STATUS_ACCEPTED)
-            {
-                $acceptedFriendsList.push($row);
-
-            }
-            else if ($row->status == UserFriends::STATUS_PENDING)
-            {
-                $pendingFriendsList.push($row);
-            }
-            else if ($row->status == UserFriends::STATUS_DECLINED)
-                {
-                    $declinedFriendsList.push($row);
-                 }
-                 // We dont consider others status to be available to send them as response
-                 // Specially for the blocked one, the second user should not know this state
-                 // otherwise he will be not user-friendly for the app
-        }
-
-        $response->json(["acceptedList" => $acceptedList, "pendingList" => $pendingList, "declinedList" => $declinedList]);
-
-        return $response;
+        return $this->getRawJsonResponse();
     }
 
     /**
@@ -84,24 +58,44 @@ class UserFriendController extends Controller
      */
     public function store(Request $request)
     {
-        $response = getDefaultJsonResponse();
-
         if ($this->_ARV->validate($request,
             [
-                "friend_identifier" => "email|requiredUnless|string"
+                "friend_id" => "required|integer"
             ]
         ))
         {
+            $friendID = $request->input('friend_id');
+            $friend = User::find($friendID);
+            if (!is_null($friend))
+            {
+                $alreadyFriend = !is_null(Friend::where(['user_id' => $this->getCurrentUser()->id,
+                                    'friend_id' => $friendID])->first());
+                if ($alreadyFriend)
+                {
+                    $this->getJsonResponse()->setOptionnalFields(['title' => 'Already friend.']);
+                }
+                else
+                {
+                    Friend::create(['user_id' => $this->getCurrentUser()->id,
+                                    'friend_id' => $friendID]);
+                    $this->getJsonResponse()->setData($friend);
+                }
+            }
+            else
+            {
+                $this->setDefaultFailureJsonResponse(false);
+                $this->getJsonResponse()->setOptionnalFields(['title' => 'This friend not exist.']);
+            }
+
             //TODO firstly try to parse the identifier, if it's an email so check if it exist in the database
             //otherwise it should be a nickname, in the 
         }
         else
         {
-            $response = getDefaultFailureJsonResponse();
+            $this->setDefaultFailureJsonResponse();
         }
 
-        return $response;
-        //
+        return $this->getRawJsonResponse();
     }
 
     /**
@@ -144,8 +138,32 @@ class UserFriendController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
+        $success = true;
+        if ($this->_ARV->validate($request,
+            ['friend_id' => 'required|integer']))
+        {
+            $friendID = intval($request->input('friend_id'));
+            $friendship = Friend::where(['user_id' => $this->getCurrentUser()->id,
+                            'friend_id' => $friendID])->first();
+            if (is_null($friendship))
+            {
+                $success = false;
+                $this->getJsonResponse()->setOptionnalFields(['title' => 'The friend not exist']);
+            }
+            else
+            {
+                $friendship->delete();
+            }
+            $this->getJsonResponse()->setData(['success' => $success]);
+        }
+        else
+        {
+            $this->setDefaultFailureJsonResponse();
+        }
+
+        return $this->getRawJsonResponse();
         //
     }
 }

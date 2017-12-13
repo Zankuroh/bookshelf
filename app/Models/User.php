@@ -26,7 +26,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'created_at', 'updated_at', 'id'
+        'password', 'remember_token', 'created_at', 'updated_at'
     ];
 
     /**
@@ -80,5 +80,17 @@ class User extends Authenticatable
       $user = User::getByEmail($email);
 
       return $user;
+    }
+
+    /**
+     * Get friends of the user
+     * 
+     **/
+    public function getFriends()
+    {
+        Log::debug("getFriends from User model for user : " . $this->id);
+        return $this->leftJoin('friends', 'users.id', '=', 'friends.friend_id')
+        ->where(['friends.user_id' => $this->id])
+        ->get();
     }
 }
