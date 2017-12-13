@@ -164,7 +164,7 @@ Route::group(['namespace' => 'Api'], function() {
              **/
             Route::group(['prefix' => 'search'], function()
             {
-                 Route::post('/', 'ProfileCOntroller@search');
+                 Route::post('/', 'ProfileController@search');
             });
            
         });
