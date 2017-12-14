@@ -47,10 +47,10 @@ public class EditProfil extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_profil);
-        _rl = (RelativeLayout)findViewById(R.id.RLEditProfil);
+        _rl = findViewById(R.id.RLEditProfil);
         _login = Profil.prof.getName();
         _email = Profil.prof.getEmail();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
@@ -300,8 +300,7 @@ public class EditProfil extends AppCompatActivity
                     try {
                         JSONObject jObj = new JSONObject(response.errorBody().string());
                         //JSONObject jObjError = jObj.getJSONObject("errors");
-                        String error = "";
-                        error = jObj.getString("title");
+                        String error = jObj.getString("title");
                         /*JSONArray password;
                         JSONArray deleted;
                         try {

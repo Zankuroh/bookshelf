@@ -20,5 +20,6 @@ class LocalDBContract
         static final String COLUMN_NAME_AUTHOR = "author";
         static final String COLUMN_NAME_GENRE = "genre";
         static final String COLUMN_NAME_USERID = "user_id";
+        static final String COLUMN_NAME_STATE = "state";
     }
 }

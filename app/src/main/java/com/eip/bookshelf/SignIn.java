@@ -75,7 +75,7 @@ public class SignIn extends Fragment implements View.OnClickListener
             }
         };
 
-        loginButton = (LoginButton) _v.findViewById(R.id.fConnect);
+        loginButton = _v.findViewById(R.id.fConnect);
         loginButton.setReadPermissions("public_profile email");
         // If using in a fragment
         loginButton.setFragment(this);
@@ -95,7 +95,7 @@ public class SignIn extends Fragment implements View.OnClickListener
         });
         accessTokenTracker.startTracking();
 
-        SignInButton mGoogleSignInButton = (SignInButton)_v.findViewById(R.id.gConnect);
+        SignInButton mGoogleSignInButton = _v.findViewById(R.id.gConnect);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.EMAIL))
@@ -181,8 +181,8 @@ public class SignIn extends Fragment implements View.OnClickListener
     private void clickSignIn()
     {
         MainActivity.hideSoftKeyboard(getActivity());
-        EditText login = (EditText) _v.findViewById(R.id.ETsignInMail);
-        EditText passwd = (EditText) _v.findViewById(R.id.ETsignInMdp);
+        EditText login = _v.findViewById(R.id.ETsignInMail);
+        EditText passwd = _v.findViewById(R.id.ETsignInMdp);
         connect(login.getText().toString(), passwd.getText().toString(), _v);
     }
 
@@ -286,15 +286,10 @@ public class SignIn extends Fragment implements View.OnClickListener
 
         Bundle arg = new Bundle();
         arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
-        // A GARDER (TAB DANS SHELF)
-        ShelfTab shelfFrag = new ShelfTab(); //ShelfTab
+        ShelfTab shelfFrag = new ShelfTab();
         shelfFrag.setArguments(arg);
         fragmentTransaction.replace(R.id.fragment_container, shelfFrag, "SHELF");
         fragmentTransaction.commit();
-//        ShelfContainer shelfFrag = new ShelfContainer();
-//        shelfFrag.setArguments(arg);
-//        fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
-//        fragmentTransaction.commit();
     }
 
     public void deconnection() {

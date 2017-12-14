@@ -39,8 +39,8 @@ public class SignUp extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_up);
-        _lp = (RelativeLayout)findViewById(R.id.RLSignUp);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        _lp = findViewById(R.id.RLSignUp);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
@@ -62,10 +62,10 @@ public class SignUp extends AppCompatActivity
 
     public void onClickSignUp(View v)
     {
-        EditText name = (EditText) findViewById(R.id.SignUpFirstName);
-        EditText password = (EditText) findViewById(R.id.SignUpPwd);
-        EditText password2 = (EditText) findViewById(R.id.SignUpPwd2);
-        EditText email = (EditText) findViewById(R.id.SignUpMail);
+        EditText name = findViewById(R.id.SignUpFirstName);
+        EditText password = findViewById(R.id.SignUpPwd);
+        EditText password2 = findViewById(R.id.SignUpPwd2);
+        EditText email = findViewById(R.id.SignUpMail);
         String errors = "";
         if (name.getText().toString().equals("")) {
             errors += "Le champ pseudo est obligatoire.";
@@ -132,8 +132,7 @@ public class SignUp extends AppCompatActivity
                     try {
                         JSONObject jObj = new JSONObject(response.errorBody().string());
                         JSONObject jObjError = jObj.getJSONObject("errors");
-                        String error = "";
-                        error = jObj.getString("title");
+                        String error = jObj.getString("title");
                         JSONArray password;
                         JSONArray email;
                         JSONArray name;

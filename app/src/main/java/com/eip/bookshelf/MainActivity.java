@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
@@ -47,16 +46,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setItemIconTintList(null);
 
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed()
     {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -87,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item)
+    public boolean onNavigationItemSelected(MenuItem item)
     {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -97,17 +96,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_biblio:
                 defineNameToolBar("Bibliothèque");
                 if (MainActivity.token != null) {
-                    // A GARDER TAB POUR SHELF
                     Bundle arg = setArgs(shelfType.MAINSHELF);
                     ShelfTab shelfFrag = new ShelfTab();
                     shelfFrag.setArguments(arg);
                     fragmentTransaction.replace(R.id.fragment_container, shelfFrag, "SHELF");
                     fragmentTransaction.commit();
-//                    Bundle arg = setArgs(shelfType.MAINSHELF);
-//                    ShelfContainer shelfFrag = new ShelfContainer();
-//                    shelfFrag.setArguments(arg);
-//                    fragmentTransaction.replace(R.id.fragment_container, shelfFrag);
-//                    fragmentTransaction.commit();
                 } else {
                     accessDenied(_this);
                 }
@@ -197,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -220,12 +213,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     static void defineNameToolBar(String title)
     {
-        Toolbar tb = (Toolbar) _this.findViewById(R.id.toolbar);
+        Toolbar tb = _this.findViewById(R.id.toolbar);
         _this.setSupportActionBar(tb);
         if (_this.getSupportActionBar() != null) {
             _this.getSupportActionBar().setTitle(title);
         }
-        DrawerLayout drawer = (DrawerLayout) _this.findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = _this.findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(_this, drawer, tb, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();

@@ -1,6 +1,5 @@
 package com.eip.bookshelf;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -9,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -22,7 +20,6 @@ public class FriendsContainer extends Fragment implements View.OnClickListener
 {
     private View _v;
     private ArrayList<AmisAdapter> _modelListFriend = new ArrayList<>();
-    private customAdapterAmis _adapterFriend;
 
     public FriendsContainer()
     {
@@ -65,9 +62,9 @@ public class FriendsContainer extends Fragment implements View.OnClickListener
 
     private void setAdapter()
     {
-        GridView gvFriend = (GridView) _v.findViewById(R.id.GVFriend);
-        _adapterFriend = new customAdapterAmis(_v, _modelListFriend);
-        gvFriend.setAdapter(_adapterFriend);
+        GridView gvFriend = _v.findViewById(R.id.GVFriend);
+        customAdapterAmis adapterFriend = new customAdapterAmis(_v, _modelListFriend);
+        gvFriend.setAdapter(adapterFriend);
         _modelListFriend.clear();
 
         gvFriend.setOnItemClickListener(new AdapterView.OnItemClickListener() {

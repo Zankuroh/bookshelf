@@ -44,16 +44,19 @@ class customAdapterAmis extends BaseAdapter
     @Override
     public View getView(final int position, View convertView, ViewGroup parent)
     {
+        View v;
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) _c.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.amis_adapter, parent, false);
-
-            AmisAdapter iadapt = _als.get(position);
-            TextView tv = (TextView) convertView.findViewById(R.id.TVAffName);
-            TextView tvh = (TextView) convertView.findViewById(R.id.TVIDAmis);
-            tv.setText(iadapt.get_name());
-            tvh.setText(iadapt.get_id());
+            v = mInflater.inflate(R.layout.amis_adapter, parent, false);
+        } else {
+            v = convertView;
         }
-        return convertView;
+
+        AmisAdapter iadapt = _als.get(position);
+        TextView tv = v.findViewById(R.id.TVAffName);
+        TextView tvh = v.findViewById(R.id.TVIDAmis);
+        tv.setText(iadapt.get_name());
+        tvh.setText(iadapt.get_id());
+        return v;
     }
 }

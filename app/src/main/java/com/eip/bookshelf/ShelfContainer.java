@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -26,8 +25,10 @@ import com.eip.utilities.model.Item;
 import com.eip.utilities.model.VolumeInfo;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,6 +43,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ShelfContainer extends Fragment
 {
     private ArrayList<BiblioAdapter> _modelListBiblio = new ArrayList<>();
+    private String _status;
     private View _v;
     private MainActivity.shelfType _type;
     private customAdapterBiblio _adapterBiblio;
@@ -57,9 +59,13 @@ public class ShelfContainer extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        _status = "-1";
         Bundle b = getArguments();
         if (b != null) {
             _type = (MainActivity.shelfType)b.getSerializable("type");
+            if (_type == MainActivity.shelfType.MAINSHELF) {
+                _status = b.getString("status");
+            }
         } else {
             _type = null;
         }
@@ -70,6 +76,7 @@ public class ShelfContainer extends Fragment
             setAdapters();
             if (_currentTab) {
                 setTextWatcher();
+                mainShelf();
             }
         } else if (_type == MainActivity.shelfType.PROPOSHELF) {
             _v = inflater.inflate(R.layout.shelf_simple, container, false);
@@ -87,20 +94,20 @@ public class ShelfContainer extends Fragment
     public void onResume()
     {
         super.onResume();
+        if (getFragmentManager() == null) {
+            return;
+        }
         Fragment myFragment = getFragmentManager().findFragmentByTag("SHELF");
         if (myFragment != null && myFragment.isVisible()) {
-            _modelListBiblio.clear();
-            _adapterBiblio.notifyDataSetChanged();
-            EditText field = (EditText) getActivity().findViewById(R.id.ETkeyword);
+            if (getActivity() == null) {
+                return;
+            }
+            EditText field = getActivity().findViewById(R.id.ETkeyword);
             if (field == null) {
-                field = (EditText) _v.findViewById(R.id.ETkeyword);
+                field = _v.findViewById(R.id.ETkeyword);
             }
             field.setText("");
-            if (_type == MainActivity.shelfType.MAINSHELF) {
-                if (_currentTab) {
-                    mainShelf();
-                }
-            } else if (_type == MainActivity.shelfType.PROPOSHELF) {
+            if (_type == MainActivity.shelfType.PROPOSHELF) {
                 propoShelf();
             } else if (_type == MainActivity.shelfType.WISHSHELF) {
                 wishShelf();
@@ -115,7 +122,9 @@ public class ShelfContainer extends Fragment
         _currentTab = isVisibleToUser;
         if (isVisibleToUser && _v != null) {
             setTextWatcher();
-            mainShelf();
+            if (_modelListBiblio.size() == 0) {
+                mainShelf();
+            }
         } else {
             unsetTextWatcher();
         }
@@ -124,9 +133,9 @@ public class ShelfContainer extends Fragment
     private void setTextWatcher()
     {
         if (getActivity() != null) {
-            EditText field = (EditText) getActivity().findViewById(R.id.ETkeyword);
+            EditText field = getActivity().findViewById(R.id.ETkeyword);
             if (field == null) {
-                field = (EditText) _v.findViewById(R.id.ETkeyword);
+                field = _v.findViewById(R.id.ETkeyword);
             }
             _tWatcher = new TextWatcher() {
                 @Override
@@ -140,9 +149,9 @@ public class ShelfContainer extends Fragment
                     String typeSearch = "";
                     String content = s.toString();
                     if (!content.equals("")) {
-                        Spinner sp = (Spinner) getActivity().findViewById(R.id.Stype);
+                        Spinner sp = getActivity().findViewById(R.id.Stype);
                         if (sp == null) {
-                            sp = (Spinner) _v.findViewById(R.id.Stype);
+                            sp = _v.findViewById(R.id.Stype);
                         }
                         typeSearch = sp.getSelectedItem().toString();
                     }
@@ -157,36 +166,10 @@ public class ShelfContainer extends Fragment
     private void unsetTextWatcher()
     {
         if (_tWatcher != null && getActivity() != null) {
-            EditText field = (EditText) getActivity().findViewById(R.id.ETkeyword);
+            EditText field = getActivity().findViewById(R.id.ETkeyword);
             field.removeTextChangedListener(_tWatcher);
         }
     }
-
-//    private void loadMain()
-//    {
-//        if (ShelfTab.in_use) {
-//            return;
-//        } else {
-//            ShelfTab.in_use = true;
-//        }
-//        TabLayout tabLayout = (TabLayout)getActivity().findViewById(R.id.TLTab);
-//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//                Log.d("shelf", "loadmain");
-//                mainShelf();
-//                // Appeler seulement la BDD au lieu de la full request.
-//
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {}
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {}
-//        });
-//        //mainShelf();
-//    }
 
     private void mainShelf()
     {
@@ -206,29 +189,32 @@ public class ShelfContainer extends Fragment
                     List<com.eip.utilities.model.BooksLocal.Book> list = bookshelf.getData();
                     ListIterator<com.eip.utilities.model.BooksLocal.Book> it = list.listIterator();
                     ArrayList<String> isbns = new ArrayList<>();
+                    Map<String, String> map = new HashMap<>();
 
                     while(it.hasNext()){
                         com.eip.utilities.model.BooksLocal.Book book = it.next();
                         isbns.add(book.getIsbn());
+                        map.put(book.getIsbn(), book.getStatusId());
                     }
                     if (!isbns.isEmpty())
-                        getBackBookInShelf(isbns);
+                        getBackBookInShelf(isbns, map);
                     else {
-                        Snackbar snackbar = Snackbar.make(_v, "Votre bibliothèque est vide", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getActivity() != null) {
+                            Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.RLShelf), "Votre bibliothèque est vide", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                     }
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getActivity() != null) {
+                            Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.RLShelf), "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
                         e.printStackTrace();
                     }
                 }
                 MainActivity.stopLoading();
-                ShelfTab.in_use = false;
             }
 
             @Override
@@ -268,12 +254,15 @@ public class ShelfContainer extends Fragment
 
                     ListIterator<com.eip.utilities.model.BooksLocal.Book> it = list.listIterator();
                     ArrayList<String> isbns = new ArrayList<>();
+                    Map<String, String> map = new HashMap<>();
+
                     while(it.hasNext()){
                         com.eip.utilities.model.BooksLocal.Book book = it.next();
                         isbns.add(book.getIsbn());
+                        map.put(book.getIsbn(), book.getStatusId());
                     }
                     if (!isbns.isEmpty())
-                        getBackBookInShelf(isbns);
+                        getBackBookInShelf(isbns, map);
                     else {
                         Snackbar snackbar = Snackbar.make(_v, "Votre liste de souhaits est vide", Snackbar.LENGTH_LONG);
                         snackbar.show();
@@ -289,7 +278,6 @@ public class ShelfContainer extends Fragment
                     }
                 }
                 MainActivity.stopLoading();
-                ShelfTab.in_use = false;
             }
 
             @Override
@@ -305,7 +293,7 @@ public class ShelfContainer extends Fragment
 
     private void setAdapters()
     {
-        GridView gvBiblio = (GridView) _v.findViewById(R.id.GVBiblio);
+        GridView gvBiblio = _v.findViewById(R.id.GVBiblio);
         _adapterBiblio = new customAdapterBiblio(_v, _modelListBiblio);
         gvBiblio.setAdapter(_adapterBiblio);
         _modelListBiblio.clear();
@@ -327,7 +315,7 @@ public class ShelfContainer extends Fragment
     {
         Thread t = new Thread(new Runnable() {
             public void run() {
-                Cursor cursor = _req.readFromSearch(typeSearch, content);
+                Cursor cursor = _req.readFromSearch(typeSearch, content, _status);
                 while(cursor.moveToNext()) {
                     String isbn = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_ISBN));
                     String title = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_TITLE));
@@ -346,37 +334,47 @@ public class ShelfContainer extends Fragment
         }
     }
 
-    private void getBackBookInShelf(final ArrayList<String> isbns)
+    private void getBackBookInShelf(final ArrayList<String> isbns, final Map<String, String> map)
     {
         Thread t = new Thread(new Runnable() {
             public void run() {
-                Cursor cursor = _req.readPrimaryInfo(isbns);
-                while(cursor.moveToNext()) {
-                    String isbn = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_ISBN));
-                    String title = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_TITLE));
-                    String pic = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_PIC));
-                    _modelListBiblio.add(new BiblioAdapter(title, pic, isbn));
-                    isbns.remove(isbn);
+                if (!_status.equals("-1")) {
+                    for (Map.Entry<String, String> entry : map.entrySet()) {
+                        if (!entry.getValue().equals(_status)) {
+                            isbns.remove(entry.getKey());
+                        }
+                    }
                 }
-                cursor.close();
-                for (String isbn : isbns) {
-                    VolumeInfo vi = getInfoBook(isbn);
-                    String img;
-                    if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
-                        img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
-                    } else {
-                        img = vi.getImageLinks().getThumbnail();
+
+                if (isbns.size() > 0) {
+                    Cursor cursor = _req.readPrimaryInfo(isbns, _status);
+                    while(cursor.moveToNext()) {
+                        String isbn = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_ISBN));
+                        String title = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_TITLE));
+                        String pic = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_PIC));
+                        _modelListBiblio.add(new BiblioAdapter(title, pic, isbn));
+                        isbns.remove(isbn);
                     }
-                    String genre = null;
-                    String authors = null;
-                    if (vi.getAuthors() != null) {
-                        authors = TextUtils.join(", ", vi.getAuthors());
+                    cursor.close();
+                    for (String isbn : isbns) {
+                        VolumeInfo vi = getInfoBook(isbn);
+                        String img;
+                        if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
+                            img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
+                        } else {
+                            img = vi.getImageLinks().getThumbnail();
+                        }
+                        String genre = null;
+                        String authors = null;
+                        if (vi.getAuthors() != null) {
+                            authors = TextUtils.join(", ", vi.getAuthors());
+                        }
+                        if (vi.getCategories() != null) {
+                            genre = TextUtils.join(", ", vi.getCategories());
+                        }
+                        _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, isbn));
+                        _req.writePrimaryInfo(vi.getTitle(), img, isbn, authors, genre, map.get(isbn));
                     }
-                    if (vi.getCategories() != null) {
-                        genre = TextUtils.join(", ", vi.getCategories());
-                    }
-                    _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, isbn));
-                    _req.writePrimaryInfo(vi.getTitle(), img, isbn, authors, genre);
                 }
             }
         });

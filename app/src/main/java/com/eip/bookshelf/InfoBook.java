@@ -89,15 +89,15 @@ public class InfoBook extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.book_info);
-        _rl = (RelativeLayout)findViewById(R.id.RLBookInfo);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        _rl = findViewById(R.id.RLBookInfo);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
-        _lvCom = (ListView) findViewById(R.id.LVCom);
+        _lvCom = findViewById(R.id.LVCom);
         Intent i = getIntent();
         Bundle b = i.getBundleExtra("book");
         _isbn = b.getString("isbn");
@@ -180,7 +180,7 @@ public class InfoBook extends AppCompatActivity
         return true;
     }
 
-    private void switchBookState(String state)
+    private void switchBookState(final String state)
     {
         // TODO: 13/12/2017  update le status d'un livre DONE
         BookshelfApi bookshelfApi = new Retrofit.Builder()
@@ -194,7 +194,8 @@ public class InfoBook extends AppCompatActivity
             public void onResponse(Call<ChangeStatus> call, Response<ChangeStatus> response) {
                 if (response.isSuccessful()) {
                     //ChangeStatus modif = response.body();
-                    Snackbar snackbar = Snackbar.make(_rl, "Le status a bien été changé", Snackbar.LENGTH_LONG);
+                    _req.updateStateBook(_isbn, String.valueOf(state));
+                    Snackbar snackbar = Snackbar.make(_rl, "Le statut a bien été changé", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
                     try {
@@ -239,11 +240,11 @@ public class InfoBook extends AppCompatActivity
             ArrayList<String> isbns = new ArrayList<>();
             isbns.add(_isbn);
 
-            Cursor c = _req.readPrimaryInfo(isbns);
+            Cursor c = _req.readPrimaryInfo(isbns, "-1");
             _inMain = c.getCount() != 0;
             c.close();
             _req.setType(MainActivity.shelfType.WISHSHELF);
-            c = _req.readPrimaryInfo(isbns);
+            c = _req.readPrimaryInfo(isbns, "-1");
             _inWish = c.getCount() != 0;
             c.close();
         }
@@ -260,10 +261,10 @@ public class InfoBook extends AppCompatActivity
 
     private void moreDataBook()
     {
-        TextView tv = (TextView) findViewById(R.id.TVInfoBook);
-        TextView tvt = (TextView) findViewById(R.id.TVTitreBook);
-        TextView tvr = (TextView) findViewById(R.id.TVResum);
-        ImageView iv = (ImageView) findViewById(R.id.IVBook);
+        TextView tv = findViewById(R.id.TVInfoBook);
+        TextView tvt = findViewById(R.id.TVTitreBook);
+        TextView tvr = findViewById(R.id.TVResum);
+        ImageView iv = findViewById(R.id.IVBook);
         Thread t = new Thread(new Runnable() {
             public void run() {
                 _vi = ShelfContainer.getInfoBook(_isbn);
@@ -422,8 +423,8 @@ public class InfoBook extends AppCompatActivity
         final Dialog dial = new Dialog(this);
         dial.setContentView(R.layout.review_popup);
         dial.setTitle("Votre critique");
-        Button btnDelete = (Button)dial.findViewById(R.id.BReviewDelete);
-        Button btnConfirm = (Button)dial.findViewById(R.id.BReviewConfirm);
+        Button btnDelete = dial.findViewById(R.id.BReviewDelete);
+        Button btnConfirm = dial.findViewById(R.id.BReviewConfirm);
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -434,8 +435,8 @@ public class InfoBook extends AppCompatActivity
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RatingBar rb = (RatingBar)dial.findViewById(R.id.ratingBar);
-                EditText et = (EditText)dial.findViewById(R.id.ETCom);
+                RatingBar rb = dial.findViewById(R.id.ratingBar);
+                EditText et = dial.findViewById(R.id.ETCom);
                 if (_myId == -1) {
                     addReview(et.getText().toString(), String.valueOf(rb.getRating()));
                 } else {
@@ -445,8 +446,8 @@ public class InfoBook extends AppCompatActivity
             }
         });
         dial.show();
-        TextView tv = (TextView)dial.findViewById(R.id.ETCom);
-        RatingBar rb = (RatingBar)dial.findViewById(R.id.ratingBar);
+        TextView tv = dial.findViewById(R.id.ETCom);
+        RatingBar rb = dial.findViewById(R.id.ratingBar);
         tv.setText(_myCom);
         rb.setRating(_myRate);
         if (_myId == -1) {
@@ -456,7 +457,7 @@ public class InfoBook extends AppCompatActivity
 
     public void onClickBuy(View v)
     {
-        TextView tvt = (TextView) findViewById(R.id.TVTitreBook);
+        TextView tvt = findViewById(R.id.TVTitreBook);
 
         String url = "https://www.amazon.fr/s/ref=nb_sb_noss_1?__mk_fr_FR=ÅMÅŽÕÑ&url=search-alias=aps&field-keywords=" + tvt.getText();
         Intent i = new Intent(Intent.ACTION_VIEW);
@@ -804,7 +805,7 @@ public class InfoBook extends AppCompatActivity
                             addToSub(author.getId());
                         }
                     }
-                    if (check == false) {
+                    if (!check) {
                         Log.i("Author", "NEED TO BE ADD");
                         addAuthor(Author);
                     }

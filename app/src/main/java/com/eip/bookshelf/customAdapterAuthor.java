@@ -70,7 +70,7 @@ class customAdapterAuthor extends BaseAdapter {
             v = convertView;
         }
 
-        _rl = (RelativeLayout)v.findViewById(R.id.RLAuthor);// TODO: 13/12/2017 recup un truc qui marche
+        _rl = v.findViewById(R.id.RLAuthor);// TODO: 13/12/2017 recup un truc qui marche
 
         final Pair<String, String> iadapt = _als.get(position);
         final TextView tv = v.findViewById(R.id.TVAutor);

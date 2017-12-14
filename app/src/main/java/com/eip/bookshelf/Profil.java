@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -19,7 +18,6 @@ import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.Profile.Profile;
 import com.eip.utilities.model.Profile.Profile_;
 
-import java.io.Console;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -73,20 +71,23 @@ public class Profil extends Fragment implements View.OnClickListener
             _isFriend = false;
         }
 
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(true);
+        if (getActivity() != null) {
+            Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+            ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+            if (ab != null) {
+                ab.setDisplayHomeAsUpEnabled(true);
+            }
+            onCreateOptionsMenu(toolbar.getMenu());
         }
-        onCreateOptionsMenu(toolbar.getMenu());
-        _rl = (RelativeLayout)_v.findViewById(R.id.RLProfil);
-        _pseudo = (TextView)_v.findViewById(R.id.TVPseudo);
-        _email = (TextView)_v.findViewById(R.id.TVEmail);
-        _birth = (TextView)_v.findViewById(R.id.TVBirth);
-        _genre = (TextView)_v.findViewById(R.id.TVGenre);
-        _book = (TextView)_v.findViewById(R.id.TVBook);
-        _create = (TextView)_v.findViewById(R.id.TVCrea);
-        _last = (TextView)_v.findViewById(R.id.TVLast);
+
+        _rl = _v.findViewById(R.id.RLProfil);
+        _pseudo = _v.findViewById(R.id.TVPseudo);
+        _email = _v.findViewById(R.id.TVEmail);
+        _birth = _v.findViewById(R.id.TVBirth);
+        _genre = _v.findViewById(R.id.TVGenre);
+        _book = _v.findViewById(R.id.TVBook);
+        _create = _v.findViewById(R.id.TVCrea);
+        _last = _v.findViewById(R.id.TVLast);
         return _v;
     }
 
@@ -116,7 +117,9 @@ public class Profil extends Fragment implements View.OnClickListener
 
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        getActivity().getMenuInflater().inflate(R.menu.main, menu);
+        if (getActivity() != null) {
+            getActivity().getMenuInflater().inflate(R.menu.main, menu);
+        }
         _menu = menu;
 
         hideButtons();
@@ -137,6 +140,7 @@ public class Profil extends Fragment implements View.OnClickListener
         _menu.findItem(R.id.IRemoveBookWish).setVisible(false);
         _menu.findItem(R.id.IAddFriend).setVisible(false);
         _menu.findItem(R.id.IRemoveFriend).setVisible(false);
+        _menu.findItem(R.id.ICategories).setVisible(false);
     }
 
     @Override

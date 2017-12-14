@@ -53,9 +53,9 @@ class customAdapterBiblio extends BaseAdapter
         }
 
         BiblioAdapter iadapt = _als.get(position);
-        TextView tv = (TextView) v.findViewById(R.id.TVAff);
-        ImageView iv = (ImageView) v.findViewById(R.id.IVAff);
-        TextView tvIsbn = (TextView) v.findViewById(R.id.TVISBN);
+        TextView tv = v.findViewById(R.id.TVAff);
+        ImageView iv = v.findViewById(R.id.IVAff);
+        TextView tvIsbn = v.findViewById(R.id.TVISBN);
         tv.setText(iadapt.get_name());
         tvIsbn.setText(iadapt.get_isbn());
         Picasso.with(_c).load(iadapt.get_id()).into(iv);

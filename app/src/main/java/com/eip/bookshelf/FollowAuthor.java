@@ -51,8 +51,8 @@ public class FollowAuthor extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         _v = inflater.inflate(R.layout.follow_author, container, false);
-        _rl = (RelativeLayout)_v.findViewById(R.id.RLAuthor);
-        _lvAuthor = (ListView) _v.findViewById(R.id.LVAuthor);
+        _rl = _v.findViewById(R.id.RLAuthor);
+        _lvAuthor = _v.findViewById(R.id.LVAuthor);
 
         setAdapter();
         getSubAuthor();
@@ -78,7 +78,6 @@ public class FollowAuthor extends Fragment
             public void onResponse(Call<SubList> call, Response<SubList> response) {
                 _modelListAuthor.clear();
                 if (response.isSuccessful()) {
-                    boolean check = false;
                     SubList rep = response.body();
                     List<SubAuthor> authors = rep.getData();
                     if (!authors.isEmpty()) {
@@ -86,7 +85,7 @@ public class FollowAuthor extends Fragment
                         while (it.hasNext()) {
                             SubAuthor author = it.next();
                             Log.i("toto", author.getAuthorId());
-                            _modelListAuthor.add(new Pair<String, String>("Auteur avec l'id => "+author.getAuthorId(), author.getAuthorId()));
+                            _modelListAuthor.add(new Pair<>("Auteur avec l'id => "+author.getAuthorId(), author.getAuthorId()));
                         }
                         _adapterAuthor.notifyDataSetChanged();
                     }

@@ -17,8 +17,6 @@ import java.util.List;
 
 public class ShelfTab extends Fragment
 {
-    static public boolean in_use = false;
-
     public ShelfTab()
     {
 
@@ -29,10 +27,10 @@ public class ShelfTab extends Fragment
     {
         View v = inflater.inflate(R.layout.shelf_tab, container, false);
 
-        ViewPager viewPager = (ViewPager) v.findViewById(R.id.VPTab);
+        ViewPager viewPager = v.findViewById(R.id.VPTab);
         setupViewPager(viewPager);
 
-        TabLayout tabLayout = (TabLayout) v.findViewById(R.id.TLTab);
+        TabLayout tabLayout = v.findViewById(R.id.TLTab);
         tabLayout.setupWithViewPager(viewPager);
 
         return v;
@@ -40,21 +38,42 @@ public class ShelfTab extends Fragment
 
     private void setupViewPager(ViewPager viewPager)
     {
+        if (this.getActivity() == null) {
+            return;
+        }
         ViewPagerAdapter adapter = new ViewPagerAdapter(this.getActivity().getSupportFragmentManager());
 
-        Bundle arg = new Bundle();
-        arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
 
         ShelfContainer tabAll = new ShelfContainer();
+        Bundle arg = new Bundle();
+        arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
+        arg.putString("status", "-1");
         tabAll.setArguments(arg);
+
         ShelfContainer tabFav = new ShelfContainer();
-        tabFav.setArguments(arg);
+        Bundle argFav = new Bundle();
+        argFav.putSerializable("type", MainActivity.shelfType.MAINSHELF);
+        argFav.putString("status", "4");
+        tabFav.setArguments(argFav);
+
         ShelfContainer tabR = new ShelfContainer();
-        tabR.setArguments(arg);
+        Bundle argR = new Bundle();
+        argR.putSerializable("type", MainActivity.shelfType.MAINSHELF);
+        argR.putString("status", "0");
+        tabR.setArguments(argR);
+
         ShelfContainer tabNR = new ShelfContainer();
-        tabNR.setArguments(arg);
+        Bundle argNR = new Bundle();
+        argNR.putSerializable("type", MainActivity.shelfType.MAINSHELF);
+        argNR.putString("status", "1");
+        tabNR.setArguments(argNR);
+
         ShelfContainer tabB = new ShelfContainer();
-        tabB.setArguments(arg);
+        Bundle argB = new Bundle();
+        argB.putSerializable("type", MainActivity.shelfType.MAINSHELF);
+        argB.putString("status", "3");
+        tabB.setArguments(argB);
+
         adapter.addFrag(tabAll, "TOUS");
         adapter.addFrag(tabFav, "FAVORIS");
         adapter.addFrag(tabR, "LU");

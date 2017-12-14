@@ -70,10 +70,10 @@ class customAdapterCom extends BaseAdapter
             e.printStackTrace();
         }
 
-        TextView tv1 = (TextView) v.findViewById(R.id.TVComWho);
-        TextView tv2 = (TextView) v.findViewById(R.id.TVComDate);
-        TextView tv3 = (TextView) v.findViewById(R.id.TVComContent);
-        RatingBar rb = (RatingBar) v.findViewById(R.id.ratingBarDisplay);
+        TextView tv1 = v.findViewById(R.id.TVComWho);
+        TextView tv2 = v.findViewById(R.id.TVComDate);
+        TextView tv3 = v.findViewById(R.id.TVComContent);
+        RatingBar rb = v.findViewById(R.id.ratingBarDisplay);
         tv1.setText(iadapt.get_who());
         tv2.setText(formated_date);
         tv3.setText(iadapt.get_content());
