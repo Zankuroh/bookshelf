@@ -58,14 +58,19 @@ namespace BookShelf
             Req.addHeader("application/x-www-form-urlencoded");
             Req.addAuthorization("Bearer", App.Token);
 
-            string fname = "David";
-            string lname = "Gemell";
-            res = await Req.PostRequest("first_name=" + fname + "&last_name=" + lname, "application/x-www-form-urlencoded");
+            cdAddAuthor dialog = new cdAddAuthor();
+            ContentDialogResult dialres = await dialog.ShowAsync();
+            res = await Req.PostRequest("first_name=" + dialog.AuthorFName + "&last_name=" + dialog.AuthorLName, "application/x-www-form-urlencoded");
         }
 
-        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        private async void btDeleteAuthor_Click(object sender, RoutedEventArgs e)
         {
+            clRequestAPI Req = new clRequestAPI("/api/author");
+            string res = null;
 
+            Req.addHeader("application/x-www-form-urlencoded");
+            Req.addAuthorization("Bearer", App.Token);
+            res = await Req.PostRequest("first_name=" + "" + "&last_name=" + "", "application/x-www-form-urlencoded");
         }
     }
 }

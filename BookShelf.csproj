@@ -95,6 +95,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ContentDialogs\cdAddAuthor.xaml.cs">
+      <DependentUpon>cdAddAuthor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\clAuthor.cs" />
     <Compile Include="Views\BookFile.xaml.cs">
       <DependentUpon>BookFile.xaml</DependentUpon>
     </Compile>
@@ -173,6 +177,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ContentDialogs\cdAddAuthor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\BookFile.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

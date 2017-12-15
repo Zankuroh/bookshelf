@@ -1,0 +1,22 @@
+﻿<ContentDialog
+    x:Class="BookShelf.cdAddAuthor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BookShelf.ContentDialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Ajoutez un Auteur"
+    PrimaryButtonText="Ok"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_OkClick"
+    SecondaryButtonClick="ContentDialog_CancelClick">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50*" />
+            <RowDefinition Height="50*"/>
+        </Grid.RowDefinitions>
+        <TextBox x:Name="txbxAuthorFName" PlaceholderText="Prénom"/>
+        <TextBox x:Name="txbxAuthorLName" Grid.Row="1" PlaceholderText="Nom"/>
+    </Grid>
+</ContentDialog>
