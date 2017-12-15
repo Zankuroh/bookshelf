@@ -82,7 +82,7 @@
                     <ColumnDefinition Width="60*"/>
                     <ColumnDefinition Width="40*"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="txbxSearch" PlaceholderText="Rechercher un livre"/>
+                <TextBox x:Name="txbxSearch" PlaceholderText="Rechercher un livre" TextChanged="txbxSearch_TextChanged"/>
                 <ComboBox Grid.Column="1" Width="15" VerticalAlignment="Stretch">
                     <x:String>par Titre</x:String>
                     <x:String>par Auteur</x:String>
@@ -91,7 +91,7 @@
                 </ComboBox>
             </Grid>
             <ScrollViewer x:Name="scviMain" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
-                <VariableSizedWrapGrid x:Name="wgrdLibrary" Orientation="Horizontal" Visibility="Visible"/>
+                <VariableSizedWrapGrid x:Name="wgrdLibrary" Orientation="Horizontal" Visibility="Visible" ItemHeight="200" ItemWidth="150"/>
             </ScrollViewer>
         </Grid>
         <!--</SplitView>-->

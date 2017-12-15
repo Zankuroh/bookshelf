@@ -23,6 +23,8 @@ namespace BookShelf
     /// </summary>
     public sealed partial class Library : Page
     {
+        List<ucBook> lib;
+
         public Library()
         {
             this.InitializeComponent();
@@ -48,18 +50,38 @@ namespace BookShelf
                     ucBook child = new ucBook(bk);
                     wgrdLibrary.Children.Add(new ucBook(bk));
                 }
-                //List<string> lst = Req.findResponseS("isbn");
-                //foreach (string str in lst)
-                //{
-                //    clBook bk = await clISBNsearch.SearchISBNclBook(str);
-                //    ucBook child = new ucBook(bk);
-                //    wgrdLibrary.Children.Add(new ucBook(bk));
-                //}
+                var b = wgrdLibrary.Children.ToList();
+                lib = b.Cast<ucBook>().ToList();
             }
             catch (Exception ex)
             {
                 clErrorHandling.ErrorMessage("Grid_Loaded(object sender, RoutedEventArgs e)", ex);
             }
+        }
+
+        private void txbxSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //var d = lib.Where<ucBook>(c => c.Book.BookData.VolumeInfo.Title.Contains(txbxSearch.Text));
+            //foreach (UIElement u in wgrdLibrary.Children)
+            //{
+            //    ucBook b = (ucBook)u;
+            //    if (!b.Book.BookData.VolumeInfo.Title.Contains(txbxSearch.Text) && txbxSearch.Text != null)
+            //    {
+            //        u.Visibility = Visibility.Collapsed;
+            //    }
+            //    else
+            //    {
+            //        u.Visibility = Visibility.Visible;
+            //    }
+            //}
+            //wgrdLibrary.UpdateLayout();
+            var filt = lib.Where(c => c.Book.BookData.VolumeInfo.Title.Contains(txbxSearch.Text));
+            wgrdLibrary.Children.Clear();
+            foreach (ucBook u in filt)
+            {
+                wgrdLibrary.Children.Add(u);
+            }
+            this.InitializeComponent();
         }
     }
 }
