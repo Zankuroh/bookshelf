@@ -17,12 +17,34 @@ use Illuminate\Support\Facades\Log;
 /**
  *   Authentication namespace
  */
-Route::group(['namespace' => 'Auth'], function() {
+Route::group(['namespace' => 'Api\Auth'], function() {
 
     Log::alert('namespace auth group');
+    /**
+     * Classic way of login
+     * 
+     **/
     Route::post('auth', 'ApiAuthController@authenticate');
 
+    /**
+     * Social network login route
+     **/
     Route::post('oauth', 'ApiAuthController@oauthenticate');
+
+    /**
+     * Get the token to reset password
+     **/
+    Route::post('resetpassword', 'ResetPasswordController@sendPasswordResetToken');
+
+    /**
+     * Use the token of reset passsword to get a new password by mail
+     **/
+    Route::get('resetpassword/{token}', function($token)
+        {
+            $resetPasswordController = new App\Http\Controllers\Api\Auth\ResetPasswordController();
+            return $resetPasswordController->sendPasswordResetMail($token);
+        }
+    );
 });
 
 /**

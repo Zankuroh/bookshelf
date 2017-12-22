@@ -5,8 +5,13 @@ namespace App\Models;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use App\Notifications\ResetPasswordNotification;
+use App\Notifications\ResetPasswordTokenNotification;
+use App\Models\PasswordReset;
 use Log;
+use Hash;
+use Carbon\Carbon;
+
 class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
@@ -92,5 +97,34 @@ class User extends Authenticatable
         return $this->leftJoin('friends', 'users.id', '=', 'friends.friend_id')
         ->where(['friends.user_id' => $this->id])
         ->get();
+    }
+
+    /**
+     * Send the new password previously reset by the user
+     * 
+     **/
+    public function sendPasswordResetMail()
+    {
+        $password = str_random(7);
+        $this->password = Hash::make($password);
+        $this->save();
+        Log::debug("sendPasswordResetNotification password=" . $password);
+        
+        $this->notify(new ResetPasswordNotification($password, $this));
+
+    }
+
+    /**
+     * Send the reset password token via email
+     * 
+     **/
+    public function sendPasswordResetTokenMail()
+    {
+        $token = str_random(7);
+        $passwordReset = PasswordReset::create(['email' => $this->email,
+                                'token' => $token,
+                                'created_at' => Carbon::now()]);
+        $passwordReset->save();
+        $this->notify(new ResetPasswordTokenNotification($token, $this));
     }
 }
