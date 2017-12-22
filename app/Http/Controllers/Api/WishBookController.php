@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Models\Wishlist;
+use App\Models\WishBook;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
@@ -89,7 +89,17 @@ class WishBookController extends \App\Http\Controllers\ApiController
      */
     public function show($id)
     {
-        //
+        $wishList = WishBook::where('user_id', '=', $id)->get();
+        if ($wishList->isNotEmpty())
+        {
+            $this->getJsonResponse()->setData($wishList);
+        }
+        else
+        {
+            $this->getJsonResponse()->setOptionnalFields(['title' => 'User\'s wish list is empty.']);
+        }
+
+        return $this->getRawJsonResponse();
     }
 
     /**
