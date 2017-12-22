@@ -147,6 +147,27 @@ Route::group(['namespace' => 'Api'], function() {
                  */
                 Route::get('/', 'WishBookController@index');
 
+                /**
+                 * Get all wishlist of the specified user
+                 **/
+                Route::get('/{userId}', function($userId)
+                {
+                    $userId = intval($userId);
+                    if (is_int($userId))
+                    {
+                        $wishListController = new App\Http\Controllers\Api\WishBookController();
+                        return $wishListController->show($userId);
+                    }
+                    else
+                    {
+                        $ARP = new App\Http\Requests\ApiRequestValidation();
+                        $jsonResponse = $ARP->getFailureJson();
+                        $jsonResponse->setOptionnalFields(['title' => 'Get away you moron ! #sqlInjection']);
+                        return $jsonResponse->getJson();
+                    }
+                    
+                });
+
                 /** Store a new book into the wishlist */
                 Route::post('/', 'WishBookController@store');
 
