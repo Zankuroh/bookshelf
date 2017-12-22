@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Spinner;
@@ -21,9 +22,12 @@ import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.api.GoogleBooksApi;
 import com.eip.utilities.model.Books;
 import com.eip.utilities.model.BooksLocal.BooksLocal;
+import com.eip.utilities.model.IndustryIdentifier;
 import com.eip.utilities.model.Item;
 import com.eip.utilities.model.VolumeInfo;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +54,9 @@ public class ShelfContainer extends Fragment
     private RequestDBLocal _req;
     private boolean _currentTab = false;
     private TextWatcher _tWatcher = null;
+    private String _keywords;
+    private int _startIndex;
+    private int _nbFound;
 
     public ShelfContainer()
     {
@@ -86,6 +93,14 @@ public class ShelfContainer extends Fragment
             _v = inflater.inflate(R.layout.shelf_simple, container, false);
             setTextWatcher();
             setAdapters();
+        } else if (_type == MainActivity.shelfType.SEARCH) {
+            _v = inflater.inflate(R.layout.shelf_search, container, false);
+            _keywords = b.getString("keywords");
+            _startIndex = 0;
+            _nbFound = 0;
+            initSearchInfo();
+            setAdapters();
+            searchBookByKeywords();
         }
         return _v;
     }
@@ -106,7 +121,9 @@ public class ShelfContainer extends Fragment
             if (field == null) {
                 field = _v.findViewById(R.id.ETkeyword);
             }
-            field.setText("");
+            if (field != null) {
+                field.setText("");
+            }
             if (_type == MainActivity.shelfType.PROPOSHELF) {
                 propoShelf();
             } else if (_type == MainActivity.shelfType.WISHSHELF) {
@@ -169,6 +186,46 @@ public class ShelfContainer extends Fragment
             EditText field = getActivity().findViewById(R.id.ETkeyword);
             field.removeTextChangedListener(_tWatcher);
         }
+    }
+
+    private void initSearchInfo()
+    {
+        TextView tv = _v.findViewById(R.id.TVInfoSearch);
+        final Button BPrev = _v.findViewById(R.id.BPrev);
+        final Button BNext = _v.findViewById(R.id.BNext);
+
+        tv.setText("Résultats pour: " + _keywords);
+        BPrev.setEnabled(false);
+        BPrev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (_startIndex > 0) {
+                    _startIndex -= 40;
+                    if (_startIndex < _nbFound) {
+                        BNext.setEnabled(true);
+                    }
+                    if (_startIndex == 0) {
+                        BPrev.setEnabled(false);
+                    }
+                    searchBookByKeywords();
+                }
+            }
+        });
+        BNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (_startIndex < _nbFound) {
+                    _startIndex += 40;
+                    if (_startIndex >= _nbFound) {
+                        BNext.setEnabled(false);
+                    }
+                    if (_startIndex > 0) {
+                        BPrev.setEnabled(true);
+                    }
+                    searchBookByKeywords();
+                }
+            }
+        });
     }
 
     private void mainShelf()
@@ -394,7 +451,7 @@ public class ShelfContainer extends Fragment
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(GoogleBooksApi.class);
-        Call<Books> call = gbi.searchByIsbn("isbn:"+isbn);
+        Call<Books> call = gbi.searchByIsbn("isbn:" + isbn, "0", "1");
         VolumeInfo vi = null;
 
         try {
@@ -407,5 +464,71 @@ public class ShelfContainer extends Fragment
             e.printStackTrace();
         }
         return vi;
+    }
+
+    public void searchBookByKeywords()
+    {
+        MainActivity.startLoading();
+
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                GoogleBooksApi gbi = new Retrofit.Builder()
+                        .baseUrl(GoogleBooksApi.APIPath)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+                        .create(GoogleBooksApi.class);
+                Call<Books> call = null;
+                try {
+                    call = gbi.searchByIsbn(URLEncoder.encode(_keywords, "UTF-8"), String.valueOf(_startIndex), "40");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                VolumeInfo vi = null;
+
+                try {
+                    Books b = call.execute().body();
+                    _nbFound = b.getTotalItems();
+                    if (b.getTotalItems() > 0) {
+                        List items = b.getItems();
+                        _modelListBiblio.clear();
+                        for (int i = 0; i < items.size(); i++) {
+                            vi = ((Item)items.get(i)).getVolumeInfo();
+                            List identifier = vi.getIndustryIdentifiers();
+                            if (identifier != null) {
+                                String isbn = null;
+                                for (int j = 0; j < identifier.size(); j++) {
+                                    if (((IndustryIdentifier)identifier.get(j)).getType().equals("ISBN_13")) {
+                                        isbn = ((IndustryIdentifier)identifier.get(j)).getIdentifier();
+                                    }
+                                }
+                                if (isbn == null) {
+                                    continue;
+                                }
+                                String img;
+                                if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
+                                    img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
+                                } else {
+                                    img = vi.getImageLinks().getThumbnail();
+                                }
+                                _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, isbn));
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        _adapterBiblio.notifyDataSetChanged();
+                        TextView tv = _v.findViewById(R.id.TVSubInfoSearch);
+                        tv.setText(String.valueOf(_nbFound) + " résultats - page " + String.valueOf(_startIndex / 40 + 1) + " / " + String.valueOf((int)Math.ceil((float)_nbFound / 40.0f)));
+                        MainActivity.stopLoading();
+                    }
+                });
+            }
+        });
+        t.start();
     }
 }

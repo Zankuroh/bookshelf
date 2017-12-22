@@ -79,14 +79,17 @@ public class Search extends Fragment implements View.OnClickListener
 
     private void searchByISBN()
     {
-        String isbn = ((EditText)_v.findViewById(R.id.searchField)).getText().toString();
-        if (!isbn.equals("")) {
-            Bundle b = new Bundle();
-            b.putString("isbn", isbn);
-            Intent in = new Intent(getActivity(), InfoBook.class);
-            in.putExtra("book", b);
-            in.putExtra("shelf", MainActivity.shelfType.SEARCH);
-            startActivity(in);
+        MainActivity.hideSoftKeyboard(getActivity());
+        String keywords = ((EditText)_v.findViewById(R.id.searchField)).getText().toString();
+        if (!keywords.equals("")) {
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            Bundle arg = new Bundle();
+            arg.putSerializable("type", MainActivity.shelfType.SEARCH);
+            arg.putString("keywords", keywords);
+            ShelfContainer shelfFrag = new ShelfContainer();
+            shelfFrag.setArguments(arg);
+            fragmentTransaction.replace(R.id.fragment_container, shelfFrag, "SHELF");
+            fragmentTransaction.commit();
         }
     }
 }

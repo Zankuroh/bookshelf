@@ -15,5 +15,5 @@ public interface GoogleBooksApi
     String APIPath = "https://www.googleapis.com/books/v1/";
 
     @GET("volumes")
-    Call<Books> searchByIsbn(@Query("q") String isbn);
+    Call<Books> searchByIsbn(@Query("q") String isbn,  @Query("startIndex") String index, @Query("maxResults") String maxRes);
 }

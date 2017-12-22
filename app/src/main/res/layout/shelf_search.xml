@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/RLShelf">
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/appBarLayout">
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    </android.support.design.widget.AppBarLayout>
+
+    <TextView
+        android:id="@+id/TVInfoSearch"
+        android:layout_below="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:layout_marginTop="5dp" />
+    <TextView
+        android:id="@+id/TVSubInfoSearch"
+        android:layout_below="@+id/TVInfoSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:layout_marginBottom="5dp" />
+
+    <include
+        layout="@layout/shelf_container"
+        android:layout_below="@+id/TVSubInfoSearch"
+        android:layout_above="@id/LLNavi"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"/>
+
+    <LinearLayout
+        android:id="@+id/LLNavi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+        <Button
+            android:id="@+id/BPrev"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:text="Précédent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp" />
+
+        <Button
+            android:id="@+id/BNext"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:text="Suivant"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp" />
+    </LinearLayout>
+
+</RelativeLayout>
