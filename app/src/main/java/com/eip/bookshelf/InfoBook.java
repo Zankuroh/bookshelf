@@ -844,7 +844,8 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifAuthor> call, Response<ModifAuthor> response) {
                 if (response.isSuccessful()) {
-                    //ModifAuthor modif = response.body();
+                    ModifAuthor author = response.body();
+                    addToSub(author.getData().getId());
                 } else {
                     /*try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
