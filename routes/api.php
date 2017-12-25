@@ -223,5 +223,11 @@ Route::group(['namespace' => 'Api'], function() {
 
             Route::delete('/', 'FriendController@destroy');
         });
+
+        Route::group(['prefix' => 'buy'], function()
+        {
+            Route::post('/', 'AmazonBuyController@generateAmazonLinkFromSearch');
+
+        });
     });
 });
