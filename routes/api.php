@@ -229,5 +229,10 @@ Route::group(['namespace' => 'Api'], function() {
             Route::post('/', 'AmazonBuyController@generateAmazonLinkFromSearch');
 
         });
+
+        Route::group(['prefix' => 'suggestion'], function()
+        {
+            Route::get('/', 'SuggestionController@index');
+        });
     });
 });

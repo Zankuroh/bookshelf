@@ -54,6 +54,15 @@ class User extends Authenticatable
     }
 
     /**
+     * Get suggestions of users
+     * 
+     **/
+    public function suggestions()
+    {
+        return $this->hasMany('\App\Models\Suggestion');
+    }
+
+    /**
      *
      * Set the account as social network logged account
      *
