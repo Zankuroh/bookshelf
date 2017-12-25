@@ -20,7 +20,9 @@ class AuthorSubscriptionController extends \App\Http\Controllers\ApiController
 	public function index(Request $request)
 	{
 		$this->getJsonResponse()->setData(
-			AuthorSubscription::where(["user_id" => $this->getCurrentUser()->id])->get());
+			AuthorSubscription::where(["user_id" => $this->getCurrentUser()->id])
+			->leftJoin('authors', 'authors.id', '=', 'author_subscriptions.author_id')
+			->get());
 		//TODO JOIN THE AUTHOR TABLE TO SEND BACK THE NAME/FIRST NAME OF AUTHORS
 
 		return $this->getRawJsonResponse();
