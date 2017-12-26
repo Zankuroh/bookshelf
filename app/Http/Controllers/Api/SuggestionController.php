@@ -219,8 +219,8 @@ class SuggestionController extends ApiController
 		$userId = $this->getCurrentUser()->id;
 		foreach($suggestions as $suggestion)
 		{
-			if (ctype_digit($suggestion))
-			{
+			// if (ctype_digit($suggestion))
+			// {
 				$suggestionRow = Suggestion::firstOrNew(
 					[
 						'isbn' => $suggestion,
@@ -229,7 +229,7 @@ class SuggestionController extends ApiController
 				);
 				$suggestionRow->reference_count = $suggestionRow->reference_count + 1;
 				$suggestionRow->save();
-			}			
+			// }			
 		}
 	}
 
