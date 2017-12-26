@@ -165,8 +165,10 @@ class SuggestionController extends ApiController
 		$amazonSearchUrl = $amazonBuyController->generateRawAmazonLinkFromSearch($isbn);
 		$amazonSearchOutput = file_get_contents($amazonSearchUrl);
 		$suggestionIds = [];
-		
-		if ($this->amazonSearchOutputIsValid($amazonSearchOutput))
+		$amazonSearchOutputIsValid = $this->amazonSearchOutputIsValid($amazonSearchOutput);
+		$amazonSearchOutputIsValid = true;
+
+		if ($amazonSearchOutputIsValid)
 		{
 			/** Exact url of the book search patterns */
 			$patternsToSearchExactUrl = array(
