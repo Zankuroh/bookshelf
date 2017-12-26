@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.eip.utilities.model.Books;
 import com.eip.utilities.model.BooksLocal.BooksLocal;
 import com.eip.utilities.model.IndustryIdentifier;
 import com.eip.utilities.model.Item;
+import com.eip.utilities.model.Suggestion.Suggestion;
 import com.eip.utilities.model.VolumeInfo;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -287,9 +289,61 @@ public class ShelfContainer extends Fragment
 
     private void propoShelf()
     {
-        //MainActivity.startLoading();
+        Log.e("TEST", "coucou e");
+        Log.d("TEST", "coucou d");
+        Log.v("TEST", "coucou v");
+        Log.i("TEST", "coucou i");
+        Log.d("TEST", "coucou1");
+        MainActivity.startLoading();
         //Todo: Appel à la BDD pour recup les vrais PROPOS
-        //MainActivity.stopLoading();
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<Suggestion> call = bookshelfApi.getSuggestion(MainActivity.token);
+        call.enqueue(new Callback<Suggestion>() {
+            @Override
+            public void onResponse(Call<Suggestion> call, Response<Suggestion> response) {
+                _modelListBiblio.clear();
+                if (response.isSuccessful()) {
+                    Suggestion bookshelf = response.body();
+                    List<String> sugg = bookshelf.getData().getSuggestions();
+                    List<String> suggFriend = bookshelf.getData().getFriendsSuggestions();
+                    List<String> lastAddFriend = bookshelf.getData().getFriendsLatestBooks();
+
+                    ListIterator<String> it = sugg.listIterator();
+                    while(it.hasNext()){
+                        String isbn = it.next();
+                        Log.i("ISBN PROP", isbn);
+                    }
+                    /*else {
+                        Snackbar snackbar = Snackbar.make(_v, "Votre liste de proposition est vide", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }*/
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+                MainActivity.stopLoading();
+            }
+
+            @Override
+            public void onFailure(Call<Suggestion> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+                MainActivity.stopLoading();
+            }
+        });
+        MainActivity.stopLoading();
     }
 
     private void wishShelf()

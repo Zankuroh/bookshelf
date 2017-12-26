@@ -4,6 +4,9 @@ package com.eip.utilities.api;
 import com.eip.utilities.model.AuthorSubscription.SubList;
 import com.eip.utilities.model.AuthorSubscription.SubscriptionValidator;
 import com.eip.utilities.model.ChangeStatus.ChangeStatus;
+import com.eip.utilities.model.Friend.List.FriendList;
+import com.eip.utilities.model.Friend.Modif.FriendModif;
+import com.eip.utilities.model.Friend.WishList.WishList;
 import com.eip.utilities.model.ModifReview.ModifReview;
 import com.eip.utilities.model.AuthLocal.AuthLocal;
 import com.eip.utilities.model.Authors.Authors;
@@ -15,7 +18,9 @@ import com.eip.utilities.model.Notification.Notifications;
 import com.eip.utilities.model.Profile.Profile;
 import com.eip.utilities.model.ProfileModification.ProfileModification;
 import com.eip.utilities.model.Register.Register;
+import com.eip.utilities.model.SimpleResponse.SimpleResponse;
 import com.eip.utilities.model.Reviews.Reviews;
+import com.eip.utilities.model.Suggestion.Suggestion;
 
 import retrofit2.Call;
 import retrofit2.http.DELETE;
@@ -127,4 +132,28 @@ public interface BookshelfApi
 
     @GET("author/novels/notifications")
     Call<Notifications> getNotifications(@Header("Authorization") String token);
+
+    @FormUrlEncoded
+    @POST("resetpassword")
+    Call<SimpleResponse> sendToken(@Field("email") String email);
+
+    @GET("resetpassword/{token}")
+    Call<SimpleResponse> validateToken(@Path("token") String mailToken);
+
+    @GET("friend")
+    Call<FriendList> getFriends(@Header("Authorization") String token);
+
+    @FormUrlEncoded
+    @POST("friend")
+    Call<FriendModif> addFriend(@Header("Authorization") String token, @Field("friend_id") Integer Id);
+
+    @DELETE("friend")
+    Call<FriendModif> delFriend(@Header("Authorization") String token, @Query("friend_id") Integer Id);
+
+    @GET("suggestion")
+    Call<Suggestion> getSuggestion(@Header("Authorization") String token);
+
+    @GET("wish/book/{user_id}}")
+    Call<WishList> getFriendWishList(@Header("Authorization") String token, @Path("user_id") String user_id);
+
 }

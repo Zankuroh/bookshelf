@@ -1,9 +1,12 @@
 package com.eip.bookshelf;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,7 @@ import android.widget.EditText;
 
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.AuthLocal.AuthLocal;
+import com.eip.utilities.model.SimpleResponse.SimpleResponse;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -167,8 +171,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 clickSignIn();
                 break;
             case R.id.btnForgetPass:
-                Snackbar snackbar = Snackbar.make(_v, "Non implémenté.", Snackbar.LENGTH_LONG);
-                snackbar.show();
+                AskEmailForReset();
                 break;
             case R.id.btnCreateAccount:
                 startActivityForResult(new Intent(getActivity(), SignUp.class), 4242);
@@ -316,5 +319,127 @@ public class SignIn extends Fragment implements View.OnClickListener
             MainActivity.token = null;
             MainActivity.provider = null;
         }
+    }
+
+    public void AskEmailForReset() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(_v.getContext());
+        builder.setMessage("Veuillez entrer votre adresse mail. Vous recevrez un token pour reset votre mot de passe");
+        final EditText input = new EditText(_v.getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        builder.setView(input);
+        builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                resetPasswordSendToken(input.getText().toString());
+            }
+        });
+        builder.setNegativeButton("Annuler", null);
+        builder.show();
+    }
+
+    public void resetPasswordSendToken(String email) {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<SimpleResponse> call = bookshelfApi.sendToken(email);
+        call.enqueue(new Callback<SimpleResponse>() {
+            @Override
+            public void onResponse(Call<SimpleResponse> call, Response<SimpleResponse> response) {
+                if (response.isSuccessful()) {
+                    SimpleResponse reset = response.body();
+                    if (reset.getData().getSuccess().equals("true")) {
+                        Snackbar snackbar = Snackbar.make(_v, "Un email avec un token vous a été envoyé", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        AskTokenForReset();
+                    }
+                    else
+                    {
+                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + reset.getTitle(), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        AskEmailForReset();
+                    }
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+                MainActivity.stopLoading();
+            }
+
+            @Override
+            public void onFailure(Call<SimpleResponse> call, Throwable t) {
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+                MainActivity.stopLoading();
+            }
+        });
+    }
+
+    public void AskTokenForReset() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(_v.getContext());
+        builder.setMessage("Veuillez entrer le token reçus par mail");
+        final EditText input = new EditText(_v.getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        builder.setView(input);
+        builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                resetPasswordSendNewPassword(input.getText().toString());
+            }
+        });
+        builder.setNegativeButton("Annuler", null);
+        builder.show();
+    }
+
+    public void resetPasswordSendNewPassword(String token) {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<SimpleResponse> call = bookshelfApi.validateToken(token);
+        call.enqueue(new Callback<SimpleResponse>() {
+            @Override
+            public void onResponse(Call<SimpleResponse> call, Response<SimpleResponse> response) {
+                if (response.isSuccessful()) {
+                    SimpleResponse reset = response.body();
+                    if (reset.getData().getSuccess().equals("true")) {
+                        Snackbar snackbar = Snackbar.make(_v, "Un email vous a été envoyé avec votre nouveau mot de passe", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
+                    else
+                    {
+                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + reset.getTitle(), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        AskTokenForReset();
+                    }
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+                MainActivity.stopLoading();
+            }
+            @Override
+            public void onFailure(Call<SimpleResponse> call, Throwable t) {
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+                MainActivity.stopLoading();
+            }
+        });
     }
 }
