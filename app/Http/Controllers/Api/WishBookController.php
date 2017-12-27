@@ -147,7 +147,7 @@ class WishBookController extends \App\Http\Controllers\ApiController
                 \Illuminate\Support\Facades\Log::alert('THE BOOK EXISTS');
                 $deleteWishBook = \App\Models\WishBook::where(['user_id' => $this->getCurrentUser()->id,
                     'isbn' => $request->input('isbn')])->first();
-                $response->setData($deleteWishBook);
+                $this->getJsonResponse()->setData($deleteWishBook);
                 \Illuminate\Support\Facades\Log::alert($deleteWishBook);
                 $deleteWishBook->delete();
             }
