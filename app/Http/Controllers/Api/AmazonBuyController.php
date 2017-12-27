@@ -8,6 +8,10 @@ use Log;
 
 class AmazonBuyController extends ApiController
 {
+	/**
+	 * Generate a research url for amazon with
+	 * given keywords fields
+	 **/
 	public function generateRawAmazonLinkFromSearch($keywordsFields)
 	{
 		$url_research_amazon = "https://www.amazon.fr/s/?";

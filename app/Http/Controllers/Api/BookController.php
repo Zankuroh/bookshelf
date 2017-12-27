@@ -158,6 +158,6 @@ class BookController extends \App\Http\Controllers\ApiController
             $this->setDefaultFailureJsonResponse();
         }
 
-        return $response->getJson();
+        return $this->getRawJsonResponse();
     }
 }

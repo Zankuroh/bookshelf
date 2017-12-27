@@ -148,10 +148,57 @@ class SuggestionController extends ApiController
 	private function amazonSearchOutputIsValid($htmlSearchPage)
 	{
 		$positionDidNotMatchAnyProducts =
-			strpos($htmlSearchPage, "did not match any products") || 
-			strpos($htmlSearchPage, "ne correspond à aucun article");
+		strpos($htmlSearchPage, "did not match any products") || 
+		strpos($htmlSearchPage, "ne correspond à aucun article");
+		
 		return $positionDidNotMatchAnyProducts === false ? true : false;
 	}
+
+	/**
+	 * Find from the global search amazon page the url of the book in question
+	 **/
+	private function findExactBookUrlFromSearchPageofAmazon($searchPageHtml)
+	{
+		/** Exact url of the book search patterns */
+		$patternsToSearchExactUrl = array(
+			'patternBeginOverallSearch' => "results-list-atf",
+			'patternEndOverallSearch' => "centerBelowMinus",
+			'patternBeginCloseToResult' => "a-link-normal a-text-normal",
+			'patternEndCloseToResult' => "img src",
+			'patternBeginResult' => 'href="',
+			'patternEndResult' => '">'
+		);
+		/** Exact url of the book */
+		$amazonBookUrl = $this->getExactResultFromHtml($searchPageHtml, $patternsToSearchExactUrl);
+
+		return $amazonBookUrl;
+	}
+
+	/**
+	 * Find from the book's page all suggestions that are related to the
+	 * book, basically it's just list of ids
+	 **/
+	private function findSuggestionsFromAmazonBookPage($searchPageHtml)
+	{
+		/** Suggestions of the book section parts search patterns */
+		$patternsToSearchSuggestionIds = array(
+			'patternBeginOverallSearch' => 'div id="purchase-sims-feature"',
+			'patternEndOverallSearch' => 'div id="view_to_purchase-sims-feature"',
+			'patternBeginCloseToResult' => "id_list",
+			'patternEndCloseToResult' => "div class",
+			'patternBeginResult' => 'id_list":',
+			'patternEndResult' => ',"url"'
+		);
+		/** Try to extract the suggestions isbn of the current book */
+		$amazonSuggestionsIdsFromUrl = $this->getExactResultFromHtml(htmlspecialchars_decode($searchPageHtml), $patternsToSearchSuggestionIds);
+
+		/** Suggestions are fetched as json representation from amazon */
+		$suggestionIds = json_decode($amazonSuggestionsIdsFromUrl);
+		/** Only first six ids from amazon are really important */
+		$suggestionIds = array_slice($suggestionIds, 0, 7);
+
+		return $suggestionIds;
+	} 
 
 	/**
 	 * Fetch suggestions from amazon
@@ -166,47 +213,23 @@ class SuggestionController extends ApiController
 		$amazonSearchOutput = file_get_contents($amazonSearchUrl);
 		$suggestionIds = [];
 		$amazonSearchOutputIsValid = $this->amazonSearchOutputIsValid($amazonSearchOutput);
-		$amazonSearchOutputIsValid = true;
 
 		if ($amazonSearchOutputIsValid)
 		{
-			/** Exact url of the book search patterns */
-			$patternsToSearchExactUrl = array(
-				'patternBeginOverallSearch' => "results-list-atf",
-				'patternEndOverallSearch' => "centerBelowMinus",
-				'patternBeginCloseToResult' => "a-link-normal a-text-normal",
-				'patternEndCloseToResult' => "img src",
-				'patternBeginResult' => 'href="',
-				'patternEndResult' => '">'
-			);
-			/** Exact url of the book */
-			$amazonBookUrl = $this->getExactResultFromHtml($amazonSearchOutput, $patternsToSearchExactUrl);
-			/** Content of url of the book */
+			/** Get the exact url of the book in question */
+			$amazonBookUrl = $this->findExactBookUrlFromSearchPageofAmazon($amazonSearchOutput);
+			/** Content of exact url of the book */
 			$amazonBookUrlContent = file_get_contents($amazonBookUrl);
 
-			/** Suggestions of the book section parts search patterns */
-			$patternsToSearchSuggestionIds = array(
-				'patternBeginOverallSearch' => 'div id="purchase-sims-feature"',
-				'patternEndOverallSearch' => 'div id="view_to_purchase-sims-feature"',
-				'patternBeginCloseToResult' => "id_list",
-				'patternEndCloseToResult' => "div class",
-				'patternBeginResult' => 'id_list":',
-				'patternEndResult' => ',"url"'
-			);
-			/** Try to extract the suggestions isbn of the current book */
-			$amazonSuggestionsIdsFromUrl = $this->getExactResultFromHtml(htmlspecialchars_decode($amazonBookUrlContent), $patternsToSearchSuggestionIds);
-
-			/** Suggestions are fetched as json representation from amazon */
-			$suggestionIds = json_decode($amazonSuggestionsIdsFromUrl);
-			/** Only first six ids from amazon are really important */
-			$suggestionIds = array_slice($suggestionIds, 0, 7);
+			/** Get suggestions from book's page */
+			$amazonSuggestions = $this->findSuggestionsFromAmazonBookPage($amazonBookUrlContent);
 		}
 		else
 		{
 			Log::debug("The generated amazon link seems to be not valid");
 		}
-		
-		return $suggestionIds;
+
+		return $amazonSuggestions;
 	}
 
 	/**
@@ -219,17 +242,14 @@ class SuggestionController extends ApiController
 		$userId = $this->getCurrentUser()->id;
 		foreach($suggestions as $suggestion)
 		{
-			// if (ctype_digit($suggestion))
-			// {
-				$suggestionRow = Suggestion::firstOrNew(
-					[
-						'isbn' => $suggestion,
-						'user_id' => $userId
-					]
-				);
-				$suggestionRow->reference_count = $suggestionRow->reference_count + 1;
-				$suggestionRow->save();
-			// }			
+			$suggestionRow = Suggestion::firstOrNew(
+				[
+					'isbn' => $suggestion,
+					'user_id' => $userId
+				]
+			);
+			$suggestionRow->reference_count = $suggestionRow->reference_count + 1;
+			$suggestionRow->save();
 		}
 	}
 
@@ -311,5 +331,72 @@ class SuggestionController extends ApiController
 				$this->storeSuggestions($suggestions);
 			}
 		}
+	}
+
+	/**
+	 * Extract the title from the page of the book
+	 **/
+	private function findAmazonBookTitleFromPage($amazonBookContent)
+	{
+		/** Amazon book's title search patterns */
+		$patternsToSearchTitle = array(
+			'patternBeginOverallSearch' => 'div id="booksTitle',
+			'patternEndOverallSearch' => 'div id="bookDescription_feature_div',
+			'patternBeginCloseToResult' => '<span id="',
+			'patternEndCloseToResult' => '<span',
+			'patternBeginResult' => '>',
+			'patternEndResult' => '</span'
+		);
+		/** Try to extract the suggestions isbn of the current book */
+		$bookTitle = $this->getExactResultFromHtml(
+			htmlspecialchars_decode($amazonBookContent),
+				$patternsToSearchTitle);
+
+		Log::debug("Amazon book's title =" . $bookTitle);
+		return $bookTitle;
+	}
+
+	/**
+	 * Extract main book's picture
+	 **/
+	private function findAmazonBookPictureUrlFromPage($amazonBookContent)
+	{
+		/** Book's main picture url search patterns */
+		$patternsToSearchPictureUrl = array(
+			'patternBeginOverallSearch' => 'div id="leftCol"',
+			'patternEndOverallSearch' => 'div id="centerCol"',
+			'patternBeginCloseToResult' => 'img-wrapper',
+			'patternEndCloseToResult' => 'type="text/javascript"',
+			'patternBeginResult' => 'data-a-dynamic-image="{"',
+			'patternEndResult' => '"'
+		);
+
+		$bookPictureUrl = $this->getExactResultFromHtml(
+			htmlspecialchars_decode($amazonBookContent),
+				$patternsToSearchPictureUrl);
+
+		Log::debug("Amazon book's picture url =" . $bookPictureUrl);
+
+		return $bookPictureUrl;
+	}
+
+	/**
+     * Search book's details from amazon
+     **/
+	public function searchDetailsFromAmazon($searchKeywordsFields)
+	{
+		$details = [];
+
+		$amazonBuyController = new AmazonBuyController();
+		$amazonSearchUrl = $amazonBuyController->generateRawAmazonLinkFromSearch($searchKeywordsFields);
+		$amazonSearchOutput = file_get_contents($amazonSearchUrl);
+		$amazonExactBookUrl = $this->findExactBookUrlFromSearchPageofAmazon($amazonSearchOutput);
+		$amazonExactBookContent = file_get_contents($amazonExactBookUrl);
+
+		$details['book_title'] = htmlspecialchars_decode($this->findAmazonBookTitleFromPage($amazonExactBookContent));
+		$details['book_picture_url'] = $this->findAmazonBookPictureUrlFromPage($amazonExactBookContent);
+		$details['book_amazon_url'] = $amazonExactBookUrl;
+
+		return $details;
 	}
 }

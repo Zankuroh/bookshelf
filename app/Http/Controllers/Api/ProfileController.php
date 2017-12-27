@@ -179,7 +179,7 @@ class ProfileController extends \App\Http\Controllers\ApiController
                 {
                     $currentUser->password = \Illuminate\Support\Facades\Hash::make($request->input('password'));
                     $currentUser->delete();
-                    $response->setData(['deleted' => 'true']);
+                    $this->getJsonResponse()->setData(['deleted' => 'true']);
                 }
                 else
                 {

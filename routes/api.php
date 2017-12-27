@@ -126,6 +126,18 @@ Route::group(['namespace' => 'Api'], function() {
 
             /** Update a book */
             Route::put('/', 'BookController@update');
+
+            Route::group(['prefix' => 'search'], function()
+            {
+                Route::get('/{bookKeywordsFields}', function($bookKeywordsFields)
+                {
+                    $suggestionController = new App\Http\Controllers\Api\SuggestionController();
+                    $bookDetails = $suggestionController->searchDetailsFromAmazon($bookKeywordsFields);
+                    $suggestionController->getJsonResponse()->setData($bookDetails);
+
+                    return $suggestionController->getRawJsonResponse();
+                });
+            });
         });
 
         /**
