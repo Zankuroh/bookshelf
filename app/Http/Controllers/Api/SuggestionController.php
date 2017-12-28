@@ -230,7 +230,10 @@ class SuggestionController extends ApiController
 		/** Suggestions are fetched as json representation from amazon */
 		$suggestionIds = json_decode($amazonSuggestionsIdsFromUrl);
 		/** Only first six ids from amazon are really important */
-		$suggestionIds = array_slice($suggestionIds, 0, 7);
+		if ($suggestionIds != null)
+		{
+			$suggestionIds = array_slice($suggestionIds, 0, 7);			
+		}
 
 		return $suggestionIds;
 	} 
