@@ -244,7 +244,7 @@ Route::group(['namespace' => 'Api'], function() {
 
         Route::group(['prefix' => 'suggestion'], function()
         {
-            Route::get('/', 'SuggestionController@index');
+            Route::post('/', 'SuggestionController@index');
         });
     });
 });
