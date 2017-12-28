@@ -7,9 +7,12 @@ import com.google.gson.annotations.SerializedName;
 
 public class Data {
 
-    @SerializedName("suggestions")
+    @SerializedName("latest_suggestions")
     @Expose
-    private List<String> suggestions = null;
+    private List<String> latestSuggestions = null;
+    @SerializedName("overall_suggestions")
+    @Expose
+    private List<String> overallSuggestions = null;
     @SerializedName("friends_suggestions")
     @Expose
     private List<String> friendsSuggestions = null;
@@ -17,12 +20,20 @@ public class Data {
     @Expose
     private List<String> friendsLatestBooks = null;
 
-    public List<String> getSuggestions() {
-        return suggestions;
+    public List<String> getLatestSuggestions() {
+        return latestSuggestions;
     }
 
-    public void setSuggestions(List<String> suggestions) {
-        this.suggestions = suggestions;
+    public void setLatestSuggestions(List<String> latestSuggestions) {
+        this.latestSuggestions = latestSuggestions;
+    }
+
+    public List<String> getOverallSuggestions() {
+        return overallSuggestions;
+    }
+
+    public void setOverallSuggestions(List<String> overallSuggestions) {
+        this.overallSuggestions = overallSuggestions;
     }
 
     public List<String> getFriendsSuggestions() {
@@ -40,5 +51,4 @@ public class Data {
     public void setFriendsLatestBooks(List<String> friendsLatestBooks) {
         this.friendsLatestBooks = friendsLatestBooks;
     }
-
 }

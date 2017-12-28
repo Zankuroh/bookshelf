@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -253,6 +255,7 @@ public class ShelfContainer extends Fragment
                     while(it.hasNext()){
                         com.eip.utilities.model.BooksLocal.Book book = it.next();
                         isbns.add(book.getIsbn());
+                        Log.i("isbn", book.getIsbn());
                         map.put(book.getIsbn(), book.getStatusId());
                     }
                     if (!isbns.isEmpty())
@@ -296,43 +299,73 @@ public class ShelfContainer extends Fragment
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<Suggestion> call = bookshelfApi.getSuggestion(MainActivity.token);
+        Call<Suggestion> call = bookshelfApi.getSuggestion(MainActivity.token, true);
         call.enqueue(new Callback<Suggestion>() {
             @Override
             public void onResponse(Call<Suggestion> call, Response<Suggestion> response) {
                 _modelListBiblio.clear();
                 if (response.isSuccessful()) {
+                    Lock l = new ReentrantLock();
                     Suggestion bookshelf = response.body();
-                    List<String> sugg = bookshelf.getData().getSuggestions();
-                    List<String> suggFriend = bookshelf.getData().getFriendsSuggestions();
-                    List<String> lastAddFriend = bookshelf.getData().getFriendsLatestBooks();
+                    List<String> latestSugg = bookshelf.getData().getLatestSuggestions();
+                    List<String> overallSugg = bookshelf.getData().getOverallSuggestions();
+                    List<String> friendLatestSugg = bookshelf.getData().getFriendsLatestBooks();
+                    List<String> friendSugg = bookshelf.getData().getFriendsSuggestions();
+                    List<String> asins = new ArrayList<>();
 
-                    ListIterator<String> it = sugg.listIterator();
+                    ListIterator<String> it = latestSugg.listIterator();
                     while(it.hasNext()){
                         String identifier = it.next();
                         if (android.text.TextUtils.isDigitsOnly(identifier)) {
                             Log.i("ISBN", identifier);
                         } else {
                             Log.i("ASIN", identifier);
-                            ASINBook(identifier);
+                            asins.add(identifier);
                         }
                     }
-                    /*else {
-                        Snackbar snackbar = Snackbar.make(_v, "Votre liste de proposition est vide", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    }*/
+                    it = overallSugg.listIterator();
+                    while(it.hasNext()){
+                        String identifier = it.next();
+                        if (android.text.TextUtils.isDigitsOnly(identifier)) {
+                            Log.i("ISBN", identifier);
+                        } else {
+                            Log.i("ASIN", identifier);
+                            asins.add(identifier);
+                        }
+                    }
+                    it = friendLatestSugg.listIterator();
+                    while(it.hasNext()){
+                        String identifier = it.next();
+                        if (android.text.TextUtils.isDigitsOnly(identifier)) {
+                            Log.i("ISBN", identifier);
+                        } else {
+                            Log.i("ASIN", identifier);
+                            asins.add(identifier);
+                        }
+                    }
+                    it = friendSugg.listIterator();
+                    while(it.hasNext()){
+                        String identifier = it.next();
+                        if (android.text.TextUtils.isDigitsOnly(identifier)) {
+                            Log.i("ISBN", identifier);
+                        } else {
+                            Log.i("ASIN", identifier);
+                            asins.add(identifier);
+                        }
+                    }
+                    for (String asin : asins) {
+                        ASINBook(asin, l);
+                    }
+                    MainActivity.stopLoading();
                 } else {
+                    Log.i("error", response.errorBody().toString());
                     try {
                         Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
-                        snackbar.show();
                         e.printStackTrace();
                     }
                 }
-                _adapterBiblio.notifyDataSetChanged();
-                MainActivity.stopLoading();
             }
 
             @Override
@@ -346,32 +379,48 @@ public class ShelfContainer extends Fragment
         });
     }
 
-    private void ASINBook(final String asin)
+    private void ASINBook(final String asin, final Lock l)
     {
-        Thread t = new Thread(new Runnable() {
-            public void run() {
-                BookshelfApi bookshelfApi = new Retrofit.Builder()
-                        .baseUrl(BookshelfApi.APIPath)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build()
-                        .create(BookshelfApi.class);
-                Call<ASIN> call = bookshelfApi.searchFromASIN(MainActivity.token, asin);
-                try {
-                    ASIN bookshelf = call.execute().body();
-                    String title = bookshelf.getData().getTitle();
-                    String picUrl = bookshelf.getData().getPicUrl();
-                    _modelListBiblio.add(new BiblioAdapter(title, picUrl, null));
-                } catch (IOException e) {
-                    e.printStackTrace();
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<ASIN> call = bookshelfApi.searchFromASIN(MainActivity.token, asin);
+        call.enqueue(new Callback<ASIN>() {
+            @Override
+            public void onResponse(Call<ASIN> call, Response<ASIN> response) {
+                if (response.isSuccessful()) {
+                    ASIN bookshelf = response.body();
+                    List<com.eip.utilities.model.ASIN.Data> data = bookshelf.getData();
+                    ListIterator<com.eip.utilities.model.ASIN.Data> it = data.listIterator();
+                    while (it.hasNext()) {
+                        com.eip.utilities.model.ASIN.Data asinData = it.next();
+                        String title = asinData.getTitle();
+                        String picUrl = asinData.getPicUrl();
+                        l.lock();
+                        _modelListBiblio.add(new BiblioAdapter(title, picUrl, null));
+                        _adapterBiblio.notifyDataSetChanged();
+                        l.unlock();
+                    }
+                } else {
+                    try {
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
+
+            @Override
+            public void onFailure(Call<ASIN> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+            }
         });
-        t.start();
-        try {
-            t.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private void wishShelf()

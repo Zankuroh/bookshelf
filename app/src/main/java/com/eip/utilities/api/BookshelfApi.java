@@ -151,8 +151,9 @@ public interface BookshelfApi
     @DELETE("friend")
     Call<FriendModif> delFriend(@Header("Authorization") String token, @Query("friend_id") Integer Id);
 
-    @GET("suggestion")
-    Call<Suggestion> getSuggestion(@Header("Authorization") String token);
+    @FormUrlEncoded
+    @POST("suggestion")
+    Call<Suggestion> getSuggestion(@Header("Authorization") String token, @Field("force_build")Boolean force);
 
     @GET("wish/book/{user_id}}")
     Call<WishList> getFriendWishList(@Header("Authorization") String token, @Path("user_id") String user_id);

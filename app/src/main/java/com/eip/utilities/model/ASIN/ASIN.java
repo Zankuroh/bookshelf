@@ -3,6 +3,8 @@ package com.eip.utilities.model.ASIN;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * Created by Maxime on 28/12/2017.
  */
@@ -11,7 +13,7 @@ public class ASIN
 {
     @SerializedName("data")
     @Expose
-    private com.eip.utilities.model.ASIN.Data data;
+    private List<Data> data;
     @SerializedName("errors")
     @Expose
     private Object errors;
@@ -19,11 +21,11 @@ public class ASIN
     @Expose
     private Object meta;
 
-    public com.eip.utilities.model.ASIN.Data getData() {
+    public List<Data> getData() {
         return data;
     }
 
-    public void setData(com.eip.utilities.model.ASIN.Data data) {
+    public void setData(List<Data> data) {
         this.data = data;
     }
 
