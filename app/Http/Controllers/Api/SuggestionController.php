@@ -366,9 +366,12 @@ class SuggestionController extends ApiController
 			foreach ($userLatestBooks as $userLastBook)
 			{
 				$suggestions = $this->fetchSuggestionsFromAmazonWithIsbn($userLastBook->isbn);
-				$latestSuggestions = array_merge($latestSuggestions, $suggestions);
+				if ($suggestions != null)
+				{
+					$latestSuggestions = array_merge($latestSuggestions, $suggestions);
+					$this->storeSuggestions($suggestions);
+				}
 				Log::debug('trying to fetch the book n=' . $userLastBook->isbn);
-				$this->storeSuggestions($suggestions);
 			}
 			shuffle($latestSuggestions);
 		}
