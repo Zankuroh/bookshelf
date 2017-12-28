@@ -1,0 +1,23 @@
+﻿<ContentDialog
+    x:Class="BookShelf.cdSearchFriend"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BookShelf.ContentDialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Ajoutez un Auteur"
+    PrimaryButtonText="Search"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_OkClick"
+    SecondaryButtonClick="ContentDialog_CancelClick">
+
+    <Grid Padding="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="30*"/>
+        </Grid.RowDefinitions>
+        <TextBox x:Name="txbxSearch" PlaceholderText="Nom/Adresse mail" MaxHeight="35"/>
+        <TextBlock x:Name="txblError" Foreground="Red" MaxHeight="30"/>
+    </Grid>
+</ContentDialog>

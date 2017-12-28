@@ -98,6 +98,9 @@
     <Compile Include="ContentDialogs\cdAddAuthor.xaml.cs">
       <DependentUpon>cdAddAuthor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ContentDialogs\cdSearchFriend.xaml.cs">
+      <DependentUpon>cdSearchFriend.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\clAuthor.cs" />
     <Compile Include="Views\BookFile.xaml.cs">
       <DependentUpon>BookFile.xaml</DependentUpon>
@@ -178,6 +181,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="ContentDialogs\cdAddAuthor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ContentDialogs\cdSearchFriend.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
