@@ -123,46 +123,56 @@ class SuggestionController extends ApiController
 		$patternBeginHref = $patternsToSearchResult['patternBeginResult'];
 		$patternEndHref = $patternsToSearchResult['patternEndResult'];
 
-		/** Find where main list search container start */
-		$positionBeginListSearchPattern = strpos($htmlOutput, $patternBeginListSearch);
-		Log::debug("Position of pattern for the BEGIN of list search : " . $positionBeginListSearchPattern);
+		try
+		{
 
-		/** Find where main list search container could be ended */
-		$positionEndListSearchPattern = strpos($htmlOutput, $patternEndListSearch);
-		Log::debug("Position of pattern for the END of list search : " . $positionEndListSearchPattern);
-		
-		/** Number of characters between begin and end of the list search container */
-		$charactersBeginAndEndListSearchContainer = $positionEndListSearchPattern - $positionBeginListSearchPattern;
-		Log::debug("Total numbers of characters between two pattern of list search " . $charactersBeginAndEndListSearchContainer);
-		
-		/** Sub string of the main container of list search, this is where href is hidden */
-		$containerListSearchStr = substr($htmlOutput, $positionBeginListSearchPattern, $charactersBeginAndEndListSearchContainer);
+
+			/** Find where main list search container start */
+			$positionBeginListSearchPattern = strpos($htmlOutput, $patternBeginListSearch);
+			Log::debug("Position of pattern for the BEGIN of list search : " . $positionBeginListSearchPattern);
+
+			/** Find where main list search container could be ended */
+			$positionEndListSearchPattern = strpos($htmlOutput, $patternEndListSearch);
+			Log::debug("Position of pattern for the END of list search : " . $positionEndListSearchPattern);
+
+			/** Number of characters between begin and end of the list search container */
+			$charactersBeginAndEndListSearchContainer = $positionEndListSearchPattern - $positionBeginListSearchPattern;
+			Log::debug("Total numbers of characters between two pattern of list search " . $charactersBeginAndEndListSearchContainer);
+
+			/** Sub string of the main container of list search, this is where href is hidden */
+			$containerListSearchStr = substr($htmlOutput, $positionBeginListSearchPattern, $charactersBeginAndEndListSearchContainer);
 		//Log::debug($containerListSearchStr);
 		//		
-		/** Find the container where the href is the most closest */
-		$positionBeginCloseToHref = strpos($containerListSearchStr, $patternBeginCloseToHref);
-		Log::debug('Position of BEGIN close to href ' . $positionBeginCloseToHref);
+			/** Find the container where the href is the most closest */
+			$positionBeginCloseToHref = strpos($containerListSearchStr, $patternBeginCloseToHref);
+			Log::debug('Position of BEGIN close to href ' . $positionBeginCloseToHref);
 
-		/** Find the end of container where the href is the most closest */
-		$positionEndCloseToHref = strpos($containerListSearchStr, $patternEndCloseToHref, $positionBeginCloseToHref);
-		Log::debug("Position of END close to href = " . $positionEndCloseToHref);
-		
-		/** Container where the final href is */
-		$containerCloseToHrefStr = substr($containerListSearchStr, $positionBeginCloseToHref, $positionEndCloseToHref);
-		Log::debug("Container where href is : " . $containerCloseToHrefStr);
+			/** Find the end of container where the href is the most closest */
+			$positionEndCloseToHref = strpos($containerListSearchStr, $patternEndCloseToHref, $positionBeginCloseToHref);
+			Log::debug("Position of END close to href = " . $positionEndCloseToHref);
 
-		/** Position of beginning final href */
-		$positionBeginFinalHref = strpos($containerCloseToHrefStr, $patternBeginHref) + strlen($patternBeginHref);
-		Log::debug("Position begin final href = " . $positionBeginFinalHref);
+			/** Container where the final href is */
+			$containerCloseToHrefStr = substr($containerListSearchStr, $positionBeginCloseToHref, $positionEndCloseToHref);
+			Log::debug("Container where href is : " . $containerCloseToHrefStr);
 
-		/** Position of end final href */
-		$positionEndFinalHref = strpos($containerCloseToHrefStr, $patternEndHref, $positionBeginFinalHref);
-		Log::debug("Position end final href = " . $positionEndFinalHref);
+			/** Position of beginning final href */
+			$positionBeginFinalHref = strpos($containerCloseToHrefStr, $patternBeginHref) + strlen($patternBeginHref);
+			Log::debug("Position begin final href = " . $positionBeginFinalHref);
 
-		/** Final href url */
-		$url = substr($containerCloseToHrefStr, $positionBeginFinalHref, $positionEndFinalHref - $positionBeginFinalHref);
-		//var_dump($containerCloseToHrefStr);
-		Log::debug("FINAL URL : " . $url);
+			/** Position of end final href */
+			$positionEndFinalHref = strpos($containerCloseToHrefStr, $patternEndHref, $positionBeginFinalHref);
+			Log::debug("Position end final href = " . $positionEndFinalHref);
+
+			/** Final href url */
+			$url = substr($containerCloseToHrefStr, $positionBeginFinalHref, $positionEndFinalHref - $positionBeginFinalHref);
+			//var_dump($containerCloseToHrefStr);
+			Log::debug("FINAL URL : " . $url);
+		}
+		catch (\Exception $e)
+		{
+			Log::debug("Exception during extracting EXACT result");
+			$url = null;
+		}
 
 		return $url;
 	}
