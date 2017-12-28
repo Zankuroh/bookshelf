@@ -56,20 +56,6 @@ namespace BookShelf
             ((RadioButton)sender).IsChecked = false;
         }
 
-        //private void OnHomeButtonChecked(object sender, RoutedEventArgs e)
-        //{
-        //    ShellSplitView.IsPaneOpen = false;
-        //    if (ShellSplitView.Content != null)
-        //        ((Frame)ShellSplitView.Content).Navigate(typeof(Library));
-        //}
-
-        //private void OnSearchButtonChecked(object sender, RoutedEventArgs e)
-        //{
-        //    ShellSplitView.IsPaneOpen = false;
-        //    if (ShellSplitView.Content != null)
-        //        ((Frame)ShellSplitView.Content).Navigate(typeof(SearchPage));
-        //}
-
         private void LibraryButton_Click(object sender, RoutedEventArgs e)
         {
             ShellSplitView.IsPaneOpen = false;
