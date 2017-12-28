@@ -13,6 +13,8 @@ use Carbon\Carbon;
 
 class SuggestionController extends ApiController
 {
+	const DELIMITER_KEYWORDS_SEARCH_DETAILS_AMAZON = ";||;";
+
 	/**
 	 * Get a list of suggestions (books)
 	 * The list is fetched from actual suggestions, amazon,
@@ -382,7 +384,7 @@ class SuggestionController extends ApiController
 		/** Try to extract the suggestions isbn of the current book */
 		$bookTitle = $this->getExactResultFromHtml(
 			htmlspecialchars_decode($amazonBookContent),
-				$patternsToSearchTitle);
+			$patternsToSearchTitle);
 
 		Log::debug("Amazon book's title =" . $bookTitle);
 		return $bookTitle;
@@ -405,7 +407,7 @@ class SuggestionController extends ApiController
 
 		$bookPictureUrl = $this->getExactResultFromHtml(
 			htmlspecialchars_decode($amazonBookContent),
-				$patternsToSearchPictureUrl);
+			$patternsToSearchPictureUrl);
 
 		Log::debug("Amazon book's picture url =" . $bookPictureUrl);
 
@@ -419,15 +421,43 @@ class SuggestionController extends ApiController
 	{
 		$details = [];
 
-		$amazonBuyController = new AmazonBuyController();
-		$amazonSearchUrl = $amazonBuyController->generateRawAmazonLinkFromSearch($searchKeywordsFields);
-		$amazonSearchOutput = file_get_contents($amazonSearchUrl);
-		$amazonExactBookUrl = $this->findExactBookUrlFromSearchPageofAmazon($amazonSearchOutput);
-		$amazonExactBookContent = file_get_contents($amazonExactBookUrl);
-
-		$details['book_title'] = htmlspecialchars_decode($this->findAmazonBookTitleFromPage($amazonExactBookContent));
-		$details['book_picture_url'] = $this->findAmazonBookPictureUrlFromPage($amazonExactBookContent);
-		$details['book_amazon_url'] = $amazonExactBookUrl;
+		$searchDetailsIds =
+		explode(self::DELIMITER_KEYWORDS_SEARCH_DETAILS_AMAZON,
+			$searchKeywordsFields);
+		$amazonBuyController = new AmazonBuyController();	
+		foreach($searchDetailsIds as $searchDetailsId)
+		{
+			$gotErrorWhileFileGetContent = false;
+			$detailsOfId = [];
+			$amazonSearchUrl = $amazonBuyController->generateRawAmazonLinkFromSearch($searchDetailsId);
+			try
+			{
+				$amazonSearchOutput = file_get_contents($amazonSearchUrl);
+			}
+			catch (\Exception $e)
+			{
+				$gotErrorWhileFileGetContent = true;
+			}
+			if (!$gotErrorWhileFileGetContent)
+			{
+				$amazonExactBookUrl = $this->findExactBookUrlFromSearchPageofAmazon($amazonSearchOutput);
+				try
+				{
+					$amazonExactBookContent = file_get_contents($amazonExactBookUrl);
+				}
+				catch (\Exception $e)
+				{
+					$gotErrorWhileFileGetContent = true;
+				}
+				if (!$gotErrorWhileFileGetContent)
+				{
+					$detailsOfId['book_title'] = htmlspecialchars_decode($this->findAmazonBookTitleFromPage($amazonExactBookContent));
+					$detailsOfId['book_picture_url'] = $this->findAmazonBookPictureUrlFromPage($amazonExactBookContent);
+					$detailsOfId['book_amazon_url'] = $amazonExactBookUrl;
+					$details[] = $detailsOfId;
+				}
+			}
+		}
 
 		return $details;
 	}
