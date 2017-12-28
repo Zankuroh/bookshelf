@@ -15,35 +15,61 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid Background="Beige" Loaded="Grid_Loaded">
-        <Grid x:Name="grdProfile" Margin="0,0,0,0" Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid x:Name="grdSub">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60*"/>
-                    <ColumnDefinition Width="40*"/>
-                </Grid.ColumnDefinitions>
-                <Image x:Name="imgProfile" Height="200"  VerticalAlignment="Top" Source="Assets/StoreLogo.png"/>
-                <StackPanel x:Name="stpnlData1" Grid.Column="1">
-                    <TextBlock x:Name="txblPseudo" HorizontalAlignment="Left" Margin="10,2" TextWrapping="Wrap" Text="Pseudo : " VerticalAlignment="Center"/>
-                    <TextBlock x:Name="txblEmail" HorizontalAlignment="Left" Margin="10,2" Grid.Row="1" TextWrapping="Wrap" Text="E-mail : " VerticalAlignment="Center"/>
-                    <TextBlock x:Name="txblBirthday" HorizontalAlignment="Left" Margin="10,2" Grid.Row="2" TextWrapping="Wrap" Text="Anniversaire : " VerticalAlignment="Center"/>
-                </StackPanel>
-            </Grid>
-            <StackPanel x:Name="stpnData2" Grid.Row="1">
-                <TextBlock x:Name="txblLikedGenre" HorizontalAlignment="Left" Margin="10,2" Grid.Row="3" TextWrapping="Wrap" Text="Genre préféré : " VerticalAlignment="Center"/>
-                <TextBlock x:Name="txblFavBook" HorizontalAlignment="Left"  Grid.Row="4" Margin="10,2" TextWrapping="Wrap" Text="Livre Préféré :" VerticalAlignment="Center"/>
-                <TextBlock x:Name="txblProfileCréation" HorizontalAlignment="Left"  Grid.Row="5" Margin="10,2" TextWrapping="Wrap" Text="Date de création compte : " VerticalAlignment="Center"/>
-                <TextBlock x:Name="txblLastCo" HorizontalAlignment="Left"  Grid.Row="6" Margin="10,2" TextWrapping="Wrap" Text="Date de dernière connexion : " VerticalAlignment="Center"/>
-                <Button x:Name="btModifProf" Grid.Row="2" Content="Modifier les informations personnelles" HorizontalAlignment="Center" Click="btModifProf_Click" Margin="0,20,0,0"/>
-                <Button x:Name="btDeleteProf" Grid.Row="2" Content="Supprimer le profil" HorizontalAlignment="Center" Click="btDeleteProf_Click" Margin="0,20,0,0"/>
-            </StackPanel>
-        </Grid>
+    <Pivot x:Name="ProfilePivot" Background="BurlyWood">
+        <Pivot.RightHeader>
+            <CommandBar Background="Transparent">
+                <AppBarSeparator/>
+                <AppBarButton Icon="Add"  Label="Ajouter d'ami" Click="btAddFriend_Click"/>
+                <AppBarButton Icon="Delete" Label="Supprimer ami" Click="btDeleteFriend_Click"/>
+                <CommandBar.SecondaryCommands>
+                    <!--<AppBarButton Icon="Bookmarks"  Label="Ajout Liste de souhait" Click="btAddtoWhishlst"/>
+                    <AppBarButton Icon="Bookmarks"  Label="Retrait liste de souhait" Click="btDeleteWish_Click"/>
+                    <AppBarButton Icon="Bookmarks"  Label="Achat" Click="btBuy_Click"/>-->
+                </CommandBar.SecondaryCommands>
+                <CommandBar.Content>
+                    <TextBlock Text="" />
+                </CommandBar.Content>
+            </CommandBar>
+        </Pivot.RightHeader>
+        <PivotItem Header="Profil">
+            <!--Pivot content goes here-->
+            <Grid Background="Beige" Loaded="Grid_Loaded">
+                <Grid x:Name="grdProfile" Margin="0,0,0,0" Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid x:Name="grdSub">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60*"/>
+                            <ColumnDefinition Width="40*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image x:Name="imgProfile" Height="200"  VerticalAlignment="Top" Source="Assets/StoreLogo.png"/>
+                        <StackPanel x:Name="stpnlData1" Grid.Column="1">
+                            <TextBlock x:Name="txblPseudo" HorizontalAlignment="Left" Margin="10,2" TextWrapping="Wrap" Text="Pseudo : " VerticalAlignment="Center"/>
+                            <TextBlock x:Name="txblEmail" HorizontalAlignment="Left" Margin="10,2" Grid.Row="1" TextWrapping="Wrap" Text="E-mail : " VerticalAlignment="Center"/>
+                            <TextBlock x:Name="txblBirthday" HorizontalAlignment="Left" Margin="10,2" Grid.Row="2" TextWrapping="Wrap" Text="Anniversaire : " VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                    <StackPanel x:Name="stpnData2" Grid.Row="1">
+                        <TextBlock x:Name="txblLikedGenre" HorizontalAlignment="Left" Margin="10,2" Grid.Row="3" TextWrapping="Wrap" Text="Genre préféré : " VerticalAlignment="Center"/>
+                        <TextBlock x:Name="txblFavBook" HorizontalAlignment="Left"  Grid.Row="4" Margin="10,2" TextWrapping="Wrap" Text="Livre Préféré :" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="txblProfileCréation" HorizontalAlignment="Left"  Grid.Row="5" Margin="10,2" TextWrapping="Wrap" Text="Date de création compte : " VerticalAlignment="Center"/>
+                        <TextBlock x:Name="txblLastCo" HorizontalAlignment="Left"  Grid.Row="6" Margin="10,2" TextWrapping="Wrap" Text="Date de dernière connexion : " VerticalAlignment="Center"/>
+                        <Button x:Name="btModifProf" Grid.Row="2" Content="Modifier les informations personnelles" HorizontalAlignment="Center" Click="btModifProf_Click" Margin="0,20,0,0"/>
+                        <Button x:Name="btDeleteProf" Grid.Row="2" Content="Supprimer le profil" HorizontalAlignment="Center" Click="btDeleteProf_Click" Margin="0,20,0,0"/>
+                    </StackPanel>
+                </Grid>
 
-    </Grid>
+            </Grid>
+        </PivotItem>
+        <PivotItem Header="Amis">
+            <Grid Background="Beige" Loaded="Grid_Loaded">
+                
+            </Grid>
+        </PivotItem>
+    </Pivot>
+
 </Page>
 

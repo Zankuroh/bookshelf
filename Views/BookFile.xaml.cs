@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Navigation;
 using Google.Apis.Books.v1.Data;
 using Windows.UI.Core;
 using Windows.Data.Json;
+using Windows.Web.Http;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -251,9 +252,31 @@ namespace BookShelf
 
         private async void btBuy_Click(object sender, RoutedEventArgs e)
         {
-            // The URI to launch
-            var uriBing = new Uri(@"https://www.amazon.fr");
+            //HttpClient httpClient = new HttpClient();
+            //HttpResponseMessage httpResponse = new HttpResponseMessage();
+            //string httpResponseBody = "";
+            //string stringResponse = null;
 
+            //try
+            //{
+            //    //Send the GET request
+            //    httpResponse = await httpClient.GetAsync(new Uri(@"http://api.duckduckgo.com/?q=Neuromancer!amazon&format=json"));
+            //    httpResponse.EnsureSuccessStatusCode();
+            //}
+            //catch (Exception ex)
+            //{
+            //    clErrorHandling.ErrorMessage(" GetRequest()", ex);
+            //}
+            //finally
+            //{
+            //    httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
+            //    stringResponse = httpResponseBody.ToString();
+            //}
+            // The URI to launch
+            var uriBing = new Uri(@"http://api.duckduckgo.com/?q=\9782352947349!amazon&t=BookShelf&format=json");
+
+            //clRequestAPI r = new clRequestAPI("http://api.duckduckgo.com/?q=Neuromancer!amazon&format=json");
+            //string s = await r.GetRequest();
             // Launch the URI
             var success = await Windows.System.Launcher.LaunchUriAsync(uriBing);
 

@@ -148,5 +148,37 @@ namespace BookShelf
                 frame.Navigate(typeof(MainPage));
             }
         }
+
+        private async void btAddFriend_Click(object sender, RoutedEventArgs e)
+        {
+            //Search id
+            clRequestAPI R = new clRequestAPI("/api/profile/search");
+            string re = null;
+
+            R.addHeader("application/x-www-form-urlencoded");
+            R.addAuthorization("Bearer", App.Token);
+
+            re = await R.PostRequest("keywords_search=Louis", "application/x-www-form-urlencoded");
+
+            //Add
+            clRequestAPI Req = new clRequestAPI("/api/friend");
+            string res = null;
+
+            Req.addAuthorization("Bearer", App.Token);
+            Req.addHeader("application/x-www-form-urlencoded");
+
+            res = await Req.PostRequest("friend_id=test@test.fr", "application/x-www-form-urlencoded");
+
+            //Get
+            clRequestAPI Req2 = new clRequestAPI("/api/friend");
+            Req2.addAuthorization("Bearer", App.Token);
+            string res2 = await Req.GetRequest();
+
+        }
+
+        private void btDeleteFriend_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
