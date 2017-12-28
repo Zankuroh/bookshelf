@@ -19,6 +19,7 @@ import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.eip.utilities.model.ASIN.ASIN;
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.api.GoogleBooksApi;
 import com.eip.utilities.model.Books;
@@ -89,8 +90,9 @@ public class ShelfContainer extends Fragment
             }
         } else if (_type == MainActivity.shelfType.PROPOSHELF) {
             _v = inflater.inflate(R.layout.shelf_simple, container, false);
-            setTextWatcher();
+            _v.findViewById(R.id.ISearchB).setVisibility(View.GONE);
             setAdapters();
+            propoShelf();
         } else if (_type == MainActivity.shelfType.WISHSHELF) {
             _v = inflater.inflate(R.layout.shelf_simple, container, false);
             setTextWatcher();
@@ -126,9 +128,7 @@ public class ShelfContainer extends Fragment
             if (field != null) {
                 field.setText("");
             }
-            if (_type == MainActivity.shelfType.PROPOSHELF) {
-                propoShelf();
-            } else if (_type == MainActivity.shelfType.WISHSHELF) {
+            if (_type == MainActivity.shelfType.WISHSHELF) {
                 wishShelf();
             }
         }
@@ -266,7 +266,7 @@ public class ShelfContainer extends Fragment
                 } else {
                     try {
                         if (getActivity() != null) {
-                            Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.RLShelf), "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                            Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.RLShelf), "Une erreur est survenue", Snackbar.LENGTH_LONG);
                             snackbar.show();
                         }
                     } catch (Exception e) {
@@ -289,11 +289,6 @@ public class ShelfContainer extends Fragment
 
     private void propoShelf()
     {
-        Log.e("TEST", "coucou e");
-        Log.d("TEST", "coucou d");
-        Log.v("TEST", "coucou v");
-        Log.i("TEST", "coucou i");
-        Log.d("TEST", "coucou1");
         MainActivity.startLoading();
         //Todo: Appel à la BDD pour recup les vrais PROPOS
         BookshelfApi bookshelfApi = new Retrofit.Builder()
@@ -314,8 +309,13 @@ public class ShelfContainer extends Fragment
 
                     ListIterator<String> it = sugg.listIterator();
                     while(it.hasNext()){
-                        String isbn = it.next();
-                        Log.i("ISBN PROP", isbn);
+                        String identifier = it.next();
+                        if (android.text.TextUtils.isDigitsOnly(identifier)) {
+                            Log.i("ISBN", identifier);
+                        } else {
+                            Log.i("ASIN", identifier);
+                            ASINBook(identifier);
+                        }
                     }
                     /*else {
                         Snackbar snackbar = Snackbar.make(_v, "Votre liste de proposition est vide", Snackbar.LENGTH_LONG);
@@ -323,14 +323,15 @@ public class ShelfContainer extends Fragment
                     }*/
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }
                 }
+                _adapterBiblio.notifyDataSetChanged();
                 MainActivity.stopLoading();
             }
 
@@ -343,7 +344,34 @@ public class ShelfContainer extends Fragment
                 MainActivity.stopLoading();
             }
         });
-        MainActivity.stopLoading();
+    }
+
+    private void ASINBook(final String asin)
+    {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                BookshelfApi bookshelfApi = new Retrofit.Builder()
+                        .baseUrl(BookshelfApi.APIPath)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+                        .create(BookshelfApi.class);
+                Call<ASIN> call = bookshelfApi.searchFromASIN(MainActivity.token, asin);
+                try {
+                    ASIN bookshelf = call.execute().body();
+                    String title = bookshelf.getData().getTitle();
+                    String picUrl = bookshelf.getData().getPicUrl();
+                    _modelListBiblio.add(new BiblioAdapter(title, picUrl, null));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void wishShelf()
@@ -380,10 +408,10 @@ public class ShelfContainer extends Fragment
                     }
                 } else {
                     try {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }
@@ -413,11 +441,16 @@ public class ShelfContainer extends Fragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String isbn = ((TextView) view.findViewById(R.id.TVISBN)).getText().toString();
-                Bundle b = new Bundle();
-                b.putString("isbn", isbn);
-                Intent in = new Intent(getActivity(), InfoBook.class);
-                in.putExtra("book", b);
-                startActivity(in);
+                if (!isbn.equals("")) {
+                    Bundle b = new Bundle();
+                    b.putString("isbn", isbn);
+                    Intent in = new Intent(getActivity(), InfoBook.class);
+                    in.putExtra("book", b);
+                    startActivity(in);
+                } else {
+                    Snackbar snackbar = Snackbar.make(_v, "Aucune information supplémentaire disponible", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
             }
         });
     }

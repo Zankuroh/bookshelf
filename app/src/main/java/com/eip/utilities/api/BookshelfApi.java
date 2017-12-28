@@ -1,6 +1,7 @@
 package com.eip.utilities.api;
 
 
+import com.eip.utilities.model.ASIN.ASIN;
 import com.eip.utilities.model.AuthorSubscription.SubList;
 import com.eip.utilities.model.AuthorSubscription.SubscriptionValidator;
 import com.eip.utilities.model.ChangeStatus.ChangeStatus;
@@ -156,4 +157,6 @@ public interface BookshelfApi
     @GET("wish/book/{user_id}}")
     Call<WishList> getFriendWishList(@Header("Authorization") String token, @Path("user_id") String user_id);
 
+    @GET("book/search/{asin}")
+    Call<ASIN> searchFromASIN(@Header("Authorization") String token, @Path("asin") String asin);
 }
