@@ -28,12 +28,13 @@ class SuggestionController extends ApiController
 		$suggestions = array();
 		
 		/**
-		 * Build suggestions from amazon
+		 * Build suggestions from amazon and get latests's books suggestions
 		 **/
-		$this->buildSuggestionsFromAmazon();
+		$forceBuild = $request->input('force_build', false) == "true" ? true : false;
+		$suggestions['latest_suggestions'] = $this->buildSuggestionsFromAmazon($forceBuild);
 
-		/** Get actual suggestions */
-		$suggestions['suggestions'] = $this->getSuggestionsOnJsonFormat();
+		/** Get overall suggestions with reference count */
+		$suggestions['overall_suggestions'] = $this->getOverallSuggestions();
 		
 		/**
 		 * Suggestions from user's friends's suggestions
@@ -52,11 +53,33 @@ class SuggestionController extends ApiController
 		return $this->getRawJsonResponse();
 	}
 
+	private function getLatestSuggestions($nbrSuggestions, $randomSort = false)
+	{
+		$suggestions = array();
+		$currentSuggestions = $this->getCurrentUser()
+		->suggestions()
+		->orderBy('updated_at', 'desc')
+		->limit($nbrSuggestions)
+		->get();
+		if ($randomSort)
+		{
+			$currentSuggestions = $currentSuggestions->shuffle();
+			$currentSuggestions = $currentSuggestions->all();
+			Log::debug("random sort");
+		}
+		foreach ($currentSuggestions as $currentSuggestion)
+		{
+			$suggestions[] = $currentSuggestion->isbn;
+		}
+
+		return $suggestions;
+	}
+
 	/**
-	 * Get suggestions with the most referenced during the fetching
+	 * Get suggestions with the most referenced during old builds
 	 * 
 	 **/
-	private function getSuggestionsOnJsonFormat()
+	private function getOverallSuggestions()
 	{
 		$suggestions = [];
 		Log::debug("Fetching from DB for suggestions");
@@ -296,8 +319,9 @@ class SuggestionController extends ApiController
 	/**
 	 * Fetch suggestions from amazon and store them in DB
 	 **/
-	private function buildSuggestionsFromAmazon()
+	private function buildSuggestionsFromAmazon($forceBuild = false)
 	{
+		$latestSuggestions = [];
 		$allowedToFetchFromAmazon = true;
 		$suggestionsNotEmpty = $this->getCurrentUser()
 		->suggestions()
@@ -317,7 +341,7 @@ class SuggestionController extends ApiController
 		}
 
 		/** Suggestions from amazon can be fetched only every 24 hours */
-		if ($allowedToFetchFromAmazon)
+		if ($allowedToFetchFromAmazon || $forceBuild)
 		{
 			$userLatestBooks = $this->getCurrentUser()
 			->books()
@@ -327,10 +351,18 @@ class SuggestionController extends ApiController
 			foreach ($userLatestBooks as $userLastBook)
 			{
 				$suggestions = $this->fetchSuggestionsFromAmazonWithIsbn($userLastBook->isbn);
+				$latestSuggestions = array_merge($latestSuggestions, $suggestions);
 				Log::debug('trying to fetch the book n=' . $userLastBook->isbn);
 				$this->storeSuggestions($suggestions);
 			}
+			shuffle($latestSuggestions);
 		}
+		else
+		{
+			$latestSuggestions = $this->getLatestSuggestions(18, true);
+		}
+
+		return $latestSuggestions;
 	}
 
 	/**
