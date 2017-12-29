@@ -11,7 +11,7 @@
     <string name="facebook_app_id">223852384693149</string>
 
     <string name="hint_com">Commentaire...</string>
-    <string name="btn_review">Noter ce livre</string>
+    <string name="btn_review">Note</string>
     <string name="btn_buy">Amazon</string>
     <string name="server_client_id">758818420378-kcg3p2or8bm0faha8vubpp4b7vsipsv0.apps.googleusercontent.com</string>
 
@@ -19,6 +19,13 @@
         <item>Titre</item>
         <item>Genre</item>
         <item>Auteur</item>
+    </string-array>
+
+    <string-array name="suggest">
+        <item>Suggestions des 3 derniers livres</item>
+        <item>Suggestions de tous les livres</item>
+        <item>Suggestions des 3 derniers livres amis</item>
+        <item>Suggestions de tous les livres amis</item>
     </string-array>
 
 </resources>

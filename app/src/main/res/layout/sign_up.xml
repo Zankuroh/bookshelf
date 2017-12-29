@@ -6,16 +6,28 @@
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <EditText
+
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="70dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:src="@drawable/bookshelf"
+        android:id="@+id/IVBookshelf" />
+
+    <EditText
         android:id="@+id/SignUpFirstName"
-        android:hint="Prénom"
-        android:layout_marginTop="110dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/SignUpPwd" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="204dp"
+        android:drawableStart="@drawable/ic_name"
+        android:ems="10"
+        android:hint="Pseudo"
+        android:inputType="textPersonName" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -23,6 +35,7 @@
         android:inputType="textEmailAddress"
         android:ems="10"
         android:id="@+id/SignUpMail"
+        android:drawableStart="@drawable/ic_email"
         android:hint="E-mail"
         android:layout_below="@+id/SignUpFirstName"
         android:layout_alignLeft="@+id/SignUpFirstName"
@@ -36,6 +49,7 @@
         android:ems="10"
         android:id="@+id/SignUpPwd"
         android:hint="Mot de passe"
+        android:drawableStart="@drawable/ic_password"
         android:selectAllOnFocus="true"
         android:layout_below="@+id/SignUpMail"
         android:layout_centerHorizontal="true"
@@ -47,7 +61,8 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/SignUpPwd2"
-        android:hint="Vérification mot de passe"
+        android:drawableStart="@drawable/ic_password"
+        android:hint="Vérification mdp"
         android:layout_below="@+id/SignUpPwd"
         android:layout_alignLeft="@+id/SignUpPwd"
         android:layout_alignStart="@+id/SignUpPwd"
@@ -55,16 +70,13 @@
         android:layout_alignEnd="@+id/SignUpPwd" />
 
     <Button
-        android:text="Créer son compte"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/btnSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#1DA44A"
         android:onClick="onClickSignUp"
-        android:layout_below="@+id/SignUpPwd2"
-        android:layout_marginTop="63dp"
-        android:layout_alignLeft="@+id/SignUpPwd2"
-        android:layout_alignStart="@+id/SignUpPwd2"
-        android:layout_alignRight="@+id/SignUpPwd2"
-        android:layout_alignEnd="@+id/SignUpPwd2" />
+        android:text="Créer son compte"
+        android:textColor="#e7e7e7" />
 
 </RelativeLayout>

@@ -62,6 +62,7 @@ public class ShelfContainer extends Fragment
     private String _keywords;
     private int _startIndex;
     private int _nbFound;
+    private GridView _gvBiblio;
 
     public ShelfContainer()
     {
@@ -91,8 +92,7 @@ public class ShelfContainer extends Fragment
                 mainShelf();
             }
         } else if (_type == MainActivity.shelfType.PROPOSHELF) {
-            _v = inflater.inflate(R.layout.shelf_simple, container, false);
-            _v.findViewById(R.id.ISearchB).setVisibility(View.GONE);
+            _v = inflater.inflate(R.layout.shelf_propo, container,false);
             setAdapters();
             propoShelf();
         } else if (_type == MainActivity.shelfType.WISHSHELF) {
@@ -299,7 +299,7 @@ public class ShelfContainer extends Fragment
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<Suggestion> call = bookshelfApi.getSuggestion(MainActivity.token, true);
+        Call<Suggestion> call = bookshelfApi.getSuggestion(MainActivity.token, false);
         call.enqueue(new Callback<Suggestion>() {
             @Override
             public void onResponse(Call<Suggestion> call, Response<Suggestion> response) {
@@ -320,6 +320,7 @@ public class ShelfContainer extends Fragment
                             Log.i("ISBN", identifier);
                         } else {
                             Log.i("ASIN", identifier);
+//                            ASINBook(identifier, l);
                             asins.add(identifier);
                         }
                     }
@@ -330,6 +331,7 @@ public class ShelfContainer extends Fragment
                             Log.i("ISBN", identifier);
                         } else {
                             Log.i("ASIN", identifier);
+//                            ASINBook(identifier, l);
                             asins.add(identifier);
                         }
                     }
@@ -340,6 +342,7 @@ public class ShelfContainer extends Fragment
                             Log.i("ISBN", identifier);
                         } else {
                             Log.i("ASIN", identifier);
+//                            ASINBook(identifier, l);
                             asins.add(identifier);
                         }
                     }
@@ -350,13 +353,13 @@ public class ShelfContainer extends Fragment
                             Log.i("ISBN", identifier);
                         } else {
                             Log.i("ASIN", identifier);
+//                            ASINBook(identifier, l);
                             asins.add(identifier);
                         }
                     }
                     for (String asin : asins) {
                         ASINBook(asin, l);
                     }
-                    MainActivity.stopLoading();
                 } else {
                     Log.i("error", response.errorBody().toString());
                     try {
@@ -366,6 +369,7 @@ public class ShelfContainer extends Fragment
                         e.printStackTrace();
                     }
                 }
+                MainActivity.stopLoading();
             }
 
             @Override
@@ -381,6 +385,7 @@ public class ShelfContainer extends Fragment
 
     private void ASINBook(final String asin, final Lock l)
     {
+        Log.i("function", "asin passe");
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -481,12 +486,12 @@ public class ShelfContainer extends Fragment
 
     private void setAdapters()
     {
-        GridView gvBiblio = _v.findViewById(R.id.GVBiblio);
+        _gvBiblio = _v.findViewById(R.id.GVBiblio);
         _adapterBiblio = new customAdapterBiblio(_v, _modelListBiblio);
-        gvBiblio.setAdapter(_adapterBiblio);
+        _gvBiblio.setAdapter(_adapterBiblio);
         _modelListBiblio.clear();
 
-        gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        _gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String isbn = ((TextView) view.findViewById(R.id.TVISBN)).getText().toString();

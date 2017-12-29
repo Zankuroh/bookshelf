@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.eip.utilities.api.BookshelfApi;
@@ -65,6 +67,7 @@ public class SignIn extends Fragment implements View.OnClickListener
         _v.findViewById(R.id.btnCo).setOnClickListener(this);
         _v.findViewById(R.id.btnForgetPass).setOnClickListener(this);
         _v.findViewById(R.id.btnCreateAccount).setOnClickListener(this);
+        _v.findViewById(R.id.fbConnect).setOnClickListener(this);
 
         _callbackManager = CallbackManager.Factory.create();
 
@@ -99,7 +102,7 @@ public class SignIn extends Fragment implements View.OnClickListener
         });
         accessTokenTracker.startTracking();
 
-        SignInButton mGoogleSignInButton = _v.findViewById(R.id.gConnect);
+        Button mGoogleSignInButton = _v.findViewById(R.id.gConnect);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.EMAIL))
@@ -175,6 +178,10 @@ public class SignIn extends Fragment implements View.OnClickListener
                 break;
             case R.id.btnCreateAccount:
                 startActivityForResult(new Intent(getActivity(), SignUp.class), 4242);
+                break;
+            case R.id.fbConnect:
+                Log.i("Click", "FB");
+                loginButton.performClick();
                 break;
             default:
                 break;

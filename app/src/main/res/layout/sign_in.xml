@@ -6,19 +6,33 @@
     android:focusableInTouchMode="true"
     android:id="@+id/RLsignIn">
 
-    <Button
-        android:text="Mot de passe oublié"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnForgetPass"
-        android:layout_below="@+id/btnCo"
-        android:layout_alignStart="@+id/btnCo"
-        android:layout_alignEnd="@+id/btnCo" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="70dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:src="@drawable/bookshelf"
+        android:id="@+id/IVBookshelf" />
+
+    <EditText
+        android:id="@+id/ETsignInMail"
+        android:drawableStart="@drawable/ic_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/IVBookshelf"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="120dp"
+        android:ems="10"
+        android:hint="E-mail"
+        android:inputType="textEmailAddress" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
+        android:drawableStart="@drawable/ic_password"
         android:ems="10"
         android:hint="Mot de passe"
         android:layout_marginTop="32dp"
@@ -27,54 +41,75 @@
         android:layout_alignLeft="@+id/ETsignInMail"
         android:layout_alignStart="@+id/ETsignInMail" />
 
+
     <Button
-        android:text="Connexion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/btnCo"
-        android:layout_marginTop="28dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/ETsignInMdp"
-        android:layout_alignEnd="@+id/ETsignInMdp"
-        android:layout_alignStart="@+id/ETsignInMdp" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:layout_alignEnd="@+id/ETsignInMail"
+        android:layout_alignStart="@+id/ETsignInMail"
+        android:text="Connexion" />
 
-    <EditText
+    <Button
+        android:id="@+id/btnForgetPass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:hint="E-mail"
-        android:ems="10"
-        android:layout_marginTop="119dp"
-        android:id="@+id/ETsignInMail"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignStart="@+id/btnCo"
+        android:layout_alignEnd="@+id/btnCo"
+        android:layout_below="@+id/btnCo"
+        android:text="Mot de passe oublié" />
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/gConnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="33dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/btnCreateAccount"
-        android:layout_alignEnd="@+id/btnCreateAccount" />
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/fConnect"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_above="@+id/gConnect"
-        android:layout_marginBottom="10dp"
-        android:layout_alignStart="@+id/gConnect"
-        android:layout_alignEnd="@+id/gConnect" />
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/btnForgetPass">
+
+        <Button
+            android:id="@+id/gConnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:background="@color/backgroundDark"
+            android:drawableStart="@drawable/ic_google"
+            android:padding="6dp"
+            android:text="Google"
+            android:layout_marginRight="5dp"
+            android:textColor="#C9C9C9"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/fbConnect"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="@color/backgroundDark"
+            android:drawableStart="@drawable/ic_facebook"
+            android:padding="6dp"
+            android:text="Facebook"
+            android:textColor="#C9C9C9"
+            android:layout_marginLeft="5dp"
+            android:textStyle="bold" />
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/fConnect"
+            android:layout_weight="0.8"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnCreateAccount"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Créer un compte"
-        android:layout_below="@+id/btnForgetPass"
-        android:layout_alignStart="@+id/btnForgetPass"
-        android:layout_alignEnd="@+id/btnForgetPass" />
+        android:layout_alignParentBottom="true"
+        android:background="#1DA44A"
+        android:textColor="#e7e7e7"
+        android:text="Créer un compte" />
 
 </RelativeLayout>

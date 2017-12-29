@@ -87,27 +87,39 @@
                 android:background="@android:color/darker_gray"
                 android:id="@+id/VLine"/>
 
-            <Button
-                android:id="@+id/BBuy"
-                style="?android:attr/buttonStyleSmall"
+            <LinearLayout
+                android:id="@+id/LLBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/VLine"
-                android:layout_marginLeft="50dip"
-                android:layout_marginRight="50dip"
-                android:onClick="onClickBuy"
-                android:text="@string/btn_buy" />
+                android:layout_below="@id/VLine">
 
-            <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_below="@id/BBuy"
-                android:layout_width="match_parent"
-                android:text="@string/btn_review"
-                android:layout_height="wrap_content"
-                android:id="@+id/BReview"
-                android:onClick="onClickReview"
-                android:layout_marginLeft="50dip"
-                android:layout_marginRight="50dip"/>
+                <Button
+                    android:id="@+id/BBuy"
+                    style="?android:attr/buttonStyleSmall"
+                    android:drawableStart="@drawable/ic_amazon"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/VLine"
+                    android:layout_marginLeft="50dip"
+                    android:layout_marginRight="15dip"
+                    android:onClick="onClickBuy"
+                    android:text="@string/btn_buy" />
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_below="@id/BBuy"
+                    android:drawableStart="@drawable/ic_star"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:text="@string/btn_review"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/BReview"
+                    android:onClick="onClickReview"
+                    android:layout_marginLeft="15dip"
+                    android:layout_marginRight="50dip"/>
+
+            </LinearLayout>
 
             <ListView
                 android:layout_width="wrap_content"
@@ -115,7 +127,7 @@
                 android:id="@+id/LVCom"
                 android:layout_alignParentBottom="true"
                 android:dividerHeight="2dp"
-                android:layout_below="@+id/BReview"
+                android:layout_below="@+id/LLBtn"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp" />

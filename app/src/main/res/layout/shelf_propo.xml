@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/RLShelf">
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/appBarLayout">
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    </android.support.design.widget.AppBarLayout>
+
+    <Spinner
+        android:id="@+id/SSuggest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/suggest"
+        android:textAlignment="center"
+        android:layout_below="@id/appBarLayout" />
+
+    <include
+        layout="@layout/shelf_container"
+        android:layout_below="@+id/SSuggest"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"/>
+
+</RelativeLayout>

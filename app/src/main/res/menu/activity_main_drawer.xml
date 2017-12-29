@@ -41,10 +41,6 @@
                 android:icon="@mipmap/ic_co"
                 android:title="Connexion" />
             <item
-                android:id="@+id/nav_param"
-                android:icon="@mipmap/ic_param"
-                android:title="Paramètres" />
-            <item
                 android:id="@+id/nav_about"
                 android:icon="@mipmap/ic_about"
                 android:title="À propos..."/>/>

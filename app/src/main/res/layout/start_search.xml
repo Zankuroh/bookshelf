@@ -18,6 +18,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_barcode"
         android:text="Scanner le livre"
         android:id="@+id/searchApn"
         android:layout_centerVertical="true"

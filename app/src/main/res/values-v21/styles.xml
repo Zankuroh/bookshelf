@@ -9,7 +9,7 @@
     </style>
 
     <style name="AlertDialogCustom" parent="android:Theme.Material.Light.Dialog.Alert">
-        <item name="android:colorPrimary">#FF74624A</item>
-        <item name="android:colorAccent">#FFCC0700</item>
+        <item name="android:colorPrimary">@color/colorPrimaryNeutral</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
     </style>
 </resources>

@@ -181,8 +181,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     //accessDenied(_this);
                 }
                 break;
-            case R.id.nav_param:
-                break;
             case R.id.nav_about:
                 navAbout();
                 break;

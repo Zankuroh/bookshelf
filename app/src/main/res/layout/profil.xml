@@ -83,8 +83,9 @@
         android:layout_alignStart="@+id/TVLabDateLast"
         android:layout_below="@+id/TVLabDateLast"
         android:layout_marginTop="20dp"
+        android:drawableStart="@drawable/ic_edit"
         android:layout_marginRight="20dp"
-        android:text="Modifier les informations personnelles"
+        android:text="Modifier mes informations"
         android:layout_alignParentEnd="true"
         android:visibility="gone"/>
 
