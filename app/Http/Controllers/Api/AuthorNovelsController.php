@@ -184,8 +184,12 @@ class AuthorNovelsController extends \App\Http\Controllers\ApiController
     	Log::debug("Already pushed novels ids : ");
     	Log::debug($authorsAlreadyReadNovelsNotificationsIds);
     	$notNotifiedNovels = AuthorNovels::whereNotIn('author_novels.id', $authorsAlreadyReadNovelsNotificationsIds)
-    	->whereIn('author_novels.id', $authorsNovels)
+        ->leftJoin('authors', 'authors.id', '=', 'author_novels.author_id')
+        ->select(['*', "author_novels.id as author_novels_id", "authors.id as authors_id"])
+        ->whereIn('author_novels.id', $authorsNovels)
     	->get();
+
+
 
     	Log::debug("SQL of not notified novels : ");
     	Log::debug(DB::getQueryLog());
@@ -206,7 +210,7 @@ class AuthorNovelsController extends \App\Http\Controllers\ApiController
     		array_push($bulkPushedNotifications,
     			[
     				'user_id' => $this->getCurrentUser()->id,
-    				'novel_id' => $item['id'],
+    				'novel_id' => $item['author_novels_id'],
     				'updated_at' => date('Y-m-d H:i:s'),
     				'created_at' => date('Y-m-d H:i:s')
     			]
