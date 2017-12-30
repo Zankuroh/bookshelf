@@ -251,7 +251,13 @@ class SuggestionController extends ApiController
 			"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($ch);
+
+		if(curl_errno($ch))
+		{
+			Log::debug('Curl error: ' . curl_error($ch));
+		}
 		curl_close($ch);
+		Log::debug("RESULT OF CURL IS NULL =" . empty($result));
 
 		return $result;
 	}
