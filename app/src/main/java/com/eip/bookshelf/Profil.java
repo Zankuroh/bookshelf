@@ -73,15 +73,15 @@ public class Profil extends Fragment implements View.OnClickListener
         Bundle b = getArguments();
         if (b != null) {
             setHasOptionsMenu(true);
-            prepareFriend();
             _FriendId = b.getString("idFriend");
             _isFriend = b.getBoolean("isFriend");
             _pseudo.setText(b.getString("fname"));
             _email.setText(b.getString("femail"));
+            prepareFriend();
         } else {
-            prepareSelf();
             _FriendId = null;
             _isFriend = false;
+            prepareSelf();
         }
 
 
@@ -185,8 +185,10 @@ public class Profil extends Fragment implements View.OnClickListener
     }
 
     private void prepareFriend() {
-        _v.findViewById(R.id.BFShelf).setOnClickListener(this);
-        _v.findViewById(R.id.BFShelf).setVisibility(View.VISIBLE);
+        if (_isFriend) {
+            _v.findViewById(R.id.BFShelf).setOnClickListener(this);
+            _v.findViewById(R.id.BFShelf).setVisibility(View.VISIBLE);
+        }
     }
 
     public void getInfo(){
@@ -326,7 +328,7 @@ public class Profil extends Fragment implements View.OnClickListener
     }
 
     private void getFriendWishList() {
-        MainActivity.defineNameToolBar("WishList de " + _pseudo);
+        MainActivity.defineNameToolBar("WishList de " + _pseudo.getText().toString());
         Bundle b = new Bundle();
         b.putString("idFriend", _FriendId);
         b.putSerializable("type", MainActivity.shelfType.WISHSHELF);

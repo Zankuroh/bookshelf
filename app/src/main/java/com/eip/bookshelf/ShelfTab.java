@@ -1,5 +1,6 @@
 package com.eip.bookshelf;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -8,8 +9,24 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
+
+import com.eip.utilities.api.BookshelfApi;
+import com.eip.utilities.model.Notification.Notification;
+import com.eip.utilities.model.Notification.Notifications;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Maxime on 02/03/2017.
@@ -17,6 +34,8 @@ import java.util.List;
 
 public class ShelfTab extends Fragment
 {
+    private View _v;
+
     public ShelfTab()
     {
 
@@ -25,15 +44,22 @@ public class ShelfTab extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View v = inflater.inflate(R.layout.shelf_tab, container, false);
+        _v = inflater.inflate(R.layout.shelf_tab, container, false);
 
-        ViewPager viewPager = v.findViewById(R.id.VPTab);
+        ViewPager viewPager = _v.findViewById(R.id.VPTab);
         setupViewPager(viewPager);
 
-        TabLayout tabLayout = v.findViewById(R.id.TLTab);
+        TabLayout tabLayout = _v.findViewById(R.id.TLTab);
         tabLayout.setupWithViewPager(viewPager);
 
-        return v;
+        Bundle b = getArguments();
+        if (b != null) {
+            if (b.getBoolean("connection", false)) {
+                getNotification();
+            }
+        }
+
+        return _v;
     }
 
     private void setupViewPager(ViewPager viewPager)
@@ -115,5 +141,50 @@ public class ShelfTab extends Fragment
         {
             return mFragmentTitleList.get(position);
         }
+    }
+
+    private void getNotification() {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<Notifications> call = bookshelfApi.getNotifications(MainActivity.token);
+        call.enqueue(new Callback<Notifications>() {
+            @Override
+            public void onResponse(Call<Notifications> call, Response<Notifications> response) {
+                if (response.isSuccessful()) {
+                    List<Notification> notifications = response.body().getData();
+                    if (!notifications.isEmpty()) {
+                        final Dialog dial = new Dialog(_v.getContext());
+                        dial.setContentView(R.layout.notification_popup);
+                        dial.setTitle("Vos nouveautées");
+                        dial.show();
+                        ArrayList<NotificationAdapter> _modelListNotif = new ArrayList<>();
+                        customAdapterNotification _adapterNotif = new customAdapterNotification(_v, _modelListNotif);
+                        ListView lv = dial.findViewById(R.id.LVNew);
+                        lv.setAdapter(_adapterNotif);
+                        _modelListNotif.clear();
+                        ListIterator<Notification> it = notifications.listIterator();
+                        while (it.hasNext()) {
+                            Notification newNotif = it.next();
+                            _modelListNotif.add(new NotificationAdapter(newNotif.getAuthorId(),newNotif.getTitle()));
+                        }
+                        _adapterNotif.notifyDataSetChanged();
+                    }
+
+                } else {
+
+                }
+                MainActivity.stopLoading();
+            }
+
+            @Override
+            public void onFailure(Call<Notifications> call, Throwable t)
+            {
+                t.printStackTrace();
+                MainActivity.stopLoading();
+            }
+        });
     }
 }
