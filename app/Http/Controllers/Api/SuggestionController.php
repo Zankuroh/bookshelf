@@ -256,6 +256,11 @@ class SuggestionController extends ApiController
 		{
 			Log::debug('Curl error: ' . curl_error($ch));
 		}
+		else
+		{
+			Log::debug('Curl info = ');
+			Log::debug(curl_getinfo($ch));
+		}
 		curl_close($ch);
 		Log::debug("RESULT OF CURL IS NULL =" . empty($result));
 
