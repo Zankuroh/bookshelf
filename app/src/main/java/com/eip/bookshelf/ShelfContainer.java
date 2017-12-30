@@ -413,20 +413,15 @@ public class ShelfContainer extends Fragment
                         l.lock();
                         _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, identifier));
                         getActivity().runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            _adapterBiblio.notifyDataSetChanged();
-                                                        }
-                                                    });
+                            @Override
+                            public void run() {
+                                _adapterBiblio.notifyDataSetChanged();
+                            }
+                        });
                         l.unlock();
                     }
                 });
                 t.start();
-                try {
-                    t.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             } else {
                 ASINBook(identifier, l);
             }
@@ -724,7 +719,10 @@ public class ShelfContainer extends Fragment
         t.start();
     }
 
-    private void getFriendWishList() {
+    private void getFriendWishList()
+    {
+        MainActivity.startLoading();
+
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -740,16 +738,37 @@ public class ShelfContainer extends Fragment
 
                     ListIterator<Datum> it = list.listIterator();
                     ArrayList<String> isbns = new ArrayList<>();
-                    Map<String, String> map = new HashMap<>();
 
-                    while(it.hasNext()){
+                    while (it.hasNext()) {
                         Datum book = it.next();
                         isbns.add(book.getIsbn());
-                        map.put(book.getIsbn(), "0");
                     }
-                    if (!isbns.isEmpty())
-                        getBackBookInShelf(isbns, map);
-                    else {
+
+                    final Lock l = new ReentrantLock();
+                    for (final String isbn : isbns) {
+                        Thread t = new Thread(new Runnable() {
+                            public void run() {
+                                VolumeInfo vi = getInfoBook(isbn);
+                                String img;
+                                if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
+                                    img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
+                                } else {
+                                    img = vi.getImageLinks().getThumbnail();
+                                }
+                                l.lock();
+                                _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, isbn));
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        _adapterBiblio.notifyDataSetChanged();
+                                    }
+                                });
+                                l.unlock();
+                            }
+                        });
+                        t.start();
+                    }
+                    if (isbns.size() == 0) {
                         Snackbar snackbar = Snackbar.make(_v, "Votre amis n'a pas de livre dans sa liste", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     }
