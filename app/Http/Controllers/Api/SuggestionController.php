@@ -245,8 +245,16 @@ class SuggestionController extends ApiController
 	 **/
 	private function fileGetContentsWithContext($url)
 	{
-		$url = urldecode($url);
+		$client = new \GuzzleHttp\Client();
+		//$url = urldecode($url);
+		
 		Log::debug("FUCKING URL =" . $url);
+		$res = $client->request('GET', $url);
+
+		Log::debug("GUZZLE RESULT " . $res->getBody());		
+
+		$result = $res->getBody();
+
 		$ch = curl_init();
 		$headers = array(
 			"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -259,17 +267,17 @@ class SuggestionController extends ApiController
 		curl_setopt($ch, CURLOPT_USERAGENT,
 			"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$result = curl_exec($ch);
+		//$result = curl_exec($ch);
 
-		if(curl_errno($ch))
-		{
-			Log::debug('Curl error: ' . curl_error($ch));
-		}
-		else
-		{
-			Log::debug('Curl info = ');
-			Log::debug(curl_getinfo($ch));
-		}
+		// if(curl_errno($ch))
+		// {
+		// 	Log::debug('Curl error: ' . curl_error($ch));
+		// }
+		// else
+		// {
+		// 	Log::debug('Curl info = ');
+		// 	Log::debug(curl_getinfo($ch));
+		// }
 		if ($result)
 		{
 			Log::debug("Result != false");
