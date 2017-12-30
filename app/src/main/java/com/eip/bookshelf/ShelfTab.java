@@ -168,13 +168,13 @@ public class ShelfTab extends Fragment
                         ListIterator<Notification> it = notifications.listIterator();
                         while (it.hasNext()) {
                             Notification newNotif = it.next();
-                            _modelListNotif.add(new NotificationAdapter(newNotif.getAuthorId(),newNotif.getTitle()));
+                            String name = newNotif.getFirstName();
+                            if (newNotif.getLastName() != null)
+                                name += " " + newNotif.getLastName();
+                            _modelListNotif.add(new NotificationAdapter(name,newNotif.getTitle()));
                         }
                         _adapterNotif.notifyDataSetChanged();
                     }
-
-                } else {
-
                 }
                 MainActivity.stopLoading();
             }
