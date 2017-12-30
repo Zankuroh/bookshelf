@@ -21,6 +21,21 @@ public class SubAuthor {
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
+    @SerializedName("first_name")
+    @Expose
+    private String firstName;
+    @SerializedName("last_name")
+    @Expose
+    private Object lastName;
+    @SerializedName("active")
+    @Expose
+    private String active;
+    @SerializedName("current_votes")
+    @Expose
+    private String currentVotes;
+    @SerializedName("added_by")
+    @Expose
+    private String addedBy;
 
     public Integer getId() {
         return id;
@@ -60,6 +75,46 @@ public class SubAuthor {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public Object getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(Object lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getActive() {
+        return active;
+    }
+
+    public void setActive(String active) {
+        this.active = active;
+    }
+
+    public String getCurrentVotes() {
+        return currentVotes;
+    }
+
+    public void setCurrentVotes(String currentVotes) {
+        this.currentVotes = currentVotes;
+    }
+
+    public String getAddedBy() {
+        return addedBy;
+    }
+
+    public void setAddedBy(String addedBy) {
+        this.addedBy = addedBy;
     }
 
 }

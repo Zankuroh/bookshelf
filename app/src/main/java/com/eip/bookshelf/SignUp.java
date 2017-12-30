@@ -168,7 +168,7 @@ public class SignUp extends AppCompatActivity
         });
     }
 
-    private static Boolean verifyEmail(String email)
+    public static Boolean verifyEmail(String email)
     {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }

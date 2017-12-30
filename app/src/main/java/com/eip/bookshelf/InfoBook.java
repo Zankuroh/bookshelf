@@ -182,7 +182,6 @@ public class InfoBook extends AppCompatActivity
 
     private void switchBookState(final String state)
     {
-        // TODO: 13/12/2017  update le status d'un livre DONE
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -387,8 +386,6 @@ public class InfoBook extends AppCompatActivity
                         }
                     });
         adb.show();
-        // TODO: 11/12/2017 add un auteur :) DONE
-        /**/
     }
 
     private void updateDisplayedReviews()
@@ -847,6 +844,8 @@ public class InfoBook extends AppCompatActivity
                     ModifAuthor author = response.body();
                     addToSub(author.getData().getId());
                 } else {
+                    Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
                     /*try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
                         JSONObject jobj = jObjError.getJSONObject("errors");
@@ -862,8 +861,7 @@ public class InfoBook extends AppCompatActivity
                         Snackbar snackbar = Snackbar.make(_rl, "Erreur : " +  jObjError.getString("title"), Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+
                         e.printStackTrace();
                     }*/
 
@@ -892,7 +890,7 @@ public class InfoBook extends AppCompatActivity
             public void onResponse(Call<SubscriptionValidator> call, Response<SubscriptionValidator> response) {
                 if (response.isSuccessful()) {
                     //SubscriptionValidator modif = response.body();
-                    Snackbar snackbar = Snackbar.make(_rl, "Vous serez notifié lors de ses prochaines sortis", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(_rl, "Vous serez notifié lors de ses prochaines sorties", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
                     try {

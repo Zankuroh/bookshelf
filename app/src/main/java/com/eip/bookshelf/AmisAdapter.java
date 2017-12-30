@@ -8,10 +8,12 @@ class AmisAdapter
 {
     private String _name;
     private String _id;
+    private String _email;
 
-    AmisAdapter(String name, String id) {
+    AmisAdapter(String name, String id, String email) {
         this._name = name;
         this._id = id;
+        this._email = email;
     }
 
     String get_name() {
@@ -28,5 +30,13 @@ class AmisAdapter
 
     public void set_id(String id) {
         this._id = id;
+    }
+
+    String get_email() {
+        return _email;
+    }
+
+    public void set_email(String email) {
+        this._email = email;
     }
 }

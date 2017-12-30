@@ -24,10 +24,15 @@ import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.api.GoogleBooksApi;
 import com.eip.utilities.model.Books;
 import com.eip.utilities.model.BooksLocal.BooksLocal;
+import com.eip.utilities.model.Friend.WishList.Datum;
+import com.eip.utilities.model.Friend.WishList.WishList;
 import com.eip.utilities.model.IndustryIdentifier;
 import com.eip.utilities.model.Item;
 import com.eip.utilities.model.Suggestion.Suggestion;
 import com.eip.utilities.model.VolumeInfo;
+
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -63,6 +68,7 @@ public class ShelfContainer extends Fragment
     private int _startIndex;
     private int _nbFound;
     private GridView _gvBiblio;
+    private String _FriendId;
 
     public ShelfContainer()
     {
@@ -76,6 +82,7 @@ public class ShelfContainer extends Fragment
         Bundle b = getArguments();
         if (b != null) {
             _type = (MainActivity.shelfType)b.getSerializable("type");
+            _FriendId = b.getString("idFriend", null);
             if (_type == MainActivity.shelfType.MAINSHELF) {
                 _status = b.getString("status");
             }
@@ -97,7 +104,11 @@ public class ShelfContainer extends Fragment
             propoShelf();
         } else if (_type == MainActivity.shelfType.WISHSHELF) {
             _v = inflater.inflate(R.layout.shelf_simple, container, false);
-            setTextWatcher();
+            if (_FriendId == null) {
+                setTextWatcher();
+            } else {
+                _v.findViewById(R.id.ISearchB).setVisibility(View.GONE);
+            }
             setAdapters();
         } else if (_type == MainActivity.shelfType.SEARCH) {
             _v = inflater.inflate(R.layout.shelf_search, container, false);
@@ -131,7 +142,11 @@ public class ShelfContainer extends Fragment
                 field.setText("");
             }
             if (_type == MainActivity.shelfType.WISHSHELF) {
-                wishShelf();
+                if (_FriendId == null) {
+                    wishShelf();
+                } else {
+                    getFriendWishList();
+                }
             }
         }
     }
@@ -293,7 +308,6 @@ public class ShelfContainer extends Fragment
     private void propoShelf()
     {
         MainActivity.startLoading();
-        //Todo: Appel à la BDD pour recup les vrais PROPOS
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -571,7 +585,9 @@ public class ShelfContainer extends Fragment
                             genre = TextUtils.join(", ", vi.getCategories());
                         }
                         _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, isbn));
-                        _req.writePrimaryInfo(vi.getTitle(), img, isbn, authors, genre, map.get(isbn));
+                        if (_FriendId == null) {
+                            _req.writePrimaryInfo(vi.getTitle(), img, isbn, authors, genre, map.get(isbn));
+                        }
                     }
                 }
             }
@@ -671,5 +687,59 @@ public class ShelfContainer extends Fragment
             }
         });
         t.start();
+    }
+
+    private void getFriendWishList() {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<WishList> call = bookshelfApi.getFriendWishList(MainActivity.token,  _FriendId);
+        call.enqueue(new Callback<WishList>() {
+            @Override
+            public void onResponse(Call<WishList> call, Response<WishList> response) {
+                _modelListBiblio.clear();
+                if (response.isSuccessful()) {
+                    List<Datum> list = response.body().getData();
+
+                    ListIterator<Datum> it = list.listIterator();
+                    ArrayList<String> isbns = new ArrayList<>();
+                    Map<String, String> map = new HashMap<>();
+
+                    while(it.hasNext()){
+                        Datum book = it.next();
+                        isbns.add(book.getIsbn());
+                        map.put(book.getIsbn(), "0");
+                    }
+                    if (!isbns.isEmpty())
+                        getBackBookInShelf(isbns, map);
+                    else {
+                        Snackbar snackbar = Snackbar.make(_v, "Votre amis n'a pas de livre dans sa liste", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+                MainActivity.stopLoading();
+            }
+
+            @Override
+            public void onFailure(Call<WishList> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+                MainActivity.stopLoading();
+            }
+        });
     }
 }

@@ -7,16 +7,24 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eip.utilities.api.BookshelfApi;
+import com.eip.utilities.model.Friend.Modif.FriendModif;
+import com.eip.utilities.model.Friend.WishList.WishList;
 import com.eip.utilities.model.Profile.Profile;
 import com.eip.utilities.model.Profile.Profile_;
+import com.eip.utilities.model.SimpleResponse.SimpleResponse;
+
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -59,30 +67,27 @@ public class Profil extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         _v = inflater.inflate(R.layout.profil, container, false);
+        _pseudo = _v.findViewById(R.id.TVPseudo);
+        _email = _v.findViewById(R.id.TVEmail);
 
         Bundle b = getArguments();
         if (b != null) {
+            setHasOptionsMenu(true);
             prepareFriend();
             _FriendId = b.getString("idFriend");
             _isFriend = b.getBoolean("isFriend");
+            _pseudo.setText(b.getString("fname"));
+            _email.setText(b.getString("femail"));
         } else {
             prepareSelf();
             _FriendId = null;
             _isFriend = false;
         }
 
-        if (getActivity() != null) {
-            Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-            ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            if (ab != null) {
-                ab.setDisplayHomeAsUpEnabled(true);
-            }
-            onCreateOptionsMenu(toolbar.getMenu());
-        }
+
 
         _rl = _v.findViewById(R.id.RLProfil);
-        _pseudo = _v.findViewById(R.id.TVPseudo);
-        _email = _v.findViewById(R.id.TVEmail);
+
         _birth = _v.findViewById(R.id.TVBirth);
         _genre = _v.findViewById(R.id.TVGenre);
         _book = _v.findViewById(R.id.TVBook);
@@ -97,6 +102,9 @@ public class Profil extends Fragment implements View.OnClickListener
         switch (v.getId()) {
             case R.id.BEditProfil:
                 startActivityForResult(new Intent(getActivity(), EditProfil.class), 4242);
+                break;
+            case R.id.BFShelf:
+                getFriendWishList();
                 break;
             default:
                 break;
@@ -115,20 +123,18 @@ public class Profil extends Fragment implements View.OnClickListener
         }
     }
 
-    public boolean onCreateOptionsMenu(Menu menu)
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
-        if (getActivity() != null) {
-            getActivity().getMenuInflater().inflate(R.menu.main, menu);
-        }
+        inflater.inflate(R.menu.main, menu);
         _menu = menu;
 
         hideButtons();
         if (_isFriend) {
-            _menu.findItem(R.id.IRemoveBookWish).setVisible(true);
-        } else if (_FriendId != null) {
             _menu.findItem(R.id.IRemoveFriend).setVisible(true);
+        } else if (_FriendId != null) {
+            _menu.findItem(R.id.IAddFriend).setVisible(true);
         }
-        return true;
     }
 
     private void hideButtons()
@@ -141,6 +147,25 @@ public class Profil extends Fragment implements View.OnClickListener
         _menu.findItem(R.id.IAddFriend).setVisible(false);
         _menu.findItem(R.id.IRemoveFriend).setVisible(false);
         _menu.findItem(R.id.ICategories).setVisible(false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId()) {
+            case R.id.IAddFriend:
+                addFriend();
+                _menu.findItem(R.id.IAddFriend).setVisible(false);
+                _menu.findItem(R.id.IRemoveFriend).setVisible(true);
+                break;
+            case R.id.IRemoveFriend:
+                deletefriend();
+                _menu.findItem(R.id.IAddFriend).setVisible(true);
+                _menu.findItem(R.id.IRemoveFriend).setVisible(false);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -210,6 +235,105 @@ public class Profil extends Fragment implements View.OnClickListener
     public void getFriendInfo(){
 
     }
-    //Todo: Récupérer les restants d'info du user
-    //Todo: Rechercher un user ?
+
+    private void addFriend() {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<FriendModif> call = bookshelfApi.addFriend(MainActivity.token,  Integer.parseInt(_FriendId));
+        call.enqueue(new Callback<FriendModif>() {
+            @Override
+            public void onResponse(Call<FriendModif> call, Response<FriendModif> response) {
+                if (response.isSuccessful()) {
+                    FriendModif fm = response.body();
+                    if (fm.getTitle() == null) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Ami ajouté", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } else {
+                        Snackbar snackbar = Snackbar.make(_rl, fm.getTitle(), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+                MainActivity.stopLoading();
+            }
+
+            @Override
+            public void onFailure(Call<FriendModif> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+                MainActivity.stopLoading();
+            }
+        });
+    }
+
+    private void deletefriend() {
+        BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .baseUrl(BookshelfApi.APIPath)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(BookshelfApi.class);
+        Call<SimpleResponse> call = bookshelfApi.delFriend(MainActivity.token,  Integer.parseInt(_FriendId));
+        call.enqueue(new Callback<SimpleResponse>() {
+            @Override
+            public void onResponse(Call<SimpleResponse> call, Response<SimpleResponse> response) {
+                if (response.isSuccessful()) {
+                    SimpleResponse valid = response.body();
+                    if (valid.getData().getSuccess().equals("true")) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Ami supprimé", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } else {
+                        Snackbar snackbar = Snackbar.make(_rl, valid.getTitle(), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
+
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        e.printStackTrace();
+                    }
+                }
+                MainActivity.stopLoading();
+            }
+
+            @Override
+            public void onFailure(Call<SimpleResponse> call, Throwable t)
+            {
+                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                t.printStackTrace();
+                MainActivity.stopLoading();
+            }
+        });
+    }
+
+    private void getFriendWishList() {
+        MainActivity.defineNameToolBar("WishList de " + _pseudo);
+        Bundle b = new Bundle();
+        b.putString("idFriend", _FriendId);
+        b.putSerializable("type", MainActivity.shelfType.WISHSHELF);
+        ShelfContainer ShelfFrag = new ShelfContainer();
+        ShelfFrag.setArguments(b);
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, ShelfFrag, "SHELF");
+        fragmentTransaction.commit();
+    }
 }
