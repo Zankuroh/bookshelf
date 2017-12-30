@@ -25,7 +25,7 @@ class AmazonBuyController extends ApiController
 		Log::debug("URL decoded = " . $url);
 		//$htmlOutput = file_get_contents($url);
 		//var_dump($htmlOutput);
-		return $url;
+		return htmlspecialchars_decode($url);
 	}
 
 	/**

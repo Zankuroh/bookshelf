@@ -174,7 +174,7 @@ class SuggestionController extends ApiController
 			$url = null;
 		}
 
-		return $url;
+		return htmlspecialchars_decode($url);
 	}
 
 	/**
