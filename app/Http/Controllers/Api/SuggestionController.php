@@ -247,9 +247,20 @@ class SuggestionController extends ApiController
 	{
 		$client = new \GuzzleHttp\Client();
 		//$url = urldecode($url);
+		//$client->setHeader('user-agent', "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.101 Safari/537.36");
+
+		//$client->setUserAgent('Mozillaa/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0');
 		
 		Log::debug("FUCKING URL =" . $url);
-		$res = $client->request('GET', $url);
+		$res = $client->request('GET', $url , array(
+			'headers' => array(
+				'user-agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36",
+				'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+				'accept-encoding' => 'gzip, deflate, br',
+				'accept-language' => 'en-US,en;q=0.9,fr;q=0.8',
+				'upgrade-insecure-requests' => '1'
+			)
+		));
 
 		Log::debug("GUZZLE RESULT " . $res->getBody());		
 
