@@ -245,36 +245,26 @@ class SuggestionController extends ApiController
 	 **/
 	private function fileGetContentsWithContext($url)
 	{
-		$ch = curl_init();
-		$headers = array(
-			"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-		);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_USERAGENT,
-			"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$result = curl_exec($ch);
+		$client = new \GuzzleHttp\Client();
+		
+		Log::debug("FUCKING URL =" . $url);
+		$res = $client->request('GET', $url , array(
+			'debug' => false,
+			'headers' => array(
+				'Host' => 'www.amazon.fr',
+				'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0",
+				'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+				'Accept-Encoding' => 'gzip, deflate, br',
+				'Accept-Language' => 'en-US,en;q=0.9,fr;q=0.8',
+				'Upgrade-Insecure-Requests' => '1',
+				'Connection' => 'Keep-Alive'
+			)
+		));
 
-		if(curl_errno($ch))
-		{
-			Log::debug('Curl error: ' . curl_error($ch));
-		}
-		else
-		{
-			Log::debug('Curl info = ');
-			Log::debug(curl_getinfo($ch));
-		}
-		if ($result)
-		{
-			Log::debug("Result != false");
-		}
-		else
-		{
-			Log::debug("Result if false");
-		}
+		Log::debug("GUZZLE RESULT " . $res->getBody());		
 
-		curl_close($ch);
+		$result = $res->getBody();
+
 		Log::debug("RESULT OF CURL IS NULL =" . empty($result));
 		Log::debug("RESULT CURL = " . $result);
 
@@ -516,6 +506,7 @@ class SuggestionController extends ApiController
 					$details[] = $detailsOfId;
 				}
 			}
+			usleep(1500);
 		}
 
 		return $details;
