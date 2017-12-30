@@ -247,7 +247,9 @@ class SuggestionController extends ApiController
 	{
 		$ch = curl_init();
 		$headers = array(
-			"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+			"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+			"Connection: Keep-Alive",
+			"Host: localhost"
 		);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_URL, $url);
