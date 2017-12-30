@@ -272,6 +272,7 @@ class SuggestionController extends ApiController
 
 		curl_close($ch);
 		Log::debug("RESULT OF CURL IS NULL =" . empty($result));
+		Log::debug("RESULT CURL = " . $result);
 
 		return $result;
 	}
