@@ -68,6 +68,10 @@ public class ShelfContainer extends Fragment
     private int _startIndex;
     private int _nbFound;
     private GridView _gvBiblio;
+    private List<String> _latestSugg;
+    private List<String> _overallSugg;
+    private List<String> _friendLatestSugg;
+    private List<String> _friendSugg;
     private String _FriendId;
 
     public ShelfContainer()
@@ -102,6 +106,7 @@ public class ShelfContainer extends Fragment
             _v = inflater.inflate(R.layout.shelf_propo, container,false);
             setAdapters();
             propoShelf();
+            setOnChangeSugg();
         } else if (_type == MainActivity.shelfType.WISHSHELF) {
             _v = inflater.inflate(R.layout.shelf_simple, container, false);
             if (_FriendId == null) {
@@ -164,6 +169,38 @@ public class ShelfContainer extends Fragment
         } else {
             unsetTextWatcher();
         }
+    }
+
+    private void setOnChangeSugg()
+    {
+        Spinner sp = _v.findViewById(R.id.SSuggest);
+        sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id)
+            {
+                String value = ((Spinner)_v.findViewById(R.id.SSuggest)).getSelectedItem().toString();
+                Log.i("Item", value);
+                switch (value) {
+                    case "Suggestions des 3 derniers livres":
+                        loadSuggestions(_latestSugg);
+                        break;
+                    case "Suggestions de tous les livres":
+                        loadSuggestions(_overallSugg);
+                        break;
+                    case "Suggestions des 3 derniers livres amis":
+                        loadSuggestions(_friendLatestSugg);
+                        break;
+                    case "Suggestions de tous les livres amis":
+                        loadSuggestions(_friendSugg);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {}
+        });
     }
 
     private void setTextWatcher()
@@ -317,63 +354,14 @@ public class ShelfContainer extends Fragment
         call.enqueue(new Callback<Suggestion>() {
             @Override
             public void onResponse(Call<Suggestion> call, Response<Suggestion> response) {
-                _modelListBiblio.clear();
                 if (response.isSuccessful()) {
-                    Lock l = new ReentrantLock();
                     Suggestion bookshelf = response.body();
-                    List<String> latestSugg = bookshelf.getData().getLatestSuggestions();
-                    List<String> overallSugg = bookshelf.getData().getOverallSuggestions();
-                    List<String> friendLatestSugg = bookshelf.getData().getFriendsLatestBooks();
-                    List<String> friendSugg = bookshelf.getData().getFriendsSuggestions();
-                    List<String> asins = new ArrayList<>();
+                    _latestSugg = bookshelf.getData().getLatestSuggestions();
+                    _overallSugg = bookshelf.getData().getOverallSuggestions();
+                    _friendLatestSugg = bookshelf.getData().getFriendsLatestBooks();
+                    _friendSugg = bookshelf.getData().getFriendsSuggestions();
 
-                    ListIterator<String> it = latestSugg.listIterator();
-                    while(it.hasNext()){
-                        String identifier = it.next();
-                        if (android.text.TextUtils.isDigitsOnly(identifier)) {
-                            Log.i("ISBN", identifier);
-                        } else {
-                            Log.i("ASIN", identifier);
-//                            ASINBook(identifier, l);
-                            asins.add(identifier);
-                        }
-                    }
-                    it = overallSugg.listIterator();
-                    while(it.hasNext()){
-                        String identifier = it.next();
-                        if (android.text.TextUtils.isDigitsOnly(identifier)) {
-                            Log.i("ISBN", identifier);
-                        } else {
-                            Log.i("ASIN", identifier);
-//                            ASINBook(identifier, l);
-                            asins.add(identifier);
-                        }
-                    }
-                    it = friendLatestSugg.listIterator();
-                    while(it.hasNext()){
-                        String identifier = it.next();
-                        if (android.text.TextUtils.isDigitsOnly(identifier)) {
-                            Log.i("ISBN", identifier);
-                        } else {
-                            Log.i("ASIN", identifier);
-//                            ASINBook(identifier, l);
-                            asins.add(identifier);
-                        }
-                    }
-                    it = friendSugg.listIterator();
-                    while(it.hasNext()){
-                        String identifier = it.next();
-                        if (android.text.TextUtils.isDigitsOnly(identifier)) {
-                            Log.i("ISBN", identifier);
-                        } else {
-                            Log.i("ASIN", identifier);
-//                            ASINBook(identifier, l);
-                            asins.add(identifier);
-                        }
-                    }
-                    for (String asin : asins) {
-                        ASINBook(asin, l);
-                    }
+                    loadSuggestions(_latestSugg);
                 } else {
                     Log.i("error", response.errorBody().toString());
                     try {
@@ -395,6 +383,26 @@ public class ShelfContainer extends Fragment
                 MainActivity.stopLoading();
             }
         });
+    }
+
+    private void loadSuggestions(List<String> sugg)
+    {
+        _modelListBiblio.clear();
+        if (sugg == null || sugg.size() == 0) {
+            _adapterBiblio.notifyDataSetChanged();
+            return;
+        }
+        Lock l = new ReentrantLock();
+        ListIterator<String> it = sugg.listIterator();
+        while(it.hasNext()){
+            String identifier = it.next();
+            if (android.text.TextUtils.isDigitsOnly(identifier)) {
+                Log.i("ISBN", identifier);
+            } else {
+                Log.i("ASIN", identifier);
+                ASINBook(identifier, l);
+            }
+        }
     }
 
     private void ASINBook(final String asin, final Lock l)
