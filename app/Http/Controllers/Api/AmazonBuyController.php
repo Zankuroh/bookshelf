@@ -22,7 +22,8 @@ class AmazonBuyController extends ApiController
 
 		$url = $url_research_amazon .
 		$segmentUrl .
-		'&' . $segmentFieldsKeywords;
+		'&' . $segmentFieldsKeywords .
+		'&' . "tag=" . urlencode("duckduckgo-20");
 
 		Log::debug("URL generated = " . $url);
 		//$htmlOutput = file_get_contents($url);
