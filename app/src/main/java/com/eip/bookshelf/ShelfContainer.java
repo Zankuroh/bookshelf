@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -353,9 +354,9 @@ public class ShelfContainer extends Fragment
                 .build()
                 .create(BookshelfApi.class);
         Call<Suggestion> call = bookshelfApi.getSuggestion(MainActivity.token, false);
-        _latestSugg = new ArrayList<>(); // !
-        _latestSugg.add("9781781100486"); // !
-        _latestSugg.add("B00B6YRQ7E"); // !
+//        _latestSugg = new ArrayList<>(); // !
+//        _latestSugg.add("9781781100486"); // !
+//        _latestSugg.add("B00B6YRQ7E"); // !
         call.enqueue(new Callback<Suggestion>() {
             @Override
             public void onResponse(Call<Suggestion> call, Response<Suggestion> response) {
@@ -396,35 +397,19 @@ public class ShelfContainer extends Fragment
             _adapterBiblio.notifyDataSetChanged();
             return;
         }
-        final Lock l = new ReentrantLock();
+        Lock l = new ReentrantLock();
         ListIterator<String> it = sugg.listIterator();
+        List<String> isbns = new ArrayList<>();
         while(it.hasNext()){
-            final String identifier = it.next();
+            String identifier = it.next();
             if (android.text.TextUtils.isDigitsOnly(identifier)) {
-                Thread t = new Thread(new Runnable() {
-                    public void run() {
-                        VolumeInfo vi = getInfoBook(identifier);
-                        String img;
-                        if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
-                            img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
-                        } else {
-                            img = vi.getImageLinks().getThumbnail();
-                        }
-                        l.lock();
-                        _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, identifier));
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                _adapterBiblio.notifyDataSetChanged();
-                            }
-                        });
-                        l.unlock();
-                    }
-                });
-                t.start();
+                isbns.add(identifier);
             } else {
                 ASINBook(identifier, l);
             }
+        }
+        if (isbns.size() > 0) {
+            getInfoBookByThread(isbns, l);
         }
     }
 
@@ -600,6 +585,10 @@ public class ShelfContainer extends Fragment
                     cursor.close();
                     for (String isbn : isbns) {
                         VolumeInfo vi = getInfoBook(isbn);
+                        if (vi == null) {
+                            Log.e("INVALID ISBN", isbn);
+                            continue;
+                        }
                         String img;
                         if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
                             img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
@@ -647,8 +636,9 @@ public class ShelfContainer extends Fragment
                 Item item = b.getItems().get(0);
                 vi = item.getVolumeInfo();
             }
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
+            return null;
         }
         return vi;
     }
@@ -744,31 +734,10 @@ public class ShelfContainer extends Fragment
                         isbns.add(book.getIsbn());
                     }
 
-                    final Lock l = new ReentrantLock();
-                    for (final String isbn : isbns) {
-                        Thread t = new Thread(new Runnable() {
-                            public void run() {
-                                VolumeInfo vi = getInfoBook(isbn);
-                                String img;
-                                if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
-                                    img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
-                                } else {
-                                    img = vi.getImageLinks().getThumbnail();
-                                }
-                                l.lock();
-                                _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, isbn));
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        _adapterBiblio.notifyDataSetChanged();
-                                    }
-                                });
-                                l.unlock();
-                            }
-                        });
-                        t.start();
-                    }
-                    if (isbns.size() == 0) {
+                    Lock l = new ReentrantLock();
+                    if (isbns.size() > 0) {
+                        getInfoBookByThread(isbns, l);
+                    } else {
                         Snackbar snackbar = Snackbar.make(_v, "Votre amis n'a pas de livre dans sa liste", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     }
@@ -795,5 +764,36 @@ public class ShelfContainer extends Fragment
                 MainActivity.stopLoading();
             }
         });
+    }
+
+    private void getInfoBookByThread(final List<String> isbns, final Lock l)
+    {
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                for (String isbn: isbns) {
+                    VolumeInfo vi = getInfoBook(isbn);
+                    if (vi == null) {
+                        Log.e("INVALID ISBN", isbn);
+                        continue;
+                    }
+                    String img;
+                    if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
+                        img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
+                    } else {
+                        img = vi.getImageLinks().getThumbnail();
+                    }
+                    l.lock();
+                    _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, isbn));
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            _adapterBiblio.notifyDataSetChanged();
+                        }
+                    });
+                    l.unlock();
+                }
+            }
+        });
+        t.start();
     }
 }
