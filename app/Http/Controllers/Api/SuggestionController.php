@@ -250,7 +250,7 @@ class SuggestionController extends ApiController
 			"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
 		);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_URL, "www.google.fr");
+		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($ch, CURLOPT_USERAGENT,
 			"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
