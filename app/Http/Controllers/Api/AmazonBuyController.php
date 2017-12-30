@@ -17,8 +17,8 @@ class AmazonBuyController extends ApiController
 	public function generateRawAmazonLinkFromSearch($keywordsFields)
 	{
 		$url_research_amazon = "https://www.amazon.fr/s/?";
-		$segmentUrl = "url=" . urlencode("search-alias=aps");
-		$segmentFieldsKeywords = 'field-keywords=' . urlencode($keywordsFields);
+		$segmentUrl = "url=" . "search-alias=aps";
+		$segmentFieldsKeywords = 'field-keywords=' . $keywordsFields;
 
 		$url = $url_research_amazon .
 		$segmentUrl .

@@ -255,11 +255,12 @@ class SuggestionController extends ApiController
 		$res = $client->request('GET', $url , array(
 			'debug' => true,
 			'headers' => array(
-				'user-agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36",
-				'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-				'accept-encoding' => 'gzip, deflate, br',
-				'accept-language' => 'en-US,en;q=0.9,fr;q=0.8',
-				'upgrade-insecure-requests' => '1'
+				'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36",
+				'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+				'Accept-Encoding' => 'gzip, deflate, br',
+				'Accept-Language' => 'en-US,en;q=0.9,fr;q=0.8',
+				'Upgrade-Insecure-Requests' => '1',
+				'Connection' => 'Keep-Alive'
 			)
 		));
 
