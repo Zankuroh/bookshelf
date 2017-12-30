@@ -261,6 +261,15 @@ class SuggestionController extends ApiController
 			Log::debug('Curl info = ');
 			Log::debug(curl_getinfo($ch));
 		}
+		if ($result)
+		{
+			Log::debug("Result != false");
+		}
+		else
+		{
+			Log::debug("Result if false");
+		}
+
 		curl_close($ch);
 		Log::debug("RESULT OF CURL IS NULL =" . empty($result));
 
