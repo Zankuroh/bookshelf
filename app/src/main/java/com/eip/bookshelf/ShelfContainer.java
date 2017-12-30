@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,7 @@ import com.eip.utilities.model.IndustryIdentifier;
 import com.eip.utilities.model.Item;
 import com.eip.utilities.model.Suggestion.Suggestion;
 import com.eip.utilities.model.VolumeInfo;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -67,6 +67,7 @@ public class ShelfContainer extends Fragment
     private List<String> _overallSugg;
     private List<String> _friendLatestSugg;
     private List<String> _friendSugg;
+    private Boolean _spinnerSugg = false;
 
     public ShelfContainer()
     {
@@ -163,23 +164,26 @@ public class ShelfContainer extends Fragment
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id)
             {
-                String value = ((Spinner)_v.findViewById(R.id.SSuggest)).getSelectedItem().toString();
-                Log.i("Item", value);
-                switch (value) {
-                    case "Suggestions des 3 derniers livres":
-                        loadSuggestions(_latestSugg);
-                        break;
-                    case "Suggestions de tous les livres":
-                        loadSuggestions(_overallSugg);
-                        break;
-                    case "Suggestions des 3 derniers livres amis":
-                        loadSuggestions(_friendLatestSugg);
-                        break;
-                    case "Suggestions de tous les livres amis":
-                        loadSuggestions(_friendSugg);
-                        break;
-                    default:
-                        break;
+                if (_spinnerSugg) {
+                    String value = ((Spinner)_v.findViewById(R.id.SSuggest)).getSelectedItem().toString();
+                    switch (value) {
+                        case "Suggestions des 3 derniers livres":
+                            loadSuggestions(_latestSugg);
+                            break;
+                        case "Suggestions de tous les livres":
+                            loadSuggestions(_overallSugg);
+                            break;
+                        case "Suggestions des 3 derniers livres amis":
+                            loadSuggestions(_friendLatestSugg);
+                            break;
+                        case "Suggestions de tous les livres amis":
+                            loadSuggestions(_friendSugg);
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    _spinnerSugg = true;
                 }
             }
 
@@ -292,7 +296,6 @@ public class ShelfContainer extends Fragment
                     while(it.hasNext()){
                         com.eip.utilities.model.BooksLocal.Book book = it.next();
                         isbns.add(book.getIsbn());
-                        Log.i("isbn", book.getIsbn());
                         map.put(book.getIsbn(), book.getStatusId());
                     }
                     if (!isbns.isEmpty())
@@ -337,6 +340,9 @@ public class ShelfContainer extends Fragment
                 .build()
                 .create(BookshelfApi.class);
         Call<Suggestion> call = bookshelfApi.getSuggestion(MainActivity.token, false);
+        _latestSugg = new ArrayList<>(); // !
+        _latestSugg.add("9781781100486"); // !
+        _latestSugg.add("B00B6YRQ7E"); // !
         call.enqueue(new Callback<Suggestion>() {
             @Override
             public void onResponse(Call<Suggestion> call, Response<Suggestion> response) {
@@ -349,7 +355,6 @@ public class ShelfContainer extends Fragment
 
                     loadSuggestions(_latestSugg);
                 } else {
-                    Log.i("error", response.errorBody().toString());
                     try {
                         Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
                         snackbar.show();
@@ -378,14 +383,38 @@ public class ShelfContainer extends Fragment
             _adapterBiblio.notifyDataSetChanged();
             return;
         }
-        Lock l = new ReentrantLock();
+        final Lock l = new ReentrantLock();
         ListIterator<String> it = sugg.listIterator();
         while(it.hasNext()){
-            String identifier = it.next();
+            final String identifier = it.next();
             if (android.text.TextUtils.isDigitsOnly(identifier)) {
-                Log.i("ISBN", identifier);
+                Thread t = new Thread(new Runnable() {
+                    public void run() {
+                        VolumeInfo vi = getInfoBook(identifier);
+                        String img;
+                        if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
+                            img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
+                        } else {
+                            img = vi.getImageLinks().getThumbnail();
+                        }
+                        l.lock();
+                        _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, identifier));
+                        getActivity().runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            _adapterBiblio.notifyDataSetChanged();
+                                                        }
+                                                    });
+                        l.unlock();
+                    }
+                });
+                t.start();
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             } else {
-                Log.i("ASIN", identifier);
                 ASINBook(identifier, l);
             }
         }
@@ -393,7 +422,6 @@ public class ShelfContainer extends Fragment
 
     private void ASINBook(final String asin, final Lock l)
     {
-        Log.i("function", "asin passe");
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -409,7 +437,7 @@ public class ShelfContainer extends Fragment
                     ListIterator<com.eip.utilities.model.ASIN.Data> it = data.listIterator();
                     while (it.hasNext()) {
                         com.eip.utilities.model.ASIN.Data asinData = it.next();
-                        String title = asinData.getTitle();
+                        String title = org.apache.commons.text.StringEscapeUtils.unescapeHtml4(asinData.getTitle());
                         String picUrl = asinData.getPicUrl();
                         l.lock();
                         _modelListBiblio.add(new BiblioAdapter(title, picUrl, null));
