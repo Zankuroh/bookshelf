@@ -36,6 +36,7 @@ class customAdapterAuthor extends BaseAdapter {
     private Context _c;
     private RelativeLayout _rl;
     private ArrayList<Pair<String, String>> _als;
+    View _v;
 
     customAdapterAuthor(Context context, ArrayList<Pair<String, String>> modelList)
     {
@@ -66,11 +67,12 @@ class customAdapterAuthor extends BaseAdapter {
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) _c.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             v = mInflater.inflate(R.layout.author_adapter, parent, false);
+            _v = mInflater.inflate(R.layout.follow_author, parent, false);
         } else {
             v = convertView;
         }
 
-        _rl = v.findViewById(R.id.RLAuthor);// TODO: 13/12/2017 recup un truc qui marche
+        //_rl = v.findViewById(R.id.RLAuthor);// TODO: 13/12/2017 recup un truc qui marche
 
         final Pair<String, String> iadapt = _als.get(position);
         final TextView tv = v.findViewById(R.id.TVAutor);
@@ -107,15 +109,15 @@ class customAdapterAuthor extends BaseAdapter {
             public void onResponse(Call<SubscriptionValidator> call, Response<SubscriptionValidator> response) {
                 if (response.isSuccessful()) {
                     //SubscriptionValidator modif = response.body();
-                    Snackbar snackbar = Snackbar.make(_rl, "Vous ne serez plus notifié lors de ses prochaines sortis", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(_v, "Vous ne serez plus notifié lors de ses prochaines sorties", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " +  jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " +  jObjError.getString("title"), Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }
@@ -126,7 +128,7 @@ class customAdapterAuthor extends BaseAdapter {
             @Override
             public void onFailure(Call<SubscriptionValidator> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
                 snackbar.show();
                 t.printStackTrace();
             }

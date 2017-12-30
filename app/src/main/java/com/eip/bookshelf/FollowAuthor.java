@@ -84,8 +84,11 @@ public class FollowAuthor extends Fragment
                         ListIterator<SubAuthor> it = authors.listIterator();
                         while (it.hasNext()) {
                             SubAuthor author = it.next();
-                            Log.i("toto", author.getAuthorId());
-                            _modelListAuthor.add(new Pair<>("Auteur avec l'id => "+author.getAuthorId(), author.getAuthorId()));
+                            String name = author.getFirstName();
+                            if (author.getLastName() != null) {
+                                name += " " + author.getLastName();
+                            }
+                            _modelListAuthor.add(new Pair<>(name, author.getAuthorId()));
                         }
                         _adapterAuthor.notifyDataSetChanged();
                     }

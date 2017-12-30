@@ -336,7 +336,13 @@ public class SignIn extends Fragment implements View.OnClickListener
         builder.setView(input);
         builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                resetPasswordSendToken(input.getText().toString());
+                if (!SignUp.verifyEmail(input.getText().toString())) {
+                    Snackbar snackbar = Snackbar.make(_v, "L'adresse mail n'est pas valide.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    AskEmailForReset();
+                } else {
+                    resetPasswordSendToken(input.getText().toString());
+                }
             }
         });
         builder.setNegativeButton("Annuler", null);

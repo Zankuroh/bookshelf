@@ -7,6 +7,7 @@ import com.eip.utilities.model.AuthorSubscription.SubscriptionValidator;
 import com.eip.utilities.model.ChangeStatus.ChangeStatus;
 import com.eip.utilities.model.Friend.List.FriendList;
 import com.eip.utilities.model.Friend.Modif.FriendModif;
+import com.eip.utilities.model.Friend.Search.FriendSearch;
 import com.eip.utilities.model.Friend.WishList.WishList;
 import com.eip.utilities.model.ModifReview.ModifReview;
 import com.eip.utilities.model.AuthLocal.AuthLocal;
@@ -149,7 +150,7 @@ public interface BookshelfApi
     Call<FriendModif> addFriend(@Header("Authorization") String token, @Field("friend_id") Integer Id);
 
     @DELETE("friend")
-    Call<FriendModif> delFriend(@Header("Authorization") String token, @Query("friend_id") Integer Id);
+    Call<SimpleResponse> delFriend(@Header("Authorization") String token, @Query("friend_id") Integer Id);
 
     @FormUrlEncoded
     @POST("suggestion")
@@ -160,4 +161,8 @@ public interface BookshelfApi
 
     @GET("book/search/{asin}")
     Call<ASIN> searchFromASIN(@Header("Authorization") String token, @Path("asin") String asin);
+
+    @FormUrlEncoded
+    @POST("profile/search")
+    Call<FriendSearch> searchFriend(@Header("Authorization") String token, @Field("keywords_search") String email);
 }
