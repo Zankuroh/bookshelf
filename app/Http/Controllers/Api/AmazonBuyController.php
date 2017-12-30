@@ -8,6 +8,8 @@ use Log;
 
 class AmazonBuyController extends ApiController
 {
+
+
 	/**
 	 * Generate a research url for amazon with
 	 * given keywords fields
@@ -22,10 +24,11 @@ class AmazonBuyController extends ApiController
 		$segmentUrl .
 		'&' . $segmentFieldsKeywords;
 
-		Log::debug("URL decoded = " . $url);
+		Log::debug("URL generated = " . $url);
 		//$htmlOutput = file_get_contents($url);
 		//var_dump($htmlOutput);
-		return htmlspecialchars_decode($url);
+		Log::debug("URL generated with html encode = " . htmlspecialchars($url));
+		return $url;
 	}
 
 	/**

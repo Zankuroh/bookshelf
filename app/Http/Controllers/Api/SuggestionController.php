@@ -238,6 +238,24 @@ class SuggestionController extends ApiController
 		return $suggestionIds;
 	} 
 
+
+	/**
+	 * Custom file get contents with context
+	 * 
+	 **/
+	private function fileGetContentsWithContext($url)
+	{
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_USERAGENT,
+			"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$result = curl_exec($ch);
+		curl_close($ch);
+
+		return $result;
+	}
+
 	/**
 	 * Fetch suggestions from amazon
 	 * This method will use parsing methods
@@ -248,7 +266,7 @@ class SuggestionController extends ApiController
 	{
 		$amazonBuyController = new AmazonBuyController();
 		$amazonSearchUrl = $amazonBuyController->generateRawAmazonLinkFromSearch($isbn);
-		$amazonSearchOutput = file_get_contents($amazonSearchUrl);
+		$amazonSearchOutput = $this->fileGetContentsWithContext($amazonSearchUrl);
 		$suggestionIds = [];
 		$amazonSearchOutputIsValid = $this->amazonSearchOutputIsValid($amazonSearchOutput);
 
@@ -257,7 +275,7 @@ class SuggestionController extends ApiController
 			/** Get the exact url of the book in question */
 			$amazonBookUrl = $this->findExactBookUrlFromSearchPageofAmazon($amazonSearchOutput);
 			/** Content of exact url of the book */
-			$amazonBookUrlContent = file_get_contents($amazonBookUrl);
+			$amazonBookUrlContent = $this->fileGetContentsWithContext($amazonBookUrl);
 
 			/** Get suggestions from book's page */
 			$amazonSuggestions = $this->findSuggestionsFromAmazonBookPage($amazonBookUrlContent);
@@ -448,7 +466,7 @@ class SuggestionController extends ApiController
 			$amazonSearchUrl = $amazonBuyController->generateRawAmazonLinkFromSearch($searchDetailsId);
 			try
 			{
-				$amazonSearchOutput = file_get_contents($amazonSearchUrl);
+				$amazonSearchOutput = $this->fileGetContentsWithContext($amazonSearchUrl);
 			}
 			catch (\Exception $e)
 			{
@@ -459,7 +477,7 @@ class SuggestionController extends ApiController
 				$amazonExactBookUrl = $this->findExactBookUrlFromSearchPageofAmazon($amazonSearchOutput);
 				try
 				{
-					$amazonExactBookContent = file_get_contents($amazonExactBookUrl);
+					$amazonExactBookContent = $this->fileGetContentsWithContext($amazonExactBookUrl);
 				}
 				catch (\Exception $e)
 				{
