@@ -245,6 +245,7 @@ class SuggestionController extends ApiController
 	 **/
 	private function fileGetContentsWithContext($url)
 	{
+		$url = urldecode($url);
 		Log::debug("FUCKING URL =" . $url);
 		$ch = curl_init();
 		$headers = array(
