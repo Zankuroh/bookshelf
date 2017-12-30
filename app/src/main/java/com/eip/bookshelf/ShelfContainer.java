@@ -74,6 +74,7 @@ public class ShelfContainer extends Fragment
     private List<String> _friendSugg;
     private String _FriendId;
     private Boolean _spinnerSugg = false;
+    private Boolean _thread = true;
 
     public ShelfContainer()
     {
@@ -155,6 +156,13 @@ public class ShelfContainer extends Fragment
                 }
             }
         }
+    }
+
+    @Override
+    public void onPause()
+    {
+        _thread = false;
+        super.onPause();
     }
 
     @Override
@@ -353,7 +361,7 @@ public class ShelfContainer extends Fragment
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(BookshelfApi.class);
-        Call<Suggestion> call = bookshelfApi.getSuggestion(MainActivity.token, false);
+        Call<Suggestion> call = bookshelfApi.getSuggestion(MainActivity.token, true);
 //        _latestSugg = new ArrayList<>(); // !
 //        _latestSugg.add("9781781100486"); // !
 //        _latestSugg.add("B00B6YRQ7E"); // !
@@ -361,6 +369,7 @@ public class ShelfContainer extends Fragment
             @Override
             public void onResponse(Call<Suggestion> call, Response<Suggestion> response) {
                 if (response.isSuccessful()) {
+                    Log.i("Success", "api Sugges");
                     Suggestion bookshelf = response.body();
                     _latestSugg = bookshelf.getData().getLatestSuggestions();
                     _overallSugg = bookshelf.getData().getOverallSuggestions();
@@ -369,6 +378,7 @@ public class ShelfContainer extends Fragment
 
                     loadSuggestions(_latestSugg);
                 } else {
+                    Log.i("fail", "api Sugges");
                     try {
                         Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
                         snackbar.show();
@@ -400,61 +410,78 @@ public class ShelfContainer extends Fragment
         Lock l = new ReentrantLock();
         ListIterator<String> it = sugg.listIterator();
         List<String> isbns = new ArrayList<>();
+        List<String> asins = new ArrayList<>();
         while(it.hasNext()){
             String identifier = it.next();
             if (android.text.TextUtils.isDigitsOnly(identifier)) {
                 isbns.add(identifier);
+                Log.i("ISBN", identifier);
             } else {
-                ASINBook(identifier, l);
+                asins.add(identifier);
+                Log.i("ASIN", identifier);
             }
         }
         if (isbns.size() > 0) {
             getInfoBookByThread(isbns, l);
         }
+        if (asins.size() > 0) {
+            ASINBook(asins, l);
+        }
     }
 
-    private void ASINBook(final String asin, final Lock l)
+    private void ASINBook(List<String> asins, final Lock l)
     {
-        BookshelfApi bookshelfApi = new Retrofit.Builder()
-                .baseUrl(BookshelfApi.APIPath)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(BookshelfApi.class);
-        Call<ASIN> call = bookshelfApi.searchFromASIN(MainActivity.token, asin);
-        call.enqueue(new Callback<ASIN>() {
-            @Override
-            public void onResponse(Call<ASIN> call, Response<ASIN> response) {
-                if (response.isSuccessful()) {
-                    ASIN bookshelf = response.body();
-                    List<com.eip.utilities.model.ASIN.Data> data = bookshelf.getData();
-                    ListIterator<com.eip.utilities.model.ASIN.Data> it = data.listIterator();
-                    while (it.hasNext()) {
-                        com.eip.utilities.model.ASIN.Data asinData = it.next();
-                        String title = org.apache.commons.text.StringEscapeUtils.unescapeHtml4(asinData.getTitle());
-                        String picUrl = asinData.getPicUrl();
-                        l.lock();
-                        _modelListBiblio.add(new BiblioAdapter(title, picUrl, null));
-                        _adapterBiblio.notifyDataSetChanged();
-                        l.unlock();
-                    }
-                } else {
-                    try {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+        for (String asin: asins) {
+            BookshelfApi bookshelfApi = new Retrofit.Builder()
+                    .baseUrl(BookshelfApi.APIPath)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+                    .create(BookshelfApi.class);
+            Call<ASIN> call = bookshelfApi.searchFromASIN(MainActivity.token, asin);
+            call.enqueue(new Callback<ASIN>() {
+                @Override
+                public void onResponse(Call<ASIN> call, Response<ASIN> response) {
+                    if (response.isSuccessful()) {
+                        Log.i("success", "api ASIN");
+                        ASIN bookshelf = response.body();
+                        List<com.eip.utilities.model.ASIN.Data> data = bookshelf.getData();
+                        ListIterator<com.eip.utilities.model.ASIN.Data> it = data.listIterator();
+                        while (it.hasNext()) {
+                            com.eip.utilities.model.ASIN.Data asinData = it.next();
+                            String title = org.apache.commons.text.StringEscapeUtils.unescapeHtml4(asinData.getTitle());
+                            String picUrl = asinData.getPicUrl();
+                            Log.i("TITLE", "+" + title + "+");
+                            if (picUrl == null || picUrl == "") {
+                                picUrl = "https://puu.sh/yQVey/96127d0c0b.png";
+                            }
+                            if (title == null || title.isEmpty()) {
+                                title = "Pas de titre";
+                            }
+                            l.lock();
+                            _modelListBiblio.add(new BiblioAdapter(title, picUrl, null));
+                            _adapterBiblio.notifyDataSetChanged();
+                            l.unlock();
+                        }
+                    } else {
+                        Log.i("fail", "api ASIN");
+                        try {
+                            Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ASIN> call, Throwable t)
-            {
-                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
-                t.printStackTrace();
-            }
-        });
+                @Override
+                public void onFailure(Call<ASIN> call, Throwable t)
+                {
+                    Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    t.printStackTrace();
+                }
+            });
+        }
     }
 
     private void wishShelf()
@@ -544,10 +571,14 @@ public class ShelfContainer extends Fragment
             public void run() {
                 Cursor cursor = _req.readFromSearch(typeSearch, content, _status);
                 while(cursor.moveToNext()) {
-                    String isbn = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_ISBN));
-                    String title = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_TITLE));
-                    String pic = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_PIC));
-                    _modelListBiblio.add(new BiblioAdapter(title, pic, isbn));
+                    if (_thread) {
+                        String isbn = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_ISBN));
+                        String title = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_TITLE));
+                        String pic = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_PIC));
+                        _modelListBiblio.add(new BiblioAdapter(title, pic, isbn));
+                    } else {
+                        break;
+                    }
                 }
                 cursor.close();
             }
@@ -591,7 +622,7 @@ public class ShelfContainer extends Fragment
                         }
                         String img;
                         if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
-                            img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
+                            img = "https://puu.sh/yQVey/96127d0c0b.png";
                         } else {
                             img = vi.getImageLinks().getThumbnail();
                         }
@@ -683,7 +714,7 @@ public class ShelfContainer extends Fragment
                                 }
                                 String img;
                                 if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
-                                    img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
+                                    img = "https://puu.sh/yQVey/96127d0c0b.png";
                                 } else {
                                     img = vi.getImageLinks().getThumbnail();
                                 }
@@ -695,15 +726,17 @@ public class ShelfContainer extends Fragment
                     e.printStackTrace();
                 }
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        _adapterBiblio.notifyDataSetChanged();
-                        TextView tv = _v.findViewById(R.id.TVSubInfoSearch);
-                        tv.setText(String.valueOf(_nbFound) + " résultats - page " + String.valueOf(_startIndex / 40 + 1) + " / " + String.valueOf((int)Math.ceil((float)_nbFound / 40.0f)));
-                        MainActivity.stopLoading();
-                    }
-                });
+                if (_thread) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            _adapterBiblio.notifyDataSetChanged();
+                            TextView tv = _v.findViewById(R.id.TVSubInfoSearch);
+                            tv.setText(String.valueOf(_nbFound) + " résultats - page " + String.valueOf(_startIndex / 40 + 1) + " / " + String.valueOf((int)Math.ceil((float)_nbFound / 40.0f)));
+                            MainActivity.stopLoading();
+                        }
+                    });
+                }
             }
         });
         t.start();
@@ -778,18 +811,23 @@ public class ShelfContainer extends Fragment
                     }
                     String img;
                     if (vi.getImageLinks() == null || vi.getImageLinks().getThumbnail() == null) {
-                        img = "https://puu.sh/wm9pR/adf0d3f814.jpg";
+                        img = "https://puu.sh/yQVey/96127d0c0b.png";
                     } else {
                         img = vi.getImageLinks().getThumbnail();
                     }
                     l.lock();
                     _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, isbn));
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            _adapterBiblio.notifyDataSetChanged();
-                        }
-                    });
+                    if (_thread) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                _adapterBiblio.notifyDataSetChanged();
+                            }
+                        });
+                    } else {
+                        l.unlock();
+                        break;
+                    }
                     l.unlock();
                 }
             }
