@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Media;
 using Windows.UI.Core;
+using Windows.Data.Json;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -38,15 +39,18 @@ namespace BookShelf
             Req.addAuthorization("Bearer", App.Token);
 
             res = await Req.GetRequest();
-            List<string> lst = Req.findResponseS("first_name");
-            List<string> lst2 = Req.findResponseS("last_name");
-            int i = 0;
-            foreach (string s in lst)
+            JsonObject jsonRes;
+            JsonObject.TryParse(res, out jsonRes);
+            JsonArray j = jsonRes["data"].GetArray();
+            foreach (IJsonValue obj in j)
             {
-                TextBlock t = new TextBlock();
-                t.Text = s + " " + lst2.ElementAt(i);
-                stpnlAuth.Children.Add(t);
-                i++;
+                JsonObject it = obj.GetObject();
+                var auth = new clAuthor();
+                auth.authorSName = it["first_name"].ToString() != "null" ? it["first_name"].GetString() : "";
+                auth.authorLName = it["last_name"].ToString() != "null" ? it["last_name"].GetString() : "";
+                auth.authorId = it["id"].ToString();
+                var child = new ucAuthorListItem(auth);
+                stpnlAuth.Children.Add(child);
             }
         }
 
@@ -61,6 +65,19 @@ namespace BookShelf
             cdAddAuthor dialog = new cdAddAuthor();
             ContentDialogResult dialres = await dialog.ShowAsync();
             res = await Req.PostRequest("first_name=" + dialog.AuthorFName + "&last_name=" + dialog.AuthorLName, "application/x-www-form-urlencoded");
+            JsonObject jsonRes;
+            JsonObject.TryParse(res, out jsonRes);
+            string err = jsonRes["errors"].ToString();
+            if (err == "null")
+            {
+                JsonObject it = jsonRes["data"].GetObject();
+                var auth = new clAuthor();
+                auth.authorSName = it["first_name"].ToString() != "null" ? it["first_name"].GetString() : "";
+                auth.authorLName = it["last_name"].ToString() != "null" ? it["last_name"].GetString() : "";
+                auth.authorId = it["id"].ToString();
+                var child = new ucAuthorListItem(auth);
+                stpnlAuth.Children.Add(child);
+            }
         }
 
         private async void btDeleteAuthor_Click(object sender, RoutedEventArgs e)
@@ -70,7 +87,20 @@ namespace BookShelf
 
             Req.addHeader("application/x-www-form-urlencoded");
             Req.addAuthorization("Bearer", App.Token);
-            res = await Req.PostRequest("first_name=" + "" + "&last_name=" + "", "application/x-www-form-urlencoded");
+            foreach (ucAuthorListItem a in stpnlAuth.Children)
+            {
+                if (a.isChecked() == true)
+                {
+                    //res = await Req.PostRequest("id=" + a.Auth.authorId, "application/x-www-form-urlencoded");
+                    res = await Req.DeletetRequest("?id=" + a.Auth.authorId);
+                    JsonObject jsonRes;
+                    JsonObject.TryParse(res, out jsonRes);
+                    string j = jsonRes["errors"].ToString();
+                    if (j != "null")
+                        stpnlAuth.Children.Remove(a);
+                }
+
+            }
         }
     }
 }

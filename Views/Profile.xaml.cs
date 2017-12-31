@@ -81,7 +81,7 @@ namespace BookShelf
             //base.OnNavigatedTo(e);
         }
 
-        private async void Grid_Loaded(object sender, RoutedEventArgs e)
+        private async void Profile_Loaded(object sender, RoutedEventArgs e)
         {
             clRequestAPI Req = new clRequestAPI("/api/profile");
             string res = null;
@@ -149,21 +149,62 @@ namespace BookShelf
             }
         }
 
-        private async void btAddFriend_Click(object sender, RoutedEventArgs e)
+        private async void scviFriend_Loaded(object sender, RoutedEventArgs e)
         {
-
-            cdSearchFriend dialog = new cdSearchFriend();
-            ContentDialogResult dialres = await dialog.ShowAsync();
-
             //Get
             clRequestAPI Req = new clRequestAPI("/api/friend");
             Req.addAuthorization("Bearer", App.Token);
-            string res2 = await Req.GetRequest();
+            string res = await Req.GetRequest();
+            JsonObject jsonRes;
+            JsonObject.TryParse(res, out jsonRes);
+            string err = jsonRes["errors"].ToString();
+            if (err == "null")
+            {
+                JsonArray j = jsonRes["data"].GetArray();
+                foreach (IJsonValue obj in j)
+                {
+                    JsonObject it = obj.GetObject();
+                    var fr = new clFriend();
+                    fr.friendName = it["name"].ToString() != "null" ? it["name"].GetString() : "";
+                    fr.friendEmail = it["email"].ToString() != "null" ? it["email"].GetString() : "";
+                    fr.friendId = it["friend_id"].ToString();
+                    var child = new ucFriendListItem(fr);
+                    stpnlFriend.Children.Add(child);
+                }
+            }
+            else
+            {
+                //popup avec err dedans
+            }
         }
 
-        private void btDeleteFriend_Click(object sender, RoutedEventArgs e)
+        private async void btAddFriend_Click(object sender, RoutedEventArgs e)
         {
+            cdSearchFriend dialog = new cdSearchFriend();
+            ContentDialogResult dialres = await dialog.ShowAsync();
+        }
 
+        private async void btDeleteFriend_Click(object sender, RoutedEventArgs e)
+        {
+            clRequestAPI Req = new clRequestAPI("/api/friend");
+            string res = null;
+
+            Req.addHeader("application/x-www-form-urlencoded");
+            Req.addAuthorization("Bearer", App.Token);
+            foreach (ucFriendListItem f in stpnlFriend.Children)
+            {
+                if (f.isChecked() == true)
+                {
+                    //res = await Req.PostRequest("id=" + a.Auth.authorId, "application/x-www-form-urlencoded");
+                    res = await Req.DeletetRequest("?id=" + f.Friend.friendId);
+                    JsonObject jsonRes;
+                    JsonObject.TryParse(res, out jsonRes);
+                    string j = jsonRes["errors"].ToString();
+                    if (j != "null")
+                        stpnlFriend.Children.Remove(f);
+                }
+
+            }
         }
     }
 }

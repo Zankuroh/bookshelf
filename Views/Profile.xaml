@@ -19,12 +19,9 @@
         <Pivot.RightHeader>
             <CommandBar Background="Transparent">
                 <AppBarSeparator/>
-                <AppBarButton Icon="Add"  Label="Ajouter d'ami" Click="btAddFriend_Click"/>
-                <AppBarButton Icon="Delete" Label="Supprimer ami" Click="btDeleteFriend_Click"/>
                 <CommandBar.SecondaryCommands>
-                    <!--<AppBarButton Icon="Bookmarks"  Label="Ajout Liste de souhait" Click="btAddtoWhishlst"/>
-                    <AppBarButton Icon="Bookmarks"  Label="Retrait liste de souhait" Click="btDeleteWish_Click"/>
-                    <AppBarButton Icon="Bookmarks"  Label="Achat" Click="btBuy_Click"/>-->
+                    <AppBarButton Icon="Add" Label="Ajouter Ami" Click="btAddFriend_Click"/>
+                    <AppBarButton Icon="Delete" Label="Supprimer Ami" Click="btDeleteFriend_Click"/>
                 </CommandBar.SecondaryCommands>
                 <CommandBar.Content>
                     <TextBlock Text="" />
@@ -33,7 +30,7 @@
         </Pivot.RightHeader>
         <PivotItem Header="Profil">
             <!--Pivot content goes here-->
-            <Grid Background="Beige" Loaded="Grid_Loaded">
+            <Grid Background="Beige" Loaded="Profile_Loaded">
                 <Grid x:Name="grdProfile" Margin="0,0,0,0" Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -65,8 +62,11 @@
             </Grid>
         </PivotItem>
         <PivotItem Header="Amis">
-            <Grid Background="Beige" Loaded="Grid_Loaded">
-                
+            <Grid Background="Beige">
+                <ScrollViewer x:Name="scviFriend" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto" Loaded="scviFriend_Loaded">
+                    <StackPanel x:Name="stpnlFriend">
+                    </StackPanel>
+                </ScrollViewer>
             </Grid>
         </PivotItem>
     </Pivot>

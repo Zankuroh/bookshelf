@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace BookShelf
 {
-    class clAuthor
+    public class clAuthor
     {
         public string authorLName { get; set; }
         public string authorSName { get; set; }
-        public int authorId { get; set; }
+        public string authorId { get; set; }
     }
 }
