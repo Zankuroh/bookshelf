@@ -249,7 +249,7 @@ class SuggestionController extends ApiController
 		
 		Log::debug("FUCKING URL =" . $url);
 		$res = $client->request('GET', $url , array(
-			'debug' => false,
+			'debug' => true,
 			'headers' => array(
 				'Host' => 'www.amazon.fr',
 				'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0",
