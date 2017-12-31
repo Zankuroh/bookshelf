@@ -47,6 +47,7 @@ namespace BookShelf
                 {
                     JsonObject it = obj.GetObject();
                     clBook bk = await clISBNsearch.SearchISBNclBook(it["isbn"].GetString());
+                    bk.BookStatus = int.Parse(it["status_id"].GetString());
                     ucBook child = new ucBook(bk);
                     wgrdLibrary.Children.Add(new ucBook(bk));
                 }
@@ -61,20 +62,6 @@ namespace BookShelf
 
         private void txbxSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //var d = lib.Where<ucBook>(c => c.Book.BookData.VolumeInfo.Title.Contains(txbxSearch.Text));
-            //foreach (UIElement u in wgrdLibrary.Children)
-            //{
-            //    ucBook b = (ucBook)u;
-            //    if (!b.Book.BookData.VolumeInfo.Title.Contains(txbxSearch.Text) && txbxSearch.Text != null)
-            //    {
-            //        u.Visibility = Visibility.Collapsed;
-            //    }
-            //    else
-            //    {
-            //        u.Visibility = Visibility.Visible;
-            //    }
-            //}
-            //wgrdLibrary.UpdateLayout();
             var filt = lib.Where(c => c.Book.BookData.VolumeInfo.Title.Contains(txbxSearch.Text));
             wgrdLibrary.Children.Clear();
             foreach (ucBook u in filt)

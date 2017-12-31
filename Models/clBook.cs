@@ -12,7 +12,7 @@ namespace BookShelf
         public enum Status { AchetéLu = 0, EmpruntéLu, NonLu };
         Volume bookData = null;
         string bookISBN = "";
-        Status bookStatus;
+        int bookStatus;
 
         public Volume BookData
         {
@@ -46,7 +46,7 @@ namespace BookShelf
             bookData = data;
         }
 
-        public Status BookStatus
+        public int BookStatus
         {
             get
             {

@@ -117,6 +117,7 @@ namespace BookShelf
                         txblPublisher.Text = book.BookData.VolumeInfo.Publisher;
                     if (book.BookData.VolumeInfo.Language != null)
                         txblLanguage.Text = book.BookData.VolumeInfo.Language;
+                    cbbxStatus.SelectedIndex = book.BookStatus;
                     Windows.UI.Xaml.Media.Imaging.BitmapImage bitmapImage = new Windows.UI.Xaml.Media.Imaging.BitmapImage();
                     Uri uri = new Uri(book.BookData.VolumeInfo.ImageLinks.Thumbnail);
                     bitmapImage.UriSource = uri;
@@ -252,26 +253,6 @@ namespace BookShelf
 
         private async void btBuy_Click(object sender, RoutedEventArgs e)
         {
-            //HttpClient httpClient = new HttpClient();
-            //HttpResponseMessage httpResponse = new HttpResponseMessage();
-            //string httpResponseBody = "";
-            //string stringResponse = null;
-
-            //try
-            //{
-            //    //Send the GET request
-            //    httpResponse = await httpClient.GetAsync(new Uri(@"http://api.duckduckgo.com/?q=Neuromancer!amazon&format=json"));
-            //    httpResponse.EnsureSuccessStatusCode();
-            //}
-            //catch (Exception ex)
-            //{
-            //    clErrorHandling.ErrorMessage(" GetRequest()", ex);
-            //}
-            //finally
-            //{
-            //    httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
-            //    stringResponse = httpResponseBody.ToString();
-            //}
             // The URI to launch
             var uriBing = new Uri(@"http://api.duckduckgo.com/?q=\9782352947349!amazon&t=BookShelf&format=json");
 
@@ -288,6 +269,17 @@ namespace BookShelf
             {
                 // URI launch failed
             }
+        }
+
+        private async void cbbxStatus_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            clRequestAPI Req = new clRequestAPI("/api/book");
+            string res = null;
+
+            Req.addHeader("application/x-www-form-urlencoded");
+            Req.addAuthorization("Bearer", App.Token);
+
+            res = await Req.PutRequest("isbn=" + book.BookISBN + "&status=" + cbbxStatus.SelectedIndex.ToString(), "application/x-www-form-urlencoded");
         }
     }
 }
