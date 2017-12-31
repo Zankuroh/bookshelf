@@ -11,7 +11,7 @@
     Height="200" Width="150" MinHeight="75" MinWidth="50">
 
     <Button x:Name="btMainBook" Margin="1,1,1,1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{x:Null}" Click="ucBook_Click">
-        <Grid x:Name="grdMainBook" Background="White">
+        <Grid x:Name="grdMainBook" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" Height="198" Margin="-28.667,-87" Width="148">
             <Grid.BorderBrush>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Black" Offset="0"/>
@@ -21,15 +21,9 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="60*"/>
                 <RowDefinition Height="15*"/>
-                <RowDefinition Height="15*"/>
-                <RowDefinition Height="15*"/>
-                <RowDefinition Height="15*"/>
             </Grid.RowDefinitions>
             <Image x:Name="imgThumb" Margin="2,2,2,2" Source="Assets/StoreLogo.png" Stretch="Fill"/>
-            <TextBlock x:Name="txblNameBook" Grid.Row="1" TextWrapping="Wrap" Text="Nom inconnu" Margin="1,1,1,1" TextAlignment="Center" VerticalAlignment="Center"/>
-            <TextBlock x:Name="txblAuthBook" Grid.Row="2" TextWrapping="Wrap" Text="Auteur inconnu" Margin="1,1,1,1" TextAlignment="Center" VerticalAlignment="Center"/>
-            <TextBlock x:Name="txblGenreBook" Grid.Row="3" TextWrapping="Wrap" Text="Genre inconnu" Margin="1,1,1,1" TextAlignment="Center" VerticalAlignment="Center"/>
-            <TextBlock x:Name="txblPublisher" Grid.Row="4" TextWrapping="Wrap" Text="Editeur inconnu" Margin="1,1,1,1" TextAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock x:Name="txblNameBook" Grid.Row="1" TextWrapping="Wrap" Text="Nom inconnu" TextAlignment="Center"/>
         </Grid>
     </Button>
 </UserControl>
