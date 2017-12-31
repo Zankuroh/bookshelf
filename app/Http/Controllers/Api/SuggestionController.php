@@ -14,6 +14,7 @@ use Carbon\Carbon;
 class SuggestionController extends ApiController
 {
 	const DELIMITER_KEYWORDS_SEARCH_DETAILS_AMAZON = ";||;";
+	private $currentProxy = null;
 
 	/**
 	 * Get a list of suggestions (books)
@@ -239,17 +240,75 @@ class SuggestionController extends ApiController
 	} 
 
 
+	private function findNewProxyFromGimmeProxy()
+	{
+		$result = json_decode(file_get_contents('http://gimmeproxy.com/api/getProxy?country=FR,GB,IT,LU&user-agent=true&protocol=http&supportsHttps=true&minSpeed=10'), true);
+		
+		Log::debug("New Proxy Result = ");
+		Log::debug($result);
+		///exit(0);
+		if (key_exists('curl', $result) && key_exists('websites', $result))
+		{
+			if (key_exists('amazon', $result['websites']) && $result['websites']['amazon'] == true)
+			{
+				$result = $result['curl'];
+				Log::debug("Final result : " . $result);				
+			}
+			else
+			{
+				Log::debug("Final result null");
+				$result = null;
+			}
+		}
+		else
+		{
+			Log::debug("Final result null");
+			$result = null;
+		}
+		
+		usleep(1000);
+
+		return $result;
+	}
+
+	/**
+	 * Get a new proxy to use
+	 * 
+	 **/
+	private function getNewProxy()
+	{
+		Log::debug("GET NEW PROXY BRO method begin");
+		if ($this->currentProxy == null)
+		{
+			$result = $this->findNewProxyFromGimmeProxy();
+			while ($result == null)
+			{
+				$result = $this->findNewProxyFromGimmeProxy();
+				Log::debug("Find again a proxy ...");
+			}
+		// Log::debug("CHELOU status code : " . $result->getStatusCode());
+		// Log::debug("Raw result  : " . $result->getBody());
+			Log::debug("Nice found a amazon proxy");
+			$this->currentProxy = $result;
+		}
+
+		return $this->currentProxy;
+	}
+
 	/**
 	 * Custom file get contents with context
 	 * 
 	 **/
 	private function fileGetContentsWithContext($url)
 	{
+		$proxy = $this->getNewProxy();
 		$client = new \GuzzleHttp\Client();
 		
 		Log::debug("FUCKING URL =" . $url);
+		
 		$res = $client->request('GET', $url , array(
-			'debug' => true,
+			'proxy' => $proxy,
+			'debug' => false,
 			'headers' => array(
 				'Host' => 'www.amazon.fr',
 				'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0",
@@ -404,6 +463,7 @@ class SuggestionController extends ApiController
 					$latestSuggestions = array_merge($latestSuggestions, $suggestions);
 					$this->storeSuggestions($suggestions);
 				}
+				$this->currentProxy = null;
 				Log::debug('trying to fetch the book n=' . $userLastBook->isbn);
 			}
 			shuffle($latestSuggestions);
