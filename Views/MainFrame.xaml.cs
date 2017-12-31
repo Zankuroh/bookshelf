@@ -98,7 +98,7 @@ namespace BookShelf
         {
             ShellSplitView.IsPaneOpen = false;
             if (ShellSplitView.Content != null)
-                ((Frame)ShellSplitView.Content).Navigate(typeof(HomePage));
+                ((Frame)ShellSplitView.Content).Navigate(typeof(Suggestions));
         }
 
         private async void Deconnection_Click(object sender, RoutedEventArgs e)

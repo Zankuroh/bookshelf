@@ -162,6 +162,9 @@
     <Compile Include="UserControls\ucReviews.xaml.cs">
       <DependentUpon>ucReviews.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Suggestions.xaml.cs">
+      <DependentUpon>Suggestions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\WishList.xaml.cs">
       <DependentUpon>WishList.xaml</DependentUpon>
     </Compile>
@@ -266,6 +269,10 @@
     <Page Include="UserControls\ucReviews.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Suggestions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\WishList.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -31,70 +31,29 @@ namespace BookShelf
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            //if (e.Parameter is clProfile)
-            //{
-            //    App.p = e.Parameter as clProfile;
-            //    if (App.p.Pseudo != null)
-            //    {
-            //        txblUsrPseudo.Text = App.p.Pseudo;
-            //    }
-            //    if (App.p.Email != null)
-            //    {
-            //        txblUsrEmail.Text = App.p.Email;
-            //    }
-            //    if (App.p.Birthday != null)
-            //    {
-            //        txblUsrBirthday.Text = App.p.Birthday;
-            //    }
-            //    if (App.p.LikedGenre != null)
-            //    {
-            //        txblUsrLikedGenre.Text = App.p.LikedGenre;
-            //    }
-            //    if (App.p.FavBook != null)
-            //    {
-            //        txblUsrFavBook.Text = App.p.FavBook;
-            //    }
-            //}
-            //else
-            //{
-            //    if (App.p.Pseudo != null)
-            //    {
-            //        txblUsrPseudo.Text = App.p.Pseudo;
-            //    }
-            //    if (App.p.Email != null)
-            //    {
-            //        txblUsrEmail.Text = App.p.Email;
-            //    }
-            //    if (App.p.Birthday != null)
-            //    {
-            //        txblUsrBirthday.Text = App.p.Birthday;
-            //    }
-            //    if (App.p.LikedGenre != null)
-            //    {
-            //        txblUsrLikedGenre.Text = App.p.LikedGenre;
-            //    }
-            //    if (App.p.FavBook != null)
-            //    {
-            //        txblUsrFavBook.Text = App.p.FavBook;
-            //    }
-            //}
-            //base.OnNavigatedTo(e);
         }
 
         private async void Profile_Loaded(object sender, RoutedEventArgs e)
         {
-            clRequestAPI Req = new clRequestAPI("/api/profile");
-            string res = null;
+            try
+            {
+                clRequestAPI Req = new clRequestAPI("/api/profile");
+                string res = null;
 
-            Req.addAuthorization("Bearer", App.Token);
+                Req.addAuthorization("Bearer", App.Token);
 
-            res = await Req.GetRequest();
-            string str = Req.findResponse("name");
-            string mail = Req.findResponse("email");
-            User.Pseudo = str;
-            User.Email = mail;
-            txblPseudo.Text += str;
-            txblEmail.Text += mail;
+                res = await Req.GetRequest();
+                string str = Req.findResponse("name");
+                string mail = Req.findResponse("email");
+                User.Pseudo = str;
+                User.Email = mail;
+                txblPseudo.Text += str;
+                txblEmail.Text += mail;
+            }
+            catch (Exception ex)
+            {
+                clErrorHandling.ErrorMessage("Profile_Loaded", ex);
+            }
         }
 
         private void btModifProf_Click(object sender, RoutedEventArgs e)

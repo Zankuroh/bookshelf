@@ -254,7 +254,7 @@ namespace BookShelf
         private async void btBuy_Click(object sender, RoutedEventArgs e)
         {
             // The URI to launch
-            var uriBing = new Uri(@"http://api.duckduckgo.com/?q=\9782352947349!amazon&t=BookShelf&format=json");
+            var uriBing = new Uri(@"http://api.duckduckgo.com/?q=\" + book.BookISBN + "!amazon&t=BookShelf&format=json");
 
             //clRequestAPI r = new clRequestAPI("http://api.duckduckgo.com/?q=Neuromancer!amazon&format=json");
             //string s = await r.GetRequest();
