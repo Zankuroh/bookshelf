@@ -151,7 +151,7 @@ public class SignUp extends AppCompatActivity
                         Snackbar snackbar = Snackbar.make(_lp, "Erreur : " + error, Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_lp, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_lp, "Une erreur est survenue", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }

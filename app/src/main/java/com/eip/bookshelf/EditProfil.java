@@ -18,7 +18,6 @@ import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.DelProfile.DelProfile;
 import com.eip.utilities.model.ProfileModification.ProfileModification;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import retrofit2.Call;
@@ -64,7 +63,6 @@ public class EditProfil extends AppCompatActivity
             findViewById(R.id.BDelete).setVisibility(View.INVISIBLE);
             findViewById(R.id.ETPseudo).setVisibility(View.INVISIBLE);
         }
-        //Todo: set les autres champs
     }
 
     @Override
@@ -172,7 +170,6 @@ public class EditProfil extends AppCompatActivity
             @Override
             public void onResponse(Call<ProfileModification> call, Response<ProfileModification> response) {
                 if (response.isSuccessful()) {
-                    //ProfileModification modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Modification réussie !", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
@@ -210,7 +207,6 @@ public class EditProfil extends AppCompatActivity
             @Override
             public void onResponse(Call<ProfileModification> call, Response<ProfileModification> response) {
                 if (response.isSuccessful()) {
-                    //ProfileModification modif = response.body();
                     _login = newName;
                     Snackbar snackbar = Snackbar.make(_rl, "Modification réussie !", Snackbar.LENGTH_LONG);
                     snackbar.show();
@@ -250,7 +246,6 @@ public class EditProfil extends AppCompatActivity
             @Override
             public void onResponse(Call<ProfileModification> call, Response<ProfileModification> response) {
                 if (response.isSuccessful()) {
-                    //ProfileModification modif = response.body();
                     _email = newEmail;
                     Snackbar snackbar = Snackbar.make(_rl, "Modification réussie !", Snackbar.LENGTH_LONG);
                     snackbar.show();
@@ -299,22 +294,11 @@ public class EditProfil extends AppCompatActivity
                 } else {
                     try {
                         JSONObject jObj = new JSONObject(response.errorBody().string());
-                        //JSONObject jObjError = jObj.getJSONObject("errors");
                         String error = jObj.getString("title");
-                        /*JSONArray password;
-                        JSONArray deleted;
-                        try {
-                            password = jObjError.getJSONArray("password");
-                            error += "\n" + password.getString(0);
-                        } catch (Exception e) {}
-                        try {
-                            deleted = jObjError.getJSONArray("delete");
-                            error += "\n" + deleted.getString(0);
-                        } catch (Exception e) {}*/
                         Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + error, Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }

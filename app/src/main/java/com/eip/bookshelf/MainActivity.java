@@ -179,7 +179,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fragmentTransaction.replace(R.id.fragment_container, signFrag);
                     fragmentTransaction.commit();
                     item.setTitle("Connexion");
-                    //accessDenied(_this);
                 }
                 break;
             case R.id.nav_about:
@@ -226,8 +225,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void navAbout()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Changelog:\n-V0.45: Refonte de l'app. Nouvelles fonctionnalités !\n\n" +
-                "L'application BookShelf vous permet de gérer votre bibliothèque !\n" +
+        builder.setMessage("L'application BookShelf vous permet de gérer votre bibliothèque !\n" +
                 "Développée par Nicolas et Maxime.\n" +
                 "D'après l'idée originale de Pierre.");
         builder.setPositiveButton("Merci !", null);

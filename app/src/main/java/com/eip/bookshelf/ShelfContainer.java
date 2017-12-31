@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +57,6 @@ public class ShelfContainer extends Fragment
 {
     private ArrayList<BiblioAdapter> _modelListBiblio = new ArrayList<>();
     private String _status;
-    private View _v;
     private MainActivity.shelfType _type;
     private customAdapterBiblio _adapterBiblio;
     private RequestDBLocal _req;
@@ -67,14 +65,12 @@ public class ShelfContainer extends Fragment
     private String _keywords;
     private int _startIndex;
     private int _nbFound;
-    private GridView _gvBiblio;
     private List<String> _latestSugg;
     private List<String> _overallSugg;
     private List<String> _friendLatestSugg;
     private List<String> _friendSugg;
     private String _FriendId;
     private Boolean _spinnerSugg = false;
-    private Boolean _thread = true;
 
     public ShelfContainer()
     {
@@ -84,49 +80,48 @@ public class ShelfContainer extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        _status = "-1";
         Bundle b = getArguments();
+        View v = null;
+
         if (b != null) {
             _type = (MainActivity.shelfType)b.getSerializable("type");
             _FriendId = b.getString("idFriend", null);
-            if (_type == MainActivity.shelfType.MAINSHELF) {
-                _status = b.getString("status");
-            }
+            _status = b.getString("status", "-1");
+            _keywords = b.getString("keywords", null);
         } else {
             _type = null;
         }
         _req = new RequestDBLocal(_type, getContext());
-//        _req.deletePrimaryInfo(null, null);
         if (_type == MainActivity.shelfType.MAINSHELF) {
-            _v = inflater.inflate(R.layout.shelf_container, container, false); //Anciennement shelf_container !
-            setAdapters();
+            v = inflater.inflate(R.layout.shelf_container, container, false);
+            setAdapters(v);
             if (_currentTab) {
-                setTextWatcher();
+                setTextWatcher(v);
                 mainShelf();
             }
         } else if (_type == MainActivity.shelfType.PROPOSHELF) {
-            _v = inflater.inflate(R.layout.shelf_propo, container,false);
-            setAdapters();
+            v = inflater.inflate(R.layout.shelf_propo, container,false);
+            setAdapters(v);
             propoShelf();
             setOnChangeSugg();
         } else if (_type == MainActivity.shelfType.WISHSHELF) {
-            _v = inflater.inflate(R.layout.shelf_simple, container, false);
+            v = inflater.inflate(R.layout.shelf_simple, container, false);
             if (_FriendId == null) {
-                setTextWatcher();
+                setTextWatcher(v);
             } else {
-                _v.findViewById(R.id.ISearchB).setVisibility(View.GONE);
+                v.findViewById(R.id.ISearchB).setVisibility(View.GONE);
             }
-            setAdapters();
+            setAdapters(v);
         } else if (_type == MainActivity.shelfType.SEARCH) {
-            _v = inflater.inflate(R.layout.shelf_search, container, false);
-            _keywords = b.getString("keywords");
+            v = inflater.inflate(R.layout.shelf_search, container, false);
             _startIndex = 0;
             _nbFound = 0;
-            initSearchInfo();
-            setAdapters();
+            initSearchInfo(v);
+            setAdapters(v);
             searchBookByKeywords();
         }
-        return _v;
+
+        return v;
     }
 
     @Override
@@ -141,12 +136,14 @@ public class ShelfContainer extends Fragment
             if (getActivity() == null) {
                 return;
             }
-            EditText field = getActivity().findViewById(R.id.ETkeyword);
-            if (field == null) {
-                field = _v.findViewById(R.id.ETkeyword);
-            }
-            if (field != null) {
-                field.setText("");
+            if (getActivity() != null) {
+                EditText field = getActivity().findViewById(R.id.ETkeyword);
+                if (field == null && getView() != null) {
+                    field = getView().findViewById(R.id.ETkeyword);
+                }
+                if (field != null) {
+                    field.setText("");
+                }
             }
             if (_type == MainActivity.shelfType.WISHSHELF) {
                 if (_FriendId == null) {
@@ -154,15 +151,10 @@ public class ShelfContainer extends Fragment
                 } else {
                     getFriendWishList();
                 }
+            } else if (_type == MainActivity.shelfType.MAINSHELF) {
+                mainShelf();
             }
         }
-    }
-
-    @Override
-    public void onPause()
-    {
-        _thread = false;
-        super.onPause();
     }
 
     @Override
@@ -170,8 +162,8 @@ public class ShelfContainer extends Fragment
     {
         super.setUserVisibleHint(isVisibleToUser);
         _currentTab = isVisibleToUser;
-        if (isVisibleToUser && _v != null) {
-            setTextWatcher();
+        if (isVisibleToUser && getView() != null) {
+            setTextWatcher(getView());
             if (_modelListBiblio.size() == 0) {
                 mainShelf();
             }
@@ -182,45 +174,47 @@ public class ShelfContainer extends Fragment
 
     private void setOnChangeSugg()
     {
-        Spinner sp = _v.findViewById(R.id.SSuggest);
-        sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id)
-            {
-                if (_spinnerSugg) {
-                    String value = ((Spinner)_v.findViewById(R.id.SSuggest)).getSelectedItem().toString();
-                    switch (value) {
-                        case "Suggestions des 3 derniers livres":
-                            loadSuggestions(_latestSugg);
-                            break;
-                        case "Suggestions de tous les livres":
-                            loadSuggestions(_overallSugg);
-                            break;
-                        case "Suggestions des 3 derniers livres amis":
-                            loadSuggestions(_friendLatestSugg);
-                            break;
-                        case "Suggestions de tous les livres amis":
-                            loadSuggestions(_friendSugg);
-                            break;
-                        default:
-                            break;
+        if (getView() != null) {
+            Spinner sp = getView().findViewById(R.id.SSuggest);
+            sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id)
+                {
+                    if (_spinnerSugg) {
+                        String value = ((Spinner)getView().findViewById(R.id.SSuggest)).getSelectedItem().toString();
+                        switch (value) {
+                            case "Suggestions des 3 derniers livres":
+                                loadSuggestions(_latestSugg);
+                                break;
+                            case "Suggestions de tous les livres":
+                                loadSuggestions(_overallSugg);
+                                break;
+                            case "Suggestions des 3 derniers livres amis":
+                                loadSuggestions(_friendLatestSugg);
+                                break;
+                            case "Suggestions de tous les livres amis":
+                                loadSuggestions(_friendSugg);
+                                break;
+                            default:
+                                break;
+                        }
+                    } else {
+                        _spinnerSugg = true;
                     }
-                } else {
-                    _spinnerSugg = true;
                 }
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {}
-        });
+                @Override
+                public void onNothingSelected(AdapterView<?> parentView) {}
+            });
+        }
     }
 
-    private void setTextWatcher()
+    private void setTextWatcher(View v)
     {
         if (getActivity() != null) {
             EditText field = getActivity().findViewById(R.id.ETkeyword);
-            if (field == null) {
-                field = _v.findViewById(R.id.ETkeyword);
+            if (field == null && v != null) {
+                field = v.findViewById(R.id.ETkeyword);
             }
             _tWatcher = new TextWatcher() {
                 @Override
@@ -235,16 +229,20 @@ public class ShelfContainer extends Fragment
                     String content = s.toString();
                     if (!content.equals("")) {
                         Spinner sp = getActivity().findViewById(R.id.Stype);
-                        if (sp == null) {
-                            sp = _v.findViewById(R.id.Stype);
+                        if (sp == null && getView() != null) {
+                            sp = getView().findViewById(R.id.Stype);
                         }
-                        typeSearch = sp.getSelectedItem().toString();
+                        if (sp != null) {
+                            typeSearch = sp.getSelectedItem().toString();
+                        }
                     }
                     _modelListBiblio.clear();
                     searchBookInShelf(typeSearch, content);
                 }
             };
-            field.addTextChangedListener(_tWatcher);
+            if (field != null) {
+                field.addTextChangedListener(_tWatcher);
+            }
         }
     }
 
@@ -256,44 +254,46 @@ public class ShelfContainer extends Fragment
         }
     }
 
-    private void initSearchInfo()
+    private void initSearchInfo(View v)
     {
-        TextView tv = _v.findViewById(R.id.TVInfoSearch);
-        final Button BPrev = _v.findViewById(R.id.BPrev);
-        final Button BNext = _v.findViewById(R.id.BNext);
+        if (v != null) {
+            TextView tv = v.findViewById(R.id.TVInfoSearch);
+            final Button BPrev = v.findViewById(R.id.BPrev);
+            final Button BNext = v.findViewById(R.id.BNext);
 
-        tv.setText("Résultats pour: " + _keywords);
-        BPrev.setEnabled(false);
-        BPrev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (_startIndex > 0) {
-                    _startIndex -= 40;
-                    if (_startIndex < _nbFound) {
-                        BNext.setEnabled(true);
-                    }
-                    if (_startIndex == 0) {
-                        BPrev.setEnabled(false);
-                    }
-                    searchBookByKeywords();
-                }
-            }
-        });
-        BNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (_startIndex < _nbFound) {
-                    _startIndex += 40;
-                    if (_startIndex >= _nbFound) {
-                        BNext.setEnabled(false);
-                    }
+            tv.setText("Résultats pour: " + _keywords);
+            BPrev.setEnabled(false);
+            BPrev.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
                     if (_startIndex > 0) {
-                        BPrev.setEnabled(true);
+                        _startIndex -= 40;
+                        if (_startIndex < _nbFound) {
+                            BNext.setEnabled(true);
+                        }
+                        if (_startIndex == 0) {
+                            BPrev.setEnabled(false);
+                        }
+                        searchBookByKeywords();
                     }
-                    searchBookByKeywords();
                 }
-            }
-        });
+            });
+            BNext.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (_startIndex < _nbFound) {
+                        _startIndex += 40;
+                        if (_startIndex >= _nbFound) {
+                            BNext.setEnabled(false);
+                        }
+                        if (_startIndex > 0) {
+                            BPrev.setEnabled(true);
+                        }
+                        searchBookByKeywords();
+                    }
+                }
+            });
+        }
     }
 
     private void mainShelf()
@@ -316,28 +316,20 @@ public class ShelfContainer extends Fragment
                     ArrayList<String> isbns = new ArrayList<>();
                     Map<String, String> map = new HashMap<>();
 
-                    while(it.hasNext()){
+                    while (it.hasNext()) {
                         com.eip.utilities.model.BooksLocal.Book book = it.next();
                         isbns.add(book.getIsbn());
                         map.put(book.getIsbn(), book.getStatusId());
                     }
-                    if (!isbns.isEmpty())
+                    if (!isbns.isEmpty()) {
                         getBackBookInShelf(isbns, map);
-                    else {
-                        if (getActivity() != null) {
-                            Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.RLShelf), "Votre bibliothèque est vide", Snackbar.LENGTH_LONG);
-                            snackbar.show();
-                        }
+                    } else if (getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView().findViewById(R.id.RLShelf), "Votre bibliothèque est vide", Snackbar.LENGTH_LONG);
+                        snackbar.show();
                     }
-                } else {
-                    try {
-                        if (getActivity() != null) {
-                            Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.RLShelf), "Une erreur est survenue", Snackbar.LENGTH_LONG);
-                            snackbar.show();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                } else if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView().findViewById(R.id.RLShelf), "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                    snackbar.show();
                 }
                 MainActivity.stopLoading();
             }
@@ -345,8 +337,10 @@ public class ShelfContainer extends Fragment
             @Override
             public void onFailure(Call<BooksLocal> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
+                if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
                 t.printStackTrace();
                 MainActivity.stopLoading();
             }
@@ -366,7 +360,6 @@ public class ShelfContainer extends Fragment
             @Override
             public void onResponse(Call<Suggestion> call, Response<Suggestion> response) {
                 if (response.isSuccessful()) {
-                    Log.i("Success", "api Sugges");
                     Suggestion bookshelf = response.body();
                     _latestSugg = bookshelf.getData().getLatestSuggestions();
                     _overallSugg = bookshelf.getData().getOverallSuggestions();
@@ -374,14 +367,9 @@ public class ShelfContainer extends Fragment
                     _friendSugg = bookshelf.getData().getFriendsSuggestions();
 
                     loadSuggestions(_latestSugg);
-                } else {
-                    Log.i("fail", "api Sugges");
-                    try {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                } else if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                    snackbar.show();
                 }
                 MainActivity.stopLoading();
             }
@@ -389,8 +377,10 @@ public class ShelfContainer extends Fragment
             @Override
             public void onFailure(Call<Suggestion> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
+                if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
                 t.printStackTrace();
                 MainActivity.stopLoading();
             }
@@ -400,7 +390,7 @@ public class ShelfContainer extends Fragment
     private void loadSuggestions(List<String> sugg)
     {
         _modelListBiblio.clear();
-        if (sugg == null || sugg.size() == 0) {
+        if (sugg == null || sugg.size() == 0 && _adapterBiblio != null) {
             _adapterBiblio.notifyDataSetChanged();
             return;
         }
@@ -412,10 +402,8 @@ public class ShelfContainer extends Fragment
             String identifier = it.next();
             if (android.text.TextUtils.isDigitsOnly(identifier)) {
                 isbns.add(identifier);
-                Log.i("ISBN", identifier);
             } else {
                 asins.add(identifier);
-                Log.i("ASIN", identifier);
             }
         }
         if (isbns.size() > 0) {
@@ -439,7 +427,6 @@ public class ShelfContainer extends Fragment
                 @Override
                 public void onResponse(Call<ASIN> call, Response<ASIN> response) {
                     if (response.isSuccessful()) {
-                        Log.i("success", "api ASIN");
                         ASIN bookshelf = response.body();
                         List<com.eip.utilities.model.ASIN.Data> data = bookshelf.getData();
                         ListIterator<com.eip.utilities.model.ASIN.Data> it = data.listIterator();
@@ -447,7 +434,6 @@ public class ShelfContainer extends Fragment
                             com.eip.utilities.model.ASIN.Data asinData = it.next();
                             String title = org.apache.commons.text.StringEscapeUtils.unescapeHtml4(asinData.getTitle());
                             String picUrl = asinData.getPicUrl();
-                            Log.i("TITLE", "+" + title + "+");
                             if (picUrl == null || picUrl == "") {
                                 picUrl = "https://puu.sh/yQVey/96127d0c0b.png";
                             }
@@ -456,25 +442,24 @@ public class ShelfContainer extends Fragment
                             }
                             l.lock();
                             _modelListBiblio.add(new BiblioAdapter(title, picUrl, null));
-                            _adapterBiblio.notifyDataSetChanged();
+                            if (_adapterBiblio != null) {
+                                _adapterBiblio.notifyDataSetChanged();
+                            }
                             l.unlock();
                         }
-                    } else {
-                        Log.i("fail", "api ASIN");
-                        try {
-                            Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
-                            snackbar.show();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    } else if (getView() != null){
+                        Snackbar snackbar = Snackbar.make(getView(), "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                        snackbar.show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ASIN> call, Throwable t)
                 {
-                    Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                    snackbar.show();
+                    if (getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
                     t.printStackTrace();
                 }
             });
@@ -507,21 +492,15 @@ public class ShelfContainer extends Fragment
                         isbns.add(book.getIsbn());
                         map.put(book.getIsbn(), book.getStatusId());
                     }
-                    if (!isbns.isEmpty())
+                    if (!isbns.isEmpty()) {
                         getBackBookInShelf(isbns, map);
-                    else {
-                        Snackbar snackbar = Snackbar.make(_v, "Votre liste de souhaits est vide", Snackbar.LENGTH_LONG);
+                    } else if (getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView(), "Votre liste de souhaits est vide", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     }
-                } else {
-                    try {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        e.printStackTrace();
-                    }
+                } else if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                    snackbar.show();
                 }
                 MainActivity.stopLoading();
             }
@@ -529,37 +508,43 @@ public class ShelfContainer extends Fragment
             @Override
             public void onFailure(Call<BooksLocal> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
+                if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
                 t.printStackTrace();
                 MainActivity.stopLoading();
             }
         });
     }
 
-    private void setAdapters()
+    private void setAdapters(View v)
     {
-        _gvBiblio = _v.findViewById(R.id.GVBiblio);
-        _adapterBiblio = new customAdapterBiblio(_v, _modelListBiblio);
-        _gvBiblio.setAdapter(_adapterBiblio);
-        _modelListBiblio.clear();
+        if (v != null) {
+            GridView gvBiblio = v.findViewById(R.id.GVBiblio);
+            _adapterBiblio = new customAdapterBiblio(v, _modelListBiblio);
+            gvBiblio.setAdapter(_adapterBiblio);
+            _modelListBiblio.clear();
 
-        _gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String isbn = ((TextView) view.findViewById(R.id.TVISBN)).getText().toString();
-                if (!isbn.equals("")) {
-                    Bundle b = new Bundle();
-                    b.putString("isbn", isbn);
-                    Intent in = new Intent(getActivity(), InfoBook.class);
-                    in.putExtra("book", b);
-                    startActivity(in);
-                } else {
-                    Snackbar snackbar = Snackbar.make(_v, "Aucune information supplémentaire disponible", Snackbar.LENGTH_LONG);
-                    snackbar.show();
+            gvBiblio.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String isbn = ((TextView) view.findViewById(R.id.TVISBN)).getText().toString();
+                    if (!isbn.equals("")) {
+                        Bundle b = new Bundle();
+                        b.putString("isbn", isbn);
+                        Intent in = new Intent(getActivity(), InfoBook.class);
+                        in.putExtra("book", b);
+                        startActivity(in);
+                    } else {
+                        if (getView() != null) {
+                            Snackbar snackbar = Snackbar.make(getView(), "Aucune information supplémentaire disponible", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void searchBookInShelf(final String typeSearch, final String content)
@@ -568,14 +553,10 @@ public class ShelfContainer extends Fragment
             public void run() {
                 Cursor cursor = _req.readFromSearch(typeSearch, content, _status);
                 while(cursor.moveToNext()) {
-                    if (_thread) {
-                        String isbn = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_ISBN));
-                        String title = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_TITLE));
-                        String pic = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_PIC));
-                        _modelListBiblio.add(new BiblioAdapter(title, pic, isbn));
-                    } else {
-                        break;
-                    }
+                    String isbn = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_ISBN));
+                    String title = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_TITLE));
+                    String pic = cursor.getString(cursor.getColumnIndex(LocalDBContract.LocalDB.COLUMN_NAME_PIC));
+                    _modelListBiblio.add(new BiblioAdapter(title, pic, isbn));
                 }
                 cursor.close();
             }
@@ -583,7 +564,9 @@ public class ShelfContainer extends Fragment
         t.start();
         try {
             t.join();
-            _adapterBiblio.notifyDataSetChanged();
+            if (_adapterBiblio != null) {
+                _adapterBiblio.notifyDataSetChanged();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -614,7 +597,6 @@ public class ShelfContainer extends Fragment
                     for (String isbn : isbns) {
                         VolumeInfo vi = getInfoBook(isbn);
                         if (vi == null) {
-                            Log.e("INVALID ISBN", isbn);
                             continue;
                         }
                         String img;
@@ -642,7 +624,9 @@ public class ShelfContainer extends Fragment
         t.start();
         try {
             t.join();
-            _adapterBiblio.notifyDataSetChanged();
+            if (_adapterBiblio != null) {
+                _adapterBiblio.notifyDataSetChanged();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -688,7 +672,7 @@ public class ShelfContainer extends Fragment
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                VolumeInfo vi = null;
+                VolumeInfo vi;
 
                 try {
                     Books b = call.execute().body();
@@ -719,17 +703,21 @@ public class ShelfContainer extends Fragment
                             }
                         }
                     }
-                } catch (IOException e) {
+                } catch (IOException | NullPointerException e) {
                     e.printStackTrace();
                 }
 
-                if (_thread) {
+                if (getActivity() != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            _adapterBiblio.notifyDataSetChanged();
-                            TextView tv = _v.findViewById(R.id.TVSubInfoSearch);
-                            tv.setText(String.valueOf(_nbFound) + " résultats - page " + String.valueOf(_startIndex / 40 + 1) + " / " + String.valueOf((int)Math.ceil((float)_nbFound / 40.0f)));
+                            if (_adapterBiblio != null) {
+                                _adapterBiblio.notifyDataSetChanged();
+                            }
+                            if (getView() != null) {
+                                TextView tv = getView().findViewById(R.id.TVSubInfoSearch);
+                                tv.setText(String.valueOf(_nbFound) + " résultats - page " + String.valueOf(_startIndex / 40 + 1) + " / " + String.valueOf((int)Math.ceil((float)_nbFound / 40.0f)));
+                            }
                             MainActivity.stopLoading();
                         }
                     });
@@ -767,18 +755,22 @@ public class ShelfContainer extends Fragment
                     Lock l = new ReentrantLock();
                     if (isbns.size() > 0) {
                         getInfoBookByThread(isbns, l);
-                    } else {
-                        Snackbar snackbar = Snackbar.make(_v, "Votre amis n'a pas de livre dans sa liste", Snackbar.LENGTH_LONG);
+                    } else if (getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView(), "Votre amis n'a pas de livre dans sa liste", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     }
                 } else {
                     try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            Snackbar snackbar = Snackbar.make(getView(), "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                         e.printStackTrace();
                     }
                 }
@@ -788,8 +780,10 @@ public class ShelfContainer extends Fragment
             @Override
             public void onFailure(Call<WishList> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
+                if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
                 t.printStackTrace();
                 MainActivity.stopLoading();
             }
@@ -803,7 +797,6 @@ public class ShelfContainer extends Fragment
                 for (String isbn: isbns) {
                     VolumeInfo vi = getInfoBook(isbn);
                     if (vi == null) {
-                        Log.e("INVALID ISBN", isbn);
                         continue;
                     }
                     String img;
@@ -814,11 +807,13 @@ public class ShelfContainer extends Fragment
                     }
                     l.lock();
                     _modelListBiblio.add(new BiblioAdapter(vi.getTitle(), img, isbn));
-                    if (_thread) {
+                    if (getActivity() != null) {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                _adapterBiblio.notifyDataSetChanged();
+                                if (_adapterBiblio != null) {
+                                    _adapterBiblio.notifyDataSetChanged();
+                                }
                             }
                         });
                     } else {

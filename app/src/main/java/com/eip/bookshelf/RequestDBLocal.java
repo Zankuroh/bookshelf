@@ -112,13 +112,13 @@ class RequestDBLocal
 
 
         return db.query(
-                LocalDBContract.LocalDB.TABLE_NAME,       // The table to query
-                projection,                               // The columns to return
-                selection,                                // The columns for the WHERE clause selection
-                selectionArgs,                            // The values for the WHERE clause selectionArgs
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                null                                      // The sort order
+                LocalDBContract.LocalDB.TABLE_NAME,     // The table to query
+                projection,                             // The columns to return
+                selection,                              // The columns for the WHERE clause selection
+                selectionArgs,                          // The values for the WHERE clause selectionArgs
+                null,                           // don't group the rows
+                null,                           // don't filter by row groups
+                null                            // The sort order
         );
     }
 

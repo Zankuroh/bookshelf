@@ -15,8 +15,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,7 +41,6 @@ import com.eip.utilities.model.Reviews.Reviews;
 import com.eip.utilities.model.VolumeInfo;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.ParseException;
@@ -192,7 +189,6 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ChangeStatus> call, Response<ChangeStatus> response) {
                 if (response.isSuccessful()) {
-                    //ChangeStatus modif = response.body();
                     _req.updateStateBook(_isbn, String.valueOf(state));
                     Snackbar snackbar = Snackbar.make(_rl, "Le statut a bien été changé", Snackbar.LENGTH_LONG);
                     snackbar.show();
@@ -474,7 +470,6 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
                 if (response.isSuccessful()) {
-                    //ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été ajouté à votre bibliothèque", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
@@ -513,7 +508,6 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
                 if (response.isSuccessful()) {
-                    //ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre bibliothèque", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     _req.deletePrimaryInfo(_isbn, MainActivity.shelfType.MAINSHELF);
@@ -552,7 +546,6 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
                 if (response.isSuccessful()) {
-                    //ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été ajouté à votre liste de souhait", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
@@ -589,7 +582,6 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifBook> call, Response<ModifBook> response) {
                 if (response.isSuccessful()) {
-                    //ModifBook modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le livre a été supprimé de votre liste de souhaits", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     _req.deletePrimaryInfo(_isbn, MainActivity.shelfType.WISHSHELF);
@@ -672,7 +664,6 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifReview> call, Response<ModifReview> response) {
                 if (response.isSuccessful()) {
-                    //ModifReview add = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le commentaire a bien été ajouté", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     updateDisplayedReviews();
@@ -710,7 +701,6 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifReview> call, Response<ModifReview> response) {
                 if (response.isSuccessful()) {
-                    //ModifReview modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le commentaire a bien été modifié", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     updateDisplayedReviews();
@@ -748,7 +738,6 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<ModifReview> call, Response<ModifReview> response) {
                 if (response.isSuccessful()) {
-                    //ModifReview modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Le commentaire a bien été supprimé", Snackbar.LENGTH_LONG);
                     snackbar.show();
                     _myId = -1;
@@ -794,16 +783,13 @@ public class InfoBook extends AppCompatActivity
                     ListIterator<Author> it = authors.listIterator();
                     while (it.hasNext()) {
                         Author author = it.next();
-                        Log.i("toto",author.getFirstName()+" "+author.getLastName()+" => "+author.getId());
                         String comp = author.getFirstName()+" "+author.getLastName();
                         if (comp.equals(Author)) {
                             check = true;
-                            Log.i("Author", "EXISTE");
                             addToSub(author.getId());
                         }
                     }
                     if (!check) {
-                        Log.i("Author", "NEED TO BE ADD");
                         addAuthor(Author);
                     }
                 } else {
@@ -846,25 +832,6 @@ public class InfoBook extends AppCompatActivity
                 } else {
                     Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
                     snackbar.show();
-                    /*try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        JSONObject jobj = jObjError.getJSONObject("errors");
-                        String msg = "";
-                        if (jobj.has("first_name")) {
-                            JSONArray ar = jobj.getJSONArray("first_name");
-                            msg += ar.get(0);
-                        }
-                        if (jobj.has("last_name")) {
-                            JSONArray ar = jobj.getJSONArray("first_name");
-                            msg += ar.get(0);
-                        }
-                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " +  jObjError.getString("title"), Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    } catch (Exception e) {
-
-                        e.printStackTrace();
-                    }*/
-
                 }
             }
 
@@ -889,7 +856,6 @@ public class InfoBook extends AppCompatActivity
             @Override
             public void onResponse(Call<SubscriptionValidator> call, Response<SubscriptionValidator> response) {
                 if (response.isSuccessful()) {
-                    //SubscriptionValidator modif = response.body();
                     Snackbar snackbar = Snackbar.make(_rl, "Vous serez notifié lors de ses prochaines sorties", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
@@ -915,6 +881,5 @@ public class InfoBook extends AppCompatActivity
             }
         });
     }
-
 }
 

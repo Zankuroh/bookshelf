@@ -3,20 +3,15 @@ package com.eip.bookshelf;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.AuthorSubscription.SubAuthor;
 import com.eip.utilities.model.AuthorSubscription.SubList;
-import com.eip.utilities.model.Authors.Author;
-import com.eip.utilities.model.Authors.Authors;
-import com.eip.utilities.model.BooksLocal.*;
 
 import org.json.JSONObject;
 
@@ -36,8 +31,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FollowAuthor extends Fragment
 {
-    private View _v;
-    private RelativeLayout _rl;
     private ListView _lvAuthor;
     private ArrayList<Pair<String, String>> _modelListAuthor = new ArrayList<>();
     private customAdapterAuthor _adapterAuthor;
@@ -50,23 +43,25 @@ public class FollowAuthor extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        _v = inflater.inflate(R.layout.follow_author, container, false);
-        _rl = _v.findViewById(R.id.RLAuthor);
-        _lvAuthor = _v.findViewById(R.id.LVAuthor);
+        View v = inflater.inflate(R.layout.follow_author, container, false);
+        _lvAuthor = v.findViewById(R.id.LVAuthor);
 
-        setAdapter();
+        setAdapter(v);
         getSubAuthor();
-        return _v;
+        return v;
     }
 
-    private void setAdapter()
+    private void setAdapter(View v)
     {
-        _adapterAuthor = new customAdapterAuthor(_v.getContext(), _modelListAuthor);
-        _lvAuthor.setAdapter(_adapterAuthor);
-        _modelListAuthor.clear();
+        if (v != null) {
+            _adapterAuthor = new customAdapterAuthor(v.getContext(), _modelListAuthor);
+            _lvAuthor.setAdapter(_adapterAuthor);
+            _modelListAuthor.clear();
+        }
     }
 
-    private void getSubAuthor() {
+    private void getSubAuthor()
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -90,20 +85,28 @@ public class FollowAuthor extends Fragment
                             }
                             _modelListAuthor.add(new Pair<>(name, author.getAuthorId()));
                         }
-                        _adapterAuthor.notifyDataSetChanged();
+                        if (_adapterAuthor != null) {
+                            _adapterAuthor.notifyDataSetChanged();
+                        }
                     }
                     else {
-                        Snackbar snackbar = Snackbar.make(_rl, "Vous n'avez pas d'auteur suivi", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            Snackbar snackbar = Snackbar.make(getView(), "Vous n'avez pas d'auteur suivi", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                     }
                 } else {
                     try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            Snackbar snackbar = Snackbar.make(getView(), "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                         e.printStackTrace();
                     }
 
@@ -113,8 +116,10 @@ public class FollowAuthor extends Fragment
             @Override
             public void onFailure(Call<SubList> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
+                if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
                 t.printStackTrace();
             }
         });

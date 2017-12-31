@@ -18,8 +18,6 @@ import static android.app.Activity.RESULT_OK;
 
 public class Search extends Fragment implements View.OnClickListener
 {
-    private View _v;
-
     public Search()
     {
 
@@ -28,11 +26,12 @@ public class Search extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        _v = inflater.inflate(R.layout.start_search, container, false);
+        View v = inflater.inflate(R.layout.start_search, container, false);
 
-        _v.findViewById(R.id.okSearch).setOnClickListener(this);
-        _v.findViewById(R.id.searchApn).setOnClickListener(this);
-        return _v;
+        v.findViewById(R.id.okSearch).setOnClickListener(this);
+        v.findViewById(R.id.searchApn).setOnClickListener(this);
+
+        return v;
     }
 
     @Override
@@ -80,8 +79,11 @@ public class Search extends Fragment implements View.OnClickListener
     private void searchByISBN()
     {
         MainActivity.hideSoftKeyboard(getActivity());
-        String keywords = ((EditText)_v.findViewById(R.id.searchField)).getText().toString();
-        if (!keywords.equals("")) {
+        String keywords = "";
+        if (getView() != null) {
+            keywords = ((EditText)getView().findViewById(R.id.searchField)).getText().toString();
+        }
+        if (!keywords.equals("") && getFragmentManager() != null) {
             android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             Bundle arg = new Bundle();
             arg.putSerializable("type", MainActivity.shelfType.SEARCH);

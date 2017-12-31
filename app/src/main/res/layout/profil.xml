@@ -98,6 +98,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
         android:text="Regarder la liste de souhait"
+        android:drawableStart="@drawable/ic_watch"
         android:layout_alignParentEnd="true"
         android:visibility="gone"/>
 

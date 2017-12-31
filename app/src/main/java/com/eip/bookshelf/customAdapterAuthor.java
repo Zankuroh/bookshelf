@@ -5,15 +5,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
-import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.eip.utilities.api.BookshelfApi;
@@ -34,9 +30,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 class customAdapterAuthor extends BaseAdapter {
     private Context _c;
-    private RelativeLayout _rl;
     private ArrayList<Pair<String, String>> _als;
-    View _v;
+    private View _v;
 
     customAdapterAuthor(Context context, ArrayList<Pair<String, String>> modelList)
     {
@@ -67,10 +62,10 @@ class customAdapterAuthor extends BaseAdapter {
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) _c.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             v = mInflater.inflate(R.layout.author_adapter, parent, false);
-            _v = v;
         } else {
             v = convertView;
         }
+        _v = parent;
 
         final Pair<String, String> iadapt = _als.get(position);
         final TextView tv = v.findViewById(R.id.TVAutor);
@@ -95,7 +90,8 @@ class customAdapterAuthor extends BaseAdapter {
         return v;
     }
 
-    private void deleteAuthorSub(String id) {
+    private void deleteAuthorSub(String id)
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -106,7 +102,6 @@ class customAdapterAuthor extends BaseAdapter {
             @Override
             public void onResponse(Call<SubscriptionValidator> call, Response<SubscriptionValidator> response) {
                 if (response.isSuccessful()) {
-                    //SubscriptionValidator modif = response.body();
                     Snackbar snackbar = Snackbar.make(_v, "Vous ne serez plus notifié lors de ses prochaines sorties", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 } else {
@@ -115,7 +110,7 @@ class customAdapterAuthor extends BaseAdapter {
                         Snackbar snackbar = Snackbar.make(_v, "Erreur : " +  jObjError.getString("title"), Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         e.printStackTrace();
                     }

@@ -9,14 +9,11 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.Notification.Notification;
 import com.eip.utilities.model.Notification.Notifications;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +31,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ShelfTab extends Fragment
 {
-    private View _v;
-
     public ShelfTab()
     {
 
@@ -44,22 +39,22 @@ public class ShelfTab extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        _v = inflater.inflate(R.layout.shelf_tab, container, false);
+        View v = inflater.inflate(R.layout.shelf_tab, container, false);
 
-        ViewPager viewPager = _v.findViewById(R.id.VPTab);
+        ViewPager viewPager = v.findViewById(R.id.VPTab);
         setupViewPager(viewPager);
 
-        TabLayout tabLayout = _v.findViewById(R.id.TLTab);
+        TabLayout tabLayout = v.findViewById(R.id.TLTab);
         tabLayout.setupWithViewPager(viewPager);
 
         Bundle b = getArguments();
         if (b != null) {
             if (b.getBoolean("connection", false)) {
-                getNotification();
+                getNotification(v);
             }
         }
 
-        return _v;
+        return v;
     }
 
     private void setupViewPager(ViewPager viewPager)
@@ -143,7 +138,11 @@ public class ShelfTab extends Fragment
         }
     }
 
-    private void getNotification() {
+    private void getNotification(final View v)
+    {
+        if (v == null) {
+            return;
+        }
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -156,12 +155,12 @@ public class ShelfTab extends Fragment
                 if (response.isSuccessful()) {
                     List<Notification> notifications = response.body().getData();
                     if (!notifications.isEmpty()) {
-                        final Dialog dial = new Dialog(_v.getContext());
+                        final Dialog dial = new Dialog(v.getContext());
                         dial.setContentView(R.layout.notification_popup);
                         dial.setTitle("Vos nouveautées");
                         dial.show();
                         ArrayList<NotificationAdapter> _modelListNotif = new ArrayList<>();
-                        customAdapterNotification _adapterNotif = new customAdapterNotification(_v, _modelListNotif);
+                        customAdapterNotification _adapterNotif = new customAdapterNotification(v, _modelListNotif);
                         ListView lv = dial.findViewById(R.id.LVNew);
                         lv.setAdapter(_adapterNotif);
                         _modelListNotif.clear();
@@ -171,19 +170,17 @@ public class ShelfTab extends Fragment
                             String name = newNotif.getFirstName();
                             if (newNotif.getLastName() != null)
                                 name += " " + newNotif.getLastName();
-                            _modelListNotif.add(new NotificationAdapter(name,newNotif.getTitle()));
+                            _modelListNotif.add(new NotificationAdapter(name, newNotif.getTitle()));
                         }
                         _adapterNotif.notifyDataSetChanged();
                     }
                 }
-                MainActivity.stopLoading();
             }
 
             @Override
             public void onFailure(Call<Notifications> call, Throwable t)
             {
                 t.printStackTrace();
-                MainActivity.stopLoading();
             }
         });
     }

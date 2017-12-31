@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 
@@ -50,7 +48,6 @@ import static android.app.Activity.RESULT_OK;
 
 public class SignIn extends Fragment implements View.OnClickListener
 {
-    private View _v;
     private CallbackManager _callbackManager;
     private GoogleApiClient mGoogleApiClient;
     private LoginButton loginButton;
@@ -63,11 +60,11 @@ public class SignIn extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        _v = inflater.inflate(R.layout.sign_in, container, false);
-        _v.findViewById(R.id.btnCo).setOnClickListener(this);
-        _v.findViewById(R.id.btnForgetPass).setOnClickListener(this);
-        _v.findViewById(R.id.btnCreateAccount).setOnClickListener(this);
-        _v.findViewById(R.id.fbConnect).setOnClickListener(this);
+        View v = inflater.inflate(R.layout.sign_in, container, false);
+        v.findViewById(R.id.btnCo).setOnClickListener(this);
+        v.findViewById(R.id.btnForgetPass).setOnClickListener(this);
+        v.findViewById(R.id.btnCreateAccount).setOnClickListener(this);
+        v.findViewById(R.id.fbConnect).setOnClickListener(this);
 
         _callbackManager = CallbackManager.Factory.create();
 
@@ -82,7 +79,7 @@ public class SignIn extends Fragment implements View.OnClickListener
             }
         };
 
-        loginButton = _v.findViewById(R.id.fConnect);
+        loginButton = v.findViewById(R.id.fConnect);
         loginButton.setReadPermissions("public_profile email");
         // If using in a fragment
         loginButton.setFragment(this);
@@ -102,7 +99,7 @@ public class SignIn extends Fragment implements View.OnClickListener
         });
         accessTokenTracker.startTracking();
 
-        Button mGoogleSignInButton = _v.findViewById(R.id.gConnect);
+        Button mGoogleSignInButton = v.findViewById(R.id.gConnect);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(Scopes.EMAIL))
@@ -110,7 +107,7 @@ public class SignIn extends Fragment implements View.OnClickListener
                 .requestIdToken(getString(R.string.server_client_id)) // R.string.server_client_id => nicolas // R.string.server_client_id_2 => maxime
                 .requestServerAuthCode(getString(R.string.server_client_id))// R.string.server_client_id => nicolas // R.string.server_client_id_2 => maxime
                 .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(_v.getContext())
+        mGoogleApiClient = new GoogleApiClient.Builder(v.getContext())
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
@@ -124,7 +121,7 @@ public class SignIn extends Fragment implements View.OnClickListener
 
         deconnection();
 
-        return _v;
+        return v;
     }
 
     private static final int RC_SIGN_IN = 9001;
@@ -139,10 +136,10 @@ public class SignIn extends Fragment implements View.OnClickListener
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data)
     {
         if (requestCode == 4242) { // SignUp successfull -> Auto connect
-            if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK && getView() != null) {
                 String login = data.getStringExtra("login");
                 String passwd = data.getStringExtra("pwd");
-                connect(login, passwd, _v);
+                connect(login, passwd, getView());
             }
         }
 
@@ -180,7 +177,6 @@ public class SignIn extends Fragment implements View.OnClickListener
                 startActivityForResult(new Intent(getActivity(), SignUp.class), 4242);
                 break;
             case R.id.fbConnect:
-                Log.i("Click", "FB");
                 loginButton.performClick();
                 break;
             default:
@@ -191,9 +187,11 @@ public class SignIn extends Fragment implements View.OnClickListener
     private void clickSignIn()
     {
         MainActivity.hideSoftKeyboard(getActivity());
-        EditText login = _v.findViewById(R.id.ETsignInMail);
-        EditText passwd = _v.findViewById(R.id.ETsignInMdp);
-        connect(login.getText().toString(), passwd.getText().toString(), _v);
+        if (getView() != null) {
+            EditText login = getView().findViewById(R.id.ETsignInMail);
+            EditText passwd = getView().findViewById(R.id.ETsignInMdp);
+            connect(login.getText().toString(), passwd.getText().toString(), getView());
+        }
     }
 
     private void connect(String email, String pwd, final View v)
@@ -214,17 +212,23 @@ public class SignIn extends Fragment implements View.OnClickListener
                     String token = auth.getData().getToken();
                     MainActivity.userID = auth.getData().getUserId();
                     MainActivity.token = "bearer " + token;
-                    Snackbar snackbar = Snackbar.make(v, "Connexion réussie !", Snackbar.LENGTH_LONG);
-                    snackbar.show();
+                    if (v != null) {
+                        Snackbar snackbar = Snackbar.make(v, "Connexion réussie !", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
                     switchFragment();
                 } else {
                     try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (v != null) {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            Snackbar snackbar = Snackbar.make(v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (v != null) {
+                            Snackbar snackbar = Snackbar.make(v, "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                         e.printStackTrace();
                     }
                 }
@@ -233,8 +237,10 @@ public class SignIn extends Fragment implements View.OnClickListener
 
             @Override
             public void onFailure(Call<AuthLocal> call, Throwable t) {
-                Snackbar snackbar = Snackbar.make(v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
+                if (v != null) {
+                    Snackbar snackbar = Snackbar.make(v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
                 t.printStackTrace();
                 MainActivity.stopLoading();
             }
@@ -259,18 +265,24 @@ public class SignIn extends Fragment implements View.OnClickListener
                     String token = auth.getData().getToken();
                     MainActivity.userID = auth.getData().getUserId();
                     MainActivity.token = "bearer " + token;
-                    Snackbar snackbar = Snackbar.make(_v, "Connexion réussie !", Snackbar.LENGTH_LONG);
-                    snackbar.show();
+                    if (getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView(), "Connexion réussie !", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
                     switchFragment();
                 } else {
                     MainActivity.provider = null;
                     try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            Snackbar snackbar = Snackbar.make(getView(), "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                         e.printStackTrace();
                     }
                 }
@@ -278,9 +290,12 @@ public class SignIn extends Fragment implements View.OnClickListener
             }
 
             @Override
-            public void onFailure(Call<AuthLocal> call, Throwable t) {
-                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
+            public void onFailure(Call<AuthLocal> call, Throwable t)
+            {
+                if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
                 t.printStackTrace();
                 MainActivity.stopLoading();
             }
@@ -289,38 +304,27 @@ public class SignIn extends Fragment implements View.OnClickListener
 
     private void switchFragment()
     {
-        MainActivity.MenuItemCo.setTitle("Déconnexion");
-        MainActivity.MenuItemBiblio.setChecked(true);
-        MainActivity.defineNameToolBar("Bibliothèque");
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        if (getFragmentManager() != null) {
+            MainActivity.MenuItemCo.setTitle("Déconnexion");
+            MainActivity.MenuItemBiblio.setChecked(true);
+            MainActivity.defineNameToolBar("Bibliothèque");
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
-        Bundle arg = new Bundle();
-        arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
-        arg.putBoolean("connection", true);
-        ShelfTab shelfFrag = new ShelfTab();
-        shelfFrag.setArguments(arg);
-        fragmentTransaction.replace(R.id.fragment_container, shelfFrag, "SHELF");
-        fragmentTransaction.commit();
+            Bundle arg = new Bundle();
+            arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
+            arg.putBoolean("connection", true);
+            ShelfTab shelfFrag = new ShelfTab();
+            shelfFrag.setArguments(arg);
+            fragmentTransaction.replace(R.id.fragment_container, shelfFrag, "SHELF");
+            fragmentTransaction.commit();
+        }
     }
 
-    public void deconnection() {
+    public void deconnection()
+    {
         if (MainActivity.provider != null  && MainActivity.provider.equals("FB") && MainActivity.token != null) {
             loginButton.performClick();
         } else if (MainActivity.provider != null && MainActivity.provider.equals("Google") && MainActivity.token != null) {
-            //mGoogleApiClient.connect();
-            /*Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                    new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-
-                        }
-                    });*/
-            /*Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
-                    new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-                        }
-                    });*/
             MainActivity.token = null;
             MainActivity.provider = null;
         } else if (MainActivity.token != null) {
@@ -329,25 +333,28 @@ public class SignIn extends Fragment implements View.OnClickListener
         }
     }
 
-    public void AskEmailForReset() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(_v.getContext());
-        builder.setMessage("Veuillez entrer votre adresse mail. Vous recevrez un token pour reset votre mot de passe");
-        final EditText input = new EditText(_v.getContext());
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        builder.setView(input);
-        builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                if (!SignUp.verifyEmail(input.getText().toString())) {
-                    Snackbar snackbar = Snackbar.make(_v, "L'adresse mail n'est pas valide.", Snackbar.LENGTH_LONG);
-                    snackbar.show();
-                    AskEmailForReset();
-                } else {
-                    resetPasswordSendToken(input.getText().toString());
+    public void AskEmailForReset()
+    {
+        if (getView() != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
+            builder.setMessage("Veuillez entrer votre adresse mail. Vous recevrez un token pour reset votre mot de passe");
+            final EditText input = new EditText(getView().getContext());
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+            builder.setView(input);
+            builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (!SignUp.verifyEmail(input.getText().toString())) {
+                        Snackbar snackbar = Snackbar.make(getView(), "L'adresse mail n'est pas valide", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        AskEmailForReset();
+                    } else {
+                        resetPasswordSendToken(input.getText().toString());
+                    }
                 }
-            }
-        });
-        builder.setNegativeButton("Annuler", null);
-        builder.show();
+            });
+            builder.setNegativeButton("Annuler", null);
+            builder.show();
+        }
     }
 
     public void resetPasswordSendToken(String email) {
@@ -362,25 +369,27 @@ public class SignIn extends Fragment implements View.OnClickListener
             public void onResponse(Call<SimpleResponse> call, Response<SimpleResponse> response) {
                 if (response.isSuccessful()) {
                     SimpleResponse reset = response.body();
-                    if (reset.getData().getSuccess().equals("true")) {
-                        Snackbar snackbar = Snackbar.make(_v, "Un email avec un token vous a été envoyé", Snackbar.LENGTH_LONG);
+                    if (reset.getData().getSuccess().equals("true") && getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView(), "Un email avec un token vous a été envoyé", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         AskTokenForReset();
-                    }
-                    else
-                    {
-                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + reset.getTitle(), Snackbar.LENGTH_LONG);
+                    } else if (getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + reset.getTitle(), Snackbar.LENGTH_LONG);
                         snackbar.show();
                         AskEmailForReset();
                     }
                 } else {
                     try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            Snackbar snackbar = Snackbar.make(getView(), "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                         e.printStackTrace();
                     }
                 }
@@ -388,31 +397,38 @@ public class SignIn extends Fragment implements View.OnClickListener
             }
 
             @Override
-            public void onFailure(Call<SimpleResponse> call, Throwable t) {
-                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
+            public void onFailure(Call<SimpleResponse> call, Throwable t)
+            {
+                if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
                 t.printStackTrace();
                 MainActivity.stopLoading();
             }
         });
     }
 
-    public void AskTokenForReset() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(_v.getContext());
-        builder.setMessage("Veuillez entrer le token reçus par mail");
-        final EditText input = new EditText(_v.getContext());
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        builder.setView(input);
-        builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                resetPasswordSendNewPassword(input.getText().toString());
-            }
-        });
-        builder.setNegativeButton("Annuler", null);
-        builder.show();
+    public void AskTokenForReset()
+    {
+        if (getView() != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
+            builder.setMessage("Veuillez entrer le token reçus par mail");
+            final EditText input = new EditText(getView().getContext());
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+            builder.setView(input);
+            builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    resetPasswordSendNewPassword(input.getText().toString());
+                }
+            });
+            builder.setNegativeButton("Annuler", null);
+            builder.show();
+        }
     }
 
-    public void resetPasswordSendNewPassword(String token) {
+    public void resetPasswordSendNewPassword(String token)
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -424,33 +440,38 @@ public class SignIn extends Fragment implements View.OnClickListener
             public void onResponse(Call<SimpleResponse> call, Response<SimpleResponse> response) {
                 if (response.isSuccessful()) {
                     SimpleResponse reset = response.body();
-                    if (reset.getData().getSuccess().equals("true")) {
-                        Snackbar snackbar = Snackbar.make(_v, "Un email vous a été envoyé avec votre nouveau mot de passe", Snackbar.LENGTH_LONG);
+                    if (reset.getData().getSuccess().equals("true") && getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView(), "Un email vous a été envoyé avec votre nouveau mot de passe", Snackbar.LENGTH_LONG);
                         snackbar.show();
-                    }
-                    else
-                    {
-                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + reset.getTitle(), Snackbar.LENGTH_LONG);
+                    } else if (getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + reset.getTitle(), Snackbar.LENGTH_LONG);
                         snackbar.show();
                         AskTokenForReset();
                     }
                 } else {
                     try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(_v, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_v, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            Snackbar snackbar = Snackbar.make(getView(), "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                         e.printStackTrace();
                     }
                 }
                 MainActivity.stopLoading();
             }
             @Override
-            public void onFailure(Call<SimpleResponse> call, Throwable t) {
-                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
+            public void onFailure(Call<SimpleResponse> call, Throwable t)
+            {
+                if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
                 t.printStackTrace();
                 MainActivity.stopLoading();
             }

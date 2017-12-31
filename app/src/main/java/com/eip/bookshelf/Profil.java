@@ -4,22 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eip.utilities.api.BookshelfApi;
 import com.eip.utilities.model.Friend.Modif.FriendModif;
-import com.eip.utilities.model.Friend.WishList.WishList;
 import com.eip.utilities.model.Profile.Profile;
 import com.eip.utilities.model.Profile.Profile_;
 import com.eip.utilities.model.SimpleResponse.SimpleResponse;
@@ -46,16 +40,10 @@ public class Profil extends Fragment implements View.OnClickListener
 {
     private String _FriendId;
     private boolean _isFriend;
-    private RelativeLayout _rl;
     private TextView _pseudo;
     private TextView _email;
-    private TextView _birth;
-    private TextView _genre;
-    private TextView _book;
-    private TextView _create;
     private TextView _last;
     public static Profile_ prof;
-    private View _v;
     private Menu _menu;
 
     public Profil()
@@ -66,9 +54,9 @@ public class Profil extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        _v = inflater.inflate(R.layout.profil, container, false);
-        _pseudo = _v.findViewById(R.id.TVPseudo);
-        _email = _v.findViewById(R.id.TVEmail);
+        View v = inflater.inflate(R.layout.profil, container, false);
+        _pseudo = v.findViewById(R.id.TVPseudo);
+        _email = v.findViewById(R.id.TVEmail);
 
         Bundle b = getArguments();
         if (b != null) {
@@ -77,23 +65,15 @@ public class Profil extends Fragment implements View.OnClickListener
             _isFriend = b.getBoolean("isFriend");
             _pseudo.setText(b.getString("fname"));
             _email.setText(b.getString("femail"));
-            prepareFriend();
+            prepareFriend(v);
         } else {
             _FriendId = null;
             _isFriend = false;
-            prepareSelf();
+            prepareSelf(v);
         }
 
-
-
-        _rl = _v.findViewById(R.id.RLProfil);
-
-        _birth = _v.findViewById(R.id.TVBirth);
-        _genre = _v.findViewById(R.id.TVGenre);
-        _book = _v.findViewById(R.id.TVBook);
-        _create = _v.findViewById(R.id.TVCrea);
-        _last = _v.findViewById(R.id.TVLast);
-        return _v;
+        _last = v.findViewById(R.id.TVLast);
+        return v;
     }
 
     @Override
@@ -179,19 +159,24 @@ public class Profil extends Fragment implements View.OnClickListener
         }
     }
 
-    private void prepareSelf() {
-        _v.findViewById(R.id.BEditProfil).setOnClickListener(this);
-        _v.findViewById(R.id.BEditProfil).setVisibility(View.VISIBLE);
-    }
-
-    private void prepareFriend() {
-        if (_isFriend) {
-            _v.findViewById(R.id.BFShelf).setOnClickListener(this);
-            _v.findViewById(R.id.BFShelf).setVisibility(View.VISIBLE);
+    private void prepareSelf(View v)
+    {
+        if (v != null) {
+            v.findViewById(R.id.BEditProfil).setOnClickListener(this);
+            v.findViewById(R.id.BEditProfil).setVisibility(View.VISIBLE);
         }
     }
 
-    public void getInfo(){
+    private void prepareFriend(View v)
+    {
+        if (_isFriend && v != null) {
+            v.findViewById(R.id.BFShelf).setOnClickListener(this);
+            v.findViewById(R.id.BFShelf).setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void getInfo()
+    {
         MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
@@ -210,15 +195,9 @@ public class Profil extends Fragment implements View.OnClickListener
                     _email.setText(prof.getEmail());
                     _last.setText(dateFormat.format(date)); //
                     //Todo: set les autres champs
-                } else {
-                    try {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        e.printStackTrace();
-                    }
+                } else if (getView() != null){
+                    Snackbar snackbar = Snackbar.make(getView(), "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                    snackbar.show();
                 }
                 MainActivity.stopLoading();
             }
@@ -226,19 +205,20 @@ public class Profil extends Fragment implements View.OnClickListener
             @Override
             public void onFailure(Call<Profile> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
+                if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
                 t.printStackTrace();
                 MainActivity.stopLoading();
             }
         });
     }
 
-    public void getFriendInfo(){
+    public void getFriendInfo() {}
 
-    }
-
-    private void addFriend() {
+    private void addFriend()
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -250,21 +230,25 @@ public class Profil extends Fragment implements View.OnClickListener
             public void onResponse(Call<FriendModif> call, Response<FriendModif> response) {
                 if (response.isSuccessful()) {
                     FriendModif fm = response.body();
-                    if (fm.getTitle() == null) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Ami ajouté", Snackbar.LENGTH_LONG);
+                    if (fm.getTitle() == null && getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView(), "Ami ajouté", Snackbar.LENGTH_LONG);
                         snackbar.show();
-                    } else {
-                        Snackbar snackbar = Snackbar.make(_rl, fm.getTitle(), Snackbar.LENGTH_LONG);
+                    } else if (getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView(), fm.getTitle(), Snackbar.LENGTH_LONG);
                         snackbar.show();
                     }
                 } else {
                     try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            Snackbar snackbar = Snackbar.make(getView(), "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                         e.printStackTrace();
                     }
                 }
@@ -274,15 +258,18 @@ public class Profil extends Fragment implements View.OnClickListener
             @Override
             public void onFailure(Call<FriendModif> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_v, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
+                if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
                 t.printStackTrace();
                 MainActivity.stopLoading();
             }
         });
     }
 
-    private void deletefriend() {
+    private void deletefriend()
+    {
         BookshelfApi bookshelfApi = new Retrofit.Builder()
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -294,22 +281,26 @@ public class Profil extends Fragment implements View.OnClickListener
             public void onResponse(Call<SimpleResponse> call, Response<SimpleResponse> response) {
                 if (response.isSuccessful()) {
                     SimpleResponse valid = response.body();
-                    if (valid.getData().getSuccess().equals("true")) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Ami supprimé", Snackbar.LENGTH_LONG);
+                    if (valid.getData().getSuccess().equals("true") && getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView(), "Ami supprimé", Snackbar.LENGTH_LONG);
                         snackbar.show();
-                    } else {
-                        Snackbar snackbar = Snackbar.make(_rl, valid.getTitle(), Snackbar.LENGTH_LONG);
+                    } else if (getView() != null) {
+                        Snackbar snackbar = Snackbar.make(getView(), valid.getTitle(), Snackbar.LENGTH_LONG);
                         snackbar.show();
                     }
 
                 } else {
                     try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + jObjError.getString("title"), Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                     } catch (Exception e) {
-                        Snackbar snackbar = Snackbar.make(_rl, "Une erreur est survenue.", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        if (getView() != null) {
+                            Snackbar snackbar = Snackbar.make(getView(), "Une erreur est survenue", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
                         e.printStackTrace();
                     }
                 }
@@ -319,23 +310,28 @@ public class Profil extends Fragment implements View.OnClickListener
             @Override
             public void onFailure(Call<SimpleResponse> call, Throwable t)
             {
-                Snackbar snackbar = Snackbar.make(_rl, "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
-                snackbar.show();
+                if (getView() != null) {
+                    Snackbar snackbar = Snackbar.make(getView(), "Erreur : " + t.getMessage(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
                 t.printStackTrace();
                 MainActivity.stopLoading();
             }
         });
     }
 
-    private void getFriendWishList() {
+    private void getFriendWishList()
+    {
         MainActivity.defineNameToolBar("WishList de " + _pseudo.getText().toString());
         Bundle b = new Bundle();
         b.putString("idFriend", _FriendId);
         b.putSerializable("type", MainActivity.shelfType.WISHSHELF);
         ShelfContainer ShelfFrag = new ShelfContainer();
         ShelfFrag.setArguments(b);
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, ShelfFrag, "SHELF");
-        fragmentTransaction.commit();
+        if (getFragmentManager() != null) {
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, ShelfFrag, "SHELF");
+            fragmentTransaction.commit();
+        }
     }
 }
