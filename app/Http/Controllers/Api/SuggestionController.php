@@ -240,19 +240,45 @@ class SuggestionController extends ApiController
 	} 
 
 
-	private function findNewProxyFromGimmeProxy()
+	private function findNewProxyFromGimmeProxy($usePrivateProxies = false)
 	{
-		$result = json_decode(file_get_contents('http://gimmeproxy.com/api/getProxy?country=FR,GB,IT,LU&user-agent=true&protocol=http&supportsHttps=true&minSpeed=10'), true);
+		$urlProxies = null;
+		if ($usePrivateProxies)
+		{
+			$urlProxies = "https://api.myprivateproxy.net/v1/fetchProxies/json/full/9lghkyvc5ipt15cshw673zm63zhpbor1";
+		}
+		else
+		{
+			$urlProxies = "http://gimmeproxy.com/api/getProxy?country=FR,GB,IT,LU&user-agent=true&protocol=http&supportsHttps=true&minSpeed=200";
+		}
+
+		$result = json_decode(file_get_contents($urlProxies), true);
 		
 		Log::debug("New Proxy Result = ");
 		Log::debug($result);
-		///exit(0);
-		if (key_exists('curl', $result) && key_exists('websites', $result))
+		if ($usePrivateProxies)
 		{
-			if (key_exists('amazon', $result['websites']) && $result['websites']['amazon'] == true)
+			$randomIndex = rand(0, count($result) - 1);
+			Log::debug("Result length : " . count($result));
+			Log::debug("random index : " . $randomIndex);
+			$proxy = $result[$randomIndex];
+			$result = $proxy['username'] . ':' . $proxy['password'] . '@' . $proxy['proxy_ip'] . ':' . $proxy['proxy_port'];
+			Log::debug("Final built proxy url : " . $result);
+		}
+		else
+		{
+			if (key_exists('curl', $result) && key_exists('websites', $result))
 			{
-				$result = $result['curl'];
-				Log::debug("Final result : " . $result);				
+				if (key_exists('amazon', $result['websites']) && $result['websites']['amazon'] == true)
+				{
+					$result = $result['curl'];
+					Log::debug("Final result : " . $result);				
+				}
+				else
+				{
+					Log::debug("Final result null");
+					$result = null;
+				}
 			}
 			else
 			{
@@ -260,12 +286,6 @@ class SuggestionController extends ApiController
 				$result = null;
 			}
 		}
-		else
-		{
-			Log::debug("Final result null");
-			$result = null;
-		}
-		
 		usleep(1000);
 
 		return $result;
@@ -277,13 +297,14 @@ class SuggestionController extends ApiController
 	 **/
 	private function getNewProxy()
 	{
+		$usePrivateProxies = false;
 		Log::debug("GET NEW PROXY BRO method begin");
 		if ($this->currentProxy == null)
 		{
-			$result = $this->findNewProxyFromGimmeProxy();
+			$result = $this->findNewProxyFromGimmeProxy($usePrivateProxies);
 			while ($result == null)
 			{
-				$result = $this->findNewProxyFromGimmeProxy();
+				$result = $this->findNewProxyFromGimmeProxy($usePrivateProxies);
 				Log::debug("Find again a proxy ...");
 			}
 		// Log::debug("CHELOU status code : " . $result->getStatusCode());
@@ -496,6 +517,7 @@ class SuggestionController extends ApiController
 			$patternsToSearchTitle);
 
 		Log::debug("Amazon book's title =" . $bookTitle);
+
 		return $bookTitle;
 	}
 
