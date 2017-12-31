@@ -296,6 +296,7 @@ public class SignIn extends Fragment implements View.OnClickListener
 
         Bundle arg = new Bundle();
         arg.putSerializable("type", MainActivity.shelfType.MAINSHELF);
+        arg.putBoolean("connection", true);
         ShelfTab shelfFrag = new ShelfTab();
         shelfFrag.setArguments(arg);
         fragmentTransaction.replace(R.id.fragment_container, shelfFrag, "SHELF");

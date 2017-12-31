@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/RLAdaptNew">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="15dip"
+        android:background="@color/colorAccent"
+        android:id="@+id/VReviewLine"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:gravity="center"
+        android:id="@+id/TVAffAuthorName"
+        android:maxLines="2"
+        android:minLines="1"
+        android:textStyle="bold|italic"
+        android:layout_below="@id/VReviewLine"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/TVBookTitre"
+        android:layout_below="@+id/TVAffAuthorName"
+        />
+
+</RelativeLayout>

@@ -67,18 +67,17 @@ class customAdapterAuthor extends BaseAdapter {
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) _c.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             v = mInflater.inflate(R.layout.author_adapter, parent, false);
-            _v = mInflater.inflate(R.layout.follow_author, parent, false);
+            _v = v;
         } else {
             v = convertView;
         }
-
-        //_rl = v.findViewById(R.id.RLAuthor);// TODO: 13/12/2017 recup un truc qui marche
 
         final Pair<String, String> iadapt = _als.get(position);
         final TextView tv = v.findViewById(R.id.TVAutor);
         final customAdapterAuthor scope = this;
         tv.setText(iadapt.first);
         v.findViewById(R.id.IVDelete).setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 AlertDialog.Builder adb = new AlertDialog.Builder(v.getContext());
                 adb.setTitle("Désabonnement");
@@ -88,7 +87,6 @@ class customAdapterAuthor extends BaseAdapter {
                     public void onClick(DialogInterface dialog, int which) {
                         _als.remove(position);
                         scope.notifyDataSetChanged();
-                        // TODO: 11/12/2017 supprime l'auteur
                         deleteAuthorSub(iadapt.second);
                     }});
                 adb.show();

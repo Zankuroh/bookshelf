@@ -36,6 +36,27 @@ public class Notification {
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
+    @SerializedName("first_name")
+    @Expose
+    private String firstName;
+    @SerializedName("last_name")
+    @Expose
+    private Object lastName;
+    @SerializedName("active")
+    @Expose
+    private String active;
+    @SerializedName("current_votes")
+    @Expose
+    private String currentVotes;
+    @SerializedName("added_by")
+    @Expose
+    private String addedBy;
+    @SerializedName("author_novels_id")
+    @Expose
+    private String authorNovelsId;
+    @SerializedName("authors_id")
+    @Expose
+    private String authorsId;
 
     public Integer getId() {
         return id;
@@ -116,5 +137,62 @@ public class Notification {
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public Object getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(Object lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getActive() {
+        return active;
+    }
+
+    public void setActive(String active) {
+        this.active = active;
+    }
+
+    public String getCurrentVotes() {
+        return currentVotes;
+    }
+
+    public void setCurrentVotes(String currentVotes) {
+        this.currentVotes = currentVotes;
+    }
+
+    public String getAddedBy() {
+        return addedBy;
+    }
+
+    public void setAddedBy(String addedBy) {
+        this.addedBy = addedBy;
+    }
+
+    public String getAuthorNovelsId() {
+        return authorNovelsId;
+    }
+
+    public void setAuthorNovelsId(String authorNovelsId) {
+        this.authorNovelsId = authorNovelsId;
+    }
+
+    public String getAuthorsId() {
+        return authorsId;
+    }
+
+    public void setAuthorsId(String authorsId) {
+        this.authorsId = authorsId;
+    }
+
 
 }

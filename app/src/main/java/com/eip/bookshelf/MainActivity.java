@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fragmentTransaction.replace(R.id.fragment_container, signFrag, "CONNECT");
                     fragmentTransaction.commit();
                 } else {
+                    defineNameToolBar("Connexion");
                     SignIn signFrag = new SignIn();
                     fragmentTransaction.replace(R.id.fragment_container, signFrag);
                     fragmentTransaction.commit();

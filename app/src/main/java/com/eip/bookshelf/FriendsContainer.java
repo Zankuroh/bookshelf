@@ -190,7 +190,6 @@ public class FriendsContainer extends Fragment implements View.OnClickListener
                 AmisAdapter ami = (AmisAdapter) _adapterFriend.getItem(position);
                 Bundle b = new Bundle();
                 b.putString("idFriend", ami.get_id());
-                Log.i("TEST", "id => " + ami.get_id());
                 b.putBoolean("isFriend", true);
                 b.putString("fname", ami.get_name());
                 b.putString("femail", ami.get_email());
