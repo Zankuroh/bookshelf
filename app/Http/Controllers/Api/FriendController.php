@@ -72,6 +72,7 @@ class FriendController extends ApiController
                                     'friend_id' => $friendID])->first());
                 if ($alreadyFriend)
                 {
+                    $this->setDefaultFailureJsonResponse(false);
                     $this->getJsonResponse()->setOptionnalFields(['title' => 'Already friend.']);
                 }
                 else
