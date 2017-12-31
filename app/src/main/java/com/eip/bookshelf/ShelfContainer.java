@@ -362,9 +362,6 @@ public class ShelfContainer extends Fragment
                 .build()
                 .create(BookshelfApi.class);
         Call<Suggestion> call = bookshelfApi.getSuggestion(MainActivity.token, true);
-//        _latestSugg = new ArrayList<>(); // !
-//        _latestSugg.add("9781781100486"); // !
-//        _latestSugg.add("B00B6YRQ7E"); // !
         call.enqueue(new Callback<Suggestion>() {
             @Override
             public void onResponse(Call<Suggestion> call, Response<Suggestion> response) {
