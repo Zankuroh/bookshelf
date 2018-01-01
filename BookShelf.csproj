@@ -109,6 +109,9 @@
     <Compile Include="UserControls\ucFriendListItem.xaml.cs">
       <DependentUpon>ucFriendListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ucSuggestions.xaml.cs">
+      <DependentUpon>ucSuggestions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\BookFile.xaml.cs">
       <DependentUpon>BookFile.xaml</DependentUpon>
     </Compile>
@@ -203,6 +206,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ucFriendListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucSuggestions.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
