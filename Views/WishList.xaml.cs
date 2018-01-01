@@ -22,6 +22,7 @@ namespace BookShelf
     /// </summary>
     public sealed partial class WishList : Page
     {
+        List<ucBook> lib = new List<ucBook>();
         public WishList()
         {
             this.InitializeComponent();
@@ -46,7 +47,43 @@ namespace BookShelf
             {
                 clBook bk = await clISBNsearch.SearchISBNclBook(str);
                 ucBook child = new ucBook(bk);
+                lib.Add(child);
                 wgrdWishlst.Children.Add(new ucBook(bk));
+            }
+        }
+
+        private void txbxSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Func<ucBook, bool> mySearch = null;
+            try
+            {
+                switch (cbbxSearch.SelectedIndex)
+                {
+                    case 0:
+                        mySearch = (x) => x.Book.BookData.VolumeInfo.Title.Contains(txbxSearch.Text);
+                        break;
+                    case 1:
+                        mySearch = (x) => x.Book.BookData.VolumeInfo.Authors.FirstOrDefault().Contains(txbxSearch.Text);
+                        break;
+                    case 2:
+                        mySearch = (x) => x.Book.BookData.VolumeInfo.Categories.FirstOrDefault().Contains(txbxSearch.Text);
+                        break;
+                    default:
+                        mySearch = (x) => x.Book.BookData.VolumeInfo.Title.Contains(txbxSearch.Text);
+                        break;
+                }
+                //var filt = lib.Where(c => c.Book.BookData.VolumeInfo.Title.Contains(txbxAllSearch.Text));
+                var filt = lib.Where(mySearch);
+                wgrdWishlst.Children.Clear();
+                foreach (ucBook u in filt)
+                {
+                    wgrdWishlst.Children.Add(u);
+                }
+                this.InitializeComponent();
+            }
+            catch (Exception ex)
+            {
+                clErrorHandling.ErrorMessage("txbxSearch_TextChanged(object sender, TextChangedEventArgs e)", ex);
             }
         }
     }

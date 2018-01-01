@@ -26,12 +26,11 @@
                     <ColumnDefinition Width="60*"/>
                     <ColumnDefinition Width="40*"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="txbxSearch" PlaceholderText="Rechercher un livre"/>
-                <ComboBox Grid.Column="1" Width="15" VerticalAlignment="Stretch">
+                <TextBox x:Name="txbxSearch" PlaceholderText="Rechercher un livre" TextChanged="txbxSearch_TextChanged"/>
+                <ComboBox x:Name="cbbxSearch" Grid.Column="1" Width="15" VerticalAlignment="Stretch">
                     <x:String>par Titre</x:String>
                     <x:String>par Auteur</x:String>
                     <x:String>par Genre</x:String>
-                    <x:String>par Statut</x:String>
                 </ComboBox>
             </Grid>
             <ScrollViewer x:Name="scviMain" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
