@@ -45,12 +45,6 @@ namespace BookShelf
                 book = newBook;
                 if (newBook.BookData.VolumeInfo.Title != null)
                     txblNameBook.Text = newBook.BookData.VolumeInfo.Title;
-                //if (newBook.BookData.VolumeInfo.Authors.FirstOrDefault() != null)
-                //    txblAuthBook.Text = newBook.BookData.VolumeInfo.Authors.FirstOrDefault();
-                //if (newBook.BookData.VolumeInfo.Categories.FirstOrDefault() != null)
-                //    txblGenreBook.Text = newBook.BookData.VolumeInfo.Categories.FirstOrDefault();
-                //if (newBook.BookData.VolumeInfo.Publisher != null)
-                //    txblPublisher.Text = newBook.BookData.VolumeInfo.Publisher;
                 Windows.UI.Xaml.Media.Imaging.BitmapImage bitmapImage = new Windows.UI.Xaml.Media.Imaging.BitmapImage();
                 Uri uri = new Uri(book.BookData.VolumeInfo.ImageLinks.SmallThumbnail);
                 bitmapImage.UriSource = uri;
@@ -71,6 +65,12 @@ namespace BookShelf
             //BookFile bk = new BookFile(book);
             //var frame = Window.Current.Content as Frame;
             //frame.Navigate(typeof(MainFrame), bk);
+        }
+
+        public ucBook Clone()
+        {
+            ucBook copy = new ucBook(this.book);
+            return copy;
         }
     }
 }
