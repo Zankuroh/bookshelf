@@ -15,85 +15,106 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid Margin="0,0,0,0" Background="Beige" Loaded="Grid_Loaded">
-        <!--<SplitView x:Name="ShellSplitView"
-           DisplayMode="CompactOverlay"
-           CompactPaneLength="48" OpenPaneLength="200" Background="#FF342114" PaneBackground="#FF3A3333">-->
-        <!--<SplitView.Pane>
-                <StackPanel>
-                    -->
-        <!-- Home button -->
-        <!--
-                    <RadioButton Style="{StaticResource SplitViewMenuButtonStyle}" Click="OnMenuButtonClicked"/>
-
-                    -->
-        <!-- Bookshelf button -->
-        <!--
-                    <RadioButton Tag="" Content="Ma Bibliothèque" Style="{StaticResource SplitViewNavButtonStyle}" Click="LibraryButton_Click"/>
-
-                    -->
-        <!-- Search button -->
-        <!--
-                    <RadioButton Tag="" Content="Recherche"
-                Style="{StaticResource SplitViewNavButtonStyle}" Click="SearchButton_Click"/>
-
-                    -->
-        <!-- Suggestion button -->
-        <!--
-                    <RadioButton Tag="" Content="Suggestion" Style="{StaticResource SplitViewNavButtonStyle}"/>
-
-                    -->
-        <!-- Wishlist button -->
-        <!--
-                    <RadioButton Tag="" Content="Liste de Souhaits" Style="{StaticResource SplitViewNavButtonStyle}" Click="WishLstButton_Click"/>
-
-                    -->
-        <!-- Authors button -->
-        <!--
-                    <RadioButton Tag="" Content="Auteurs suivis" Style="{StaticResource SplitViewNavButtonStyle}" Click="AuthorsButton_Click"/>
-
-                    -->
-        <!--Profile button-->
-        <!--
-                    <RadioButton Tag="" Content="Profil" Style="{StaticResource SplitViewNavButtonStyle}" Click="ProfileButton_Click"/>
-                    -->
-        <!-- Deconnexion button -->
-        <!--
-                    <RadioButton Tag="" Content="Deconnexion" Style="{StaticResource SplitViewNavButtonStyle}"/>
-
-                    -->
-        <!-- Parameters button -->
-        <!--
-                    <RadioButton Tag="" Content="Parametres" Style="{StaticResource SplitViewNavButtonStyle}"/>
-
-                    -->
-        <!-- About button -->
-        <!--
-                    <RadioButton Tag="" Content="A propos" Style="{StaticResource SplitViewNavButtonStyle}" Click="ProfileButton_Click"/>
-                </StackPanel>
-            </SplitView.Pane>-->
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="10*" MaxHeight="40"/>
-                <RowDefinition Height="90*"/>
-            </Grid.RowDefinitions>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60*"/>
-                    <ColumnDefinition Width="40*"/>
-                </Grid.ColumnDefinitions>
-                <TextBox x:Name="txbxSearch" PlaceholderText="Rechercher un livre" TextChanged="txbxSearch_TextChanged"/>
-                <ComboBox Grid.Column="1" Width="15" VerticalAlignment="Stretch">
-                    <x:String>par Titre</x:String>
-                    <x:String>par Auteur</x:String>
-                    <x:String>par Genre</x:String>
-                    <x:String>par Statut</x:String>
-                </ComboBox>
+    <Pivot x:Name="ProfilePivot" Background="BurlyWood" Loaded="Pivot_Loaded">
+        <PivotItem Header="Tous">
+            <Grid x:Name="grdAll" Margin="0,0,0,0" Background="Beige">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10*" MaxHeight="40"/>
+                        <RowDefinition Height="90*"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60*"/>
+                            <ColumnDefinition Width="40*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="txbxAllSearch" PlaceholderText="Rechercher un livre" TextChanged="txbxSearch_TextChanged"/>
+                        <ComboBox x:Name="cbbxAllSearch" Grid.Column="1" Width="15" VerticalAlignment="Stretch">
+                            <x:String>par Titre</x:String>
+                            <x:String>par Auteur</x:String>
+                            <x:String>par Genre</x:String>
+                        </ComboBox>
+                    </Grid>
+                    <ScrollViewer x:Name="scviMain" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+                        <VariableSizedWrapGrid x:Name="wgrdAll" Orientation="Horizontal" Visibility="Visible" ItemHeight="200" ItemWidth="150"/>
+                    </ScrollViewer>
+                </Grid>
             </Grid>
-            <ScrollViewer x:Name="scviMain" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
-                <VariableSizedWrapGrid x:Name="wgrdLibrary" Orientation="Horizontal" Visibility="Visible" ItemHeight="200" ItemWidth="150"/>
-            </ScrollViewer>
-        </Grid>
-        <!--</SplitView>-->
-    </Grid>
+        </PivotItem>
+        <PivotItem x:Name="pivotFav" Header="Favoris">
+            <Grid x:Name="grdFav" Margin="0,0,0,0" Background="Beige">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10*" MaxHeight="40"/>
+                        <RowDefinition Height="90*"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60*"/>
+                            <ColumnDefinition Width="40*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="txbxFavSearch" PlaceholderText="Rechercher un livre" TextChanged="txbxFavSearch_TextChanged"/>
+                        <ComboBox x:Name="cbbxFavSearch" Grid.Column="1" Width="15" VerticalAlignment="Stretch">
+                            <x:String>par Titre</x:String>
+                            <x:String>par Auteur</x:String>
+                            <x:String>par Genre</x:String>
+                        </ComboBox>
+                    </Grid>
+                    <ScrollViewer x:Name="scviFavMain" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+                        <VariableSizedWrapGrid x:Name="wgrdFav" Orientation="Horizontal" Visibility="Visible" ItemHeight="200" ItemWidth="150"/>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
+        </PivotItem>
+        <PivotItem Header="Lu">
+            <Grid x:Name="grdRead" Margin="0,0,0,0" Background="Beige">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10*" MaxHeight="40"/>
+                        <RowDefinition Height="90*"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60*"/>
+                            <ColumnDefinition Width="40*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="txbxReadSearch" PlaceholderText="Rechercher un livre" TextChanged="txbxReadSearch_TextChanged"/>
+                        <ComboBox x:Name="cbbxReadSearch" Grid.Column="1" Width="15" VerticalAlignment="Stretch">
+                            <x:String>par Titre</x:String>
+                            <x:String>par Auteur</x:String>
+                            <x:String>par Genre</x:String>
+                        </ComboBox>
+                    </Grid>
+                    <ScrollViewer x:Name="scviReadMain" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+                        <VariableSizedWrapGrid x:Name="wgrdRead" Orientation="Horizontal" Visibility="Visible" ItemHeight="200" ItemWidth="150"/>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
+        </PivotItem>
+        <PivotItem Header="Non Lu">
+            <Grid x:Name="grdUnRead" Margin="0,0,0,0" Background="Beige">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10*" MaxHeight="40"/>
+                        <RowDefinition Height="90*"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60*"/>
+                            <ColumnDefinition Width="40*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="txbxUnReadSearch" PlaceholderText="Rechercher un livre" TextChanged="txbxUnreadSearch_TextChanged"/>
+                        <ComboBox x:Name="cbbxUnreadSearch" Grid.Column="1" Width="15" VerticalAlignment="Stretch">
+                            <x:String>par Titre</x:String>
+                            <x:String>par Auteur</x:String>
+                            <x:String>par Genre</x:String>
+                        </ComboBox>
+                    </Grid>
+                    <ScrollViewer x:Name="scviUnReadMain" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+                        <VariableSizedWrapGrid x:Name="wgrdUnRead" Orientation="Horizontal" Visibility="Visible" ItemHeight="200" ItemWidth="150"/>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
+        </PivotItem>
+    </Pivot>
 </Page>
