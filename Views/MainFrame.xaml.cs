@@ -103,14 +103,30 @@ namespace BookShelf
 
         private async void Deconnection_Click(object sender, RoutedEventArgs e)
         {
-            App.Token = null;
-            var frame = Window.Current.Content as Frame;
-            frame.Navigate(typeof(MainPage));
-            if (App.fb != null)
+            ContentDialog disconnect = new ContentDialog();
+            disconnect.Title = "Deconnexion";
+            disconnect.PrimaryButtonText = "Ok";
+            disconnect.SecondaryButtonText = "Annuler";
+            //disconnect.= "Se Deconnecter?";
+            //CloseButtonText = "Ok";
+            ContentDialogResult result = await disconnect.ShowAsync();
+            if (result == ContentDialogResult.Primary)
             {
-                await App.fb.LogoutAsync();
-                App.fb = null;
+                App.Token = null;
+                var frame = Window.Current.Content as Frame;
+                frame.Navigate(typeof(MainPage));
+                if (App.fb != null)
+                {
+                    await App.fb.LogoutAsync();
+                    App.fb = null;
+                }
             }
+            else
+            {
+                // User pressed Cancel, ESC, or the back arrow.
+                // Terms of use were not accepted.
+            }
+
         }
         //private void OnSettingsButtonChecked(object sender, RoutedEventArgs e)
         //{
