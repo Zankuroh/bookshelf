@@ -45,6 +45,7 @@ public class Profil extends Fragment implements View.OnClickListener
     private TextView _last;
     public static Profile_ prof;
     private Menu _menu;
+    private View _v;
 
     public Profil()
     {
@@ -55,6 +56,7 @@ public class Profil extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View v = inflater.inflate(R.layout.profil, container, false);
+        _v = v;
         _pseudo = v.findViewById(R.id.TVPseudo);
         _email = v.findViewById(R.id.TVEmail);
 
@@ -169,8 +171,8 @@ public class Profil extends Fragment implements View.OnClickListener
 
     private void prepareFriend(View v)
     {
+        v.findViewById(R.id.BFShelf).setOnClickListener(this);
         if (_isFriend && v != null) {
-            v.findViewById(R.id.BFShelf).setOnClickListener(this);
             v.findViewById(R.id.BFShelf).setVisibility(View.VISIBLE);
         }
     }
@@ -231,6 +233,7 @@ public class Profil extends Fragment implements View.OnClickListener
                 if (response.isSuccessful()) {
                     FriendModif fm = response.body();
                     if (fm.getTitle() == null && getView() != null) {
+                        getView().findViewById(R.id.BFShelf).setVisibility(View.VISIBLE);
                         Snackbar snackbar = Snackbar.make(getView(), "Ami ajouté", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } else if (getView() != null) {
@@ -282,6 +285,7 @@ public class Profil extends Fragment implements View.OnClickListener
                 if (response.isSuccessful()) {
                     SimpleResponse valid = response.body();
                     if (valid.getData().getSuccess().equals("true") && getView() != null) {
+                        getView().findViewById(R.id.BFShelf).setVisibility(View.GONE);
                         Snackbar snackbar = Snackbar.make(getView(), "Ami supprimé", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     } else if (getView() != null) {
