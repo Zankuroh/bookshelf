@@ -40,9 +40,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -71,6 +73,7 @@ public class ShelfContainer extends Fragment
     private List<String> _friendSugg;
     private String _FriendId;
     private Boolean _spinnerSugg = false;
+    private OkHttpClient _cli;
 
     public ShelfContainer()
     {
@@ -92,6 +95,11 @@ public class ShelfContainer extends Fragment
             _type = null;
         }
         _req = new RequestDBLocal(_type, getContext());
+        _cli = new OkHttpClient().newBuilder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build();
         if (_type == MainActivity.shelfType.MAINSHELF) {
             v = inflater.inflate(R.layout.shelf_container, container, false);
             setAdapters(v);
@@ -103,7 +111,7 @@ public class ShelfContainer extends Fragment
             v = inflater.inflate(R.layout.shelf_propo, container,false);
             setAdapters(v);
             propoShelf();
-            setOnChangeSugg();
+            setOnChangeSugg(v);
         } else if (_type == MainActivity.shelfType.WISHSHELF) {
             v = inflater.inflate(R.layout.shelf_simple, container, false);
             if (_FriendId == null) {
@@ -172,10 +180,10 @@ public class ShelfContainer extends Fragment
         }
     }
 
-    private void setOnChangeSugg()
+    private void setOnChangeSugg(View v)
     {
-        if (getView() != null) {
-            Spinner sp = getView().findViewById(R.id.SSuggest);
+        if (v != null) {
+            Spinner sp = v.findViewById(R.id.SSuggest);
             sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id)
@@ -300,6 +308,7 @@ public class ShelfContainer extends Fragment
     {
         MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .client(_cli)
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -351,6 +360,7 @@ public class ShelfContainer extends Fragment
     {
         MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .client(_cli)
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -361,6 +371,7 @@ public class ShelfContainer extends Fragment
             public void onResponse(Call<Suggestion> call, Response<Suggestion> response) {
                 if (response.isSuccessful()) {
                     Suggestion bookshelf = response.body();
+
                     _latestSugg = bookshelf.getData().getLatestSuggestions();
                     _overallSugg = bookshelf.getData().getOverallSuggestions();
                     _friendLatestSugg = bookshelf.getData().getFriendsLatestBooks();
@@ -418,6 +429,7 @@ public class ShelfContainer extends Fragment
     {
         for (String asin: asins) {
             BookshelfApi bookshelfApi = new Retrofit.Builder()
+                    .client(_cli)
                     .baseUrl(BookshelfApi.APIPath)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
@@ -470,6 +482,7 @@ public class ShelfContainer extends Fragment
     {
         MainActivity.startLoading();
         BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .client(_cli)
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -662,6 +675,7 @@ public class ShelfContainer extends Fragment
         Thread t = new Thread(new Runnable() {
             public void run() {
                 GoogleBooksApi gbi = new Retrofit.Builder()
+                        .client(_cli)
                         .baseUrl(GoogleBooksApi.APIPath)
                         .addConverterFactory(GsonConverterFactory.create())
                         .build()
@@ -732,6 +746,7 @@ public class ShelfContainer extends Fragment
         MainActivity.startLoading();
 
         BookshelfApi bookshelfApi = new Retrofit.Builder()
+                .client(_cli)
                 .baseUrl(BookshelfApi.APIPath)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
