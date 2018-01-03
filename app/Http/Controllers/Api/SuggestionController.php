@@ -494,7 +494,7 @@ class SuggestionController extends ApiController
 			$latestSuggestions = $this->getLatestSuggestions(18, true);
 		}
 
-		return $latestSuggestions;
+		return array_unique($latestSuggestions);
 	}
 
 	/**
