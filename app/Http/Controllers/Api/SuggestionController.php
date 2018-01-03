@@ -35,6 +35,10 @@ class SuggestionController extends ApiController
 		 **/
 		$forceBuild = $request->input('force_build', false) == "true" ? true : false;
 		$suggestions['latest_suggestions'] = $this->buildSuggestionsFromAmazon($forceBuild);
+		if (empty($suggestions['latest_suggestions']))
+		{
+			$suggestions['latest_suggestions'] = $this->getOverallSuggestions();
+		}
 
 		/** Get overall suggestions with reference count */
 		$suggestions['overall_suggestions'] = $this->getOverallSuggestions();
@@ -601,7 +605,7 @@ class SuggestionController extends ApiController
 					$details[] = $detailsOfId;
 				}
 			}
-			usleep(1500);
+			usleep(500);
 		}
 
 		return $details;
