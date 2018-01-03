@@ -249,7 +249,7 @@ class SuggestionController extends ApiController
 		}
 		else
 		{
-			$urlProxies = "http://gimmeproxy.com/api/getProxy?country=FR,GB,IT,LU&user-agent=true&protocol=http&supportsHttps=true&minSpeed=200";
+			$urlProxies = "http://gimmeproxy.com/api/getProxy?country=FR,GB,IT,LU&user-agent=true&protocol=http&supportsHttps=true&minSpeed=199";
 		}
 
 		$result = json_decode(file_get_contents($urlProxies), true);
@@ -322,28 +322,41 @@ class SuggestionController extends ApiController
 	 **/
 	private function fileGetContentsWithContext($url)
 	{
+		$result = null;
 		$proxy = $this->getNewProxy();
 		$client = new \GuzzleHttp\Client();
 		
 		Log::debug("FUCKING URL =" . $url);
 		
-		$res = $client->request('GET', $url , array(
-			'proxy' => $proxy,
-			'debug' => false,
-			'headers' => array(
-				'Host' => 'www.amazon.fr',
-				'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0",
-				'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-				'Accept-Encoding' => 'gzip, deflate, br',
-				'Accept-Language' => 'en-US,en;q=0.9,fr;q=0.8',
-				'Upgrade-Insecure-Requests' => '1',
-				'Connection' => 'Keep-Alive'
-			)
-		));
+		try
+		{
+			$res = $client->request('GET', $url , array(
+				'proxy' => $proxy,
+				'debug' => false,
+				'headers' => array(
+					'Host' => 'www.amazon.fr',
+					'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0",
+					'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+					'Accept-Encoding' => 'gzip, deflate, br',
+					'Accept-Language' => 'en-US,en;q=0.9,fr;q=0.8',
+					'Upgrade-Insecure-Requests' => '1',
+					'Connection' => 'Keep-Alive'
+				)
+			));
 
-		Log::debug("GUZZLE RESULT " . $res->getBody());		
+			Log::debug("GUZZLE RESULT " . $res->getBody());		
 
-		$result = $res->getBody();
+			$result = $res->getBody();
+
+		}
+		catch (Exception $e)
+		{
+			Log::debug("Exception during request of file get content");
+		}
+		catch (\GuzzleHttp\Exception\RequestException $eG)
+		{
+			Log::debug("Exception during request of file get content guzzle");
+		}
 
 		Log::debug("RESULT OF CURL IS NULL =" . empty($result));
 		Log::debug("RESULT CURL = " . $result);
