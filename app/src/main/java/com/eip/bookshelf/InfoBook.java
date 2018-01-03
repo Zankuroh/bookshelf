@@ -348,7 +348,9 @@ public class InfoBook extends AppCompatActivity
         if (_vi.getImageLinks() != null && _vi.getImageLinks().getThumbnail() != null) {
             Picasso.with(this).load(_vi.getImageLinks().getThumbnail()).fit().into(iv);
         }
-        this.makeLinks(tv, _vi.getAuthors(), spans);
+        if (_vi.getAuthors() != null && MainActivity.token != null) {
+            this.makeLinks(tv, _vi.getAuthors(), spans);
+        }
     }
 
     private void makeLinks(TextView textView, List<String> links, ArrayList<ClickableSpan> clickableSpans)
