@@ -301,7 +301,7 @@ class SuggestionController extends ApiController
 	 **/
 	private function getNewProxy()
 	{
-		$usePrivateProxies = false;
+		$usePrivateProxies = true;
 		Log::debug("GET NEW PROXY BRO method begin");
 		if ($this->currentProxy == null)
 		{
@@ -376,6 +376,7 @@ class SuggestionController extends ApiController
 	 **/
 	private function fetchSuggestionsFromAmazonWithIsbn($isbn)
 	{
+		$amazonSuggestions = null;
 		$amazonBuyController = new AmazonBuyController();
 		$amazonSearchUrl = $amazonBuyController->generateRawAmazonLinkFromSearch($isbn);
 		$amazonSearchOutput = $this->fileGetContentsWithContext($amazonSearchUrl);
