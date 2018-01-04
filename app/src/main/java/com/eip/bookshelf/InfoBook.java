@@ -785,7 +785,11 @@ public class InfoBook extends AppCompatActivity
                     ListIterator<Author> it = authors.listIterator();
                     while (it.hasNext()) {
                         Author author = it.next();
-                        String comp = author.getFirstName()+" "+author.getLastName();
+                        String comp = author.getFirstName();
+                        if (author.getLastName() != null)
+                        {
+                            comp += " "+author.getLastName();
+                        }
                         if (comp.equals(Author)) {
                             check = true;
                             addToSub(author.getId());
