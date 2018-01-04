@@ -60,7 +60,8 @@ public class EditProfil extends AppCompatActivity
         if (MainActivity.provider != null) {
             findViewById(R.id.ETPassword).setVisibility(View.INVISIBLE);
             findViewById(R.id.ETPasswordVerif).setVisibility(View.INVISIBLE);
-            findViewById(R.id.BDelete).setVisibility(View.INVISIBLE);
+//            findViewById(R.id.BDelete).setVisibility(View.INVISIBLE);
+            findViewById(R.id.ETEmail).setVisibility(View.INVISIBLE);
             findViewById(R.id.ETPseudo).setVisibility(View.INVISIBLE);
         }
     }
@@ -99,18 +100,30 @@ public class EditProfil extends AppCompatActivity
 
     public void onClickDelete(View v)
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("VOUS ALLEZ SUPPRIMER VOTRE COMPTE.\nPour confirmer, entrez votre mot de passe actuel");
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        builder.setView(input);
-        builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                deleteUser(input.getText().toString());
-            }
-        });
-        builder.setNegativeButton("Annuler", null);
-        builder.show();
+        if (MainActivity.provider != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("VOUS ALLEZ SUPPRIMER VOTRE COMPTE.\nConfirmer pour continuer.");
+            builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    deleteUser("");
+                }
+            });
+            builder.setNegativeButton("Annuler", null);
+            builder.show();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("VOUS ALLEZ SUPPRIMER VOTRE COMPTE.\nPour confirmer, entrez votre mot de passe actuel");
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+            builder.setPositiveButton("Valider",  new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    deleteUser(input.getText().toString());
+                }
+            });
+            builder.setNegativeButton("Annuler", null);
+            builder.show();
+        }
     }
 
     public void onClickCancel(View v)
