@@ -34,5 +34,11 @@ namespace BookShelf
         {
             return chbxName.IsChecked;
         }
+
+        private void btFriendItem_Click(object sender, RoutedEventArgs e)
+        {
+            var frame = Window.Current.Content as Frame;
+            frame.Navigate(typeof(FriendWish), Friend);
+        }
     }
 }

@@ -11,6 +11,8 @@
     MaxHeight="50">
 
     <Grid Background="Beige">
-        <CheckBox x:Name="chbxName" Content="" HorizontalAlignment="Stretch" Margin="2,2,2,2" IsChecked="False"/>
+        <Button x:Name="btFriendItem" HorizontalAlignment="Left" VerticalAlignment="Stretch" Click="btFriendItem_Click">
+            <CheckBox x:Name="chbxName" Content="" HorizontalAlignment="Left" IsChecked="False" />
+        </Button>
     </Grid>
 </UserControl>

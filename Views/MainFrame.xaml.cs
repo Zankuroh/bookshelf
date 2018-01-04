@@ -107,8 +107,6 @@ namespace BookShelf
             disconnect.Title = "Deconnexion";
             disconnect.PrimaryButtonText = "Ok";
             disconnect.SecondaryButtonText = "Annuler";
-            //disconnect.= "Se Deconnecter?";
-            //CloseButtonText = "Ok";
             ContentDialogResult result = await disconnect.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {

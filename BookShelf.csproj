@@ -98,6 +98,9 @@
     <Compile Include="ContentDialogs\cdAddAuthor.xaml.cs">
       <DependentUpon>cdAddAuthor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ContentDialogs\cdEnterEmail.xaml.cs">
+      <DependentUpon>cdEnterEmail.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ContentDialogs\cdSearchFriend.xaml.cs">
       <DependentUpon>cdSearchFriend.xaml</DependentUpon>
     </Compile>
@@ -129,6 +132,9 @@
     </Compile>
     <Compile Include="Views\FavAuthors.xaml.cs">
       <DependentUpon>FavAuthors.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FriendWish.xaml.cs">
+      <DependentUpon>FriendWish.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
@@ -197,6 +203,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ContentDialogs\cdEnterEmail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ContentDialogs\cdSearchFriend.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -228,6 +238,10 @@
     <Page Include="Views\FavAuthors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FriendWish.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HomePage.xaml">
       <Generator>MSBuild:Compile</Generator>

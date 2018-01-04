@@ -11,5 +11,7 @@ namespace BookShelf
         public string friendName { get; set; }
         public string friendEmail { get; set; }
         public string friendId { get; set; }
+        public string userId { get; set; }
+        public string Id { get; set; }
     }
 }

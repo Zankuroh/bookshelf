@@ -36,20 +36,28 @@ namespace BookShelf
 
         private async void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            clRequestAPI Req = new clRequestAPI("/api/wish/book");
-            string res = null;
-
-            Req.addAuthorization("Bearer", App.Token);
-
-            res = await Req.GetRequest();
-            List<string> lst = Req.findResponseS("isbn");
-            foreach (string str in lst)
+            try
             {
-                clBook bk = await clISBNsearch.SearchISBNclBook(str);
-                ucBook child = new ucBook(bk);
-                lib.Add(child);
-                wgrdWishlst.Children.Add(new ucBook(bk));
+                clRequestAPI Req = new clRequestAPI("/api/wish/book");
+                string res = null;
+
+                Req.addAuthorization("Bearer", App.Token);
+
+                res = await Req.GetRequest();
+                List<string> lst = Req.findResponseS("isbn");
+                foreach (string str in lst)
+                {
+                    clBook bk = await clISBNsearch.SearchISBNclBook(str);
+                    ucBook child = new ucBook(bk);
+                    lib.Add(child);
+                    wgrdWishlst.Children.Add(new ucBook(bk));
+                }
             }
+            catch (Exception ex)
+            {
+                clErrorHandling.ErrorMessage("Grid_Loaded(object sender, RoutedEventArgs e) in WishList.xaml.cs", ex);
+            }
+   
         }
 
         private void txbxSearch_TextChanged(object sender, TextChangedEventArgs e)

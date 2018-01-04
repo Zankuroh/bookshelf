@@ -24,7 +24,7 @@
                     <AppBarButton Icon="Delete" Label="Supprimer Auteur" Click="btDeleteAuthor_Click"/>
                 </CommandBar.SecondaryCommands>
             <CommandBar.Content>
-                <TextBlock Text="Your Favorite Authors" Margin="12,14"/>
+                <TextBlock Text="Vos auteurs favoris" Margin="12,14"/>
             </CommandBar.Content>
         </CommandBar>
         <ScrollViewer x:Name="scviMain" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto" Loaded="scviMain_Loaded">

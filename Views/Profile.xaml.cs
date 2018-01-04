@@ -126,6 +126,8 @@ namespace BookShelf
                     var fr = new clFriend();
                     fr.friendName = it["name"].ToString() != "null" ? it["name"].GetString() : "";
                     fr.friendEmail = it["email"].ToString() != "null" ? it["email"].GetString() : "";
+                    fr.Id = it["id"].ToString();
+                    fr.userId = it["user_id"].ToString();
                     fr.friendId = it["friend_id"].ToString();
                     var child = new ucFriendListItem(fr);
                     stpnlFriend.Children.Add(child);

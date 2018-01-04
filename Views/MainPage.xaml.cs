@@ -120,7 +120,7 @@ namespace BookShelf
                 else
                 {
                     //placer une MsgBox ici
-                    string msg = "Echec : la connexion a echoué\n" ;
+                    string msg = "Echec : la connexion a echoué\n";
                     msg += jsonRes["errors"].ToString() + " ";
                     if (jsonRes.ContainsKey("title"))
                         msg += jsonRes["title"].ToString();
@@ -225,10 +225,54 @@ namespace BookShelf
         //    //rootPage.NotifyUser(facebookUserName + " is connected!", NotifyType.StatusMessage);
         //}
 
-        private void btForgotPwd_Click(object sender, RoutedEventArgs e)
+        private async void btForgotPwd_Click(object sender, RoutedEventArgs e)
         {
             //A supprimer pour la release
-            Frame.Navigate(typeof(Search));
+            //Frame.Navigate(typeof(Search));
+            try
+            {
+                cdEnterEmail dBox = new cdEnterEmail();
+                ContentDialogResult result = await dBox.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    string requestContent = "email=" + dBox.Email;
+                    clRequestAPI Req = new clRequestAPI("/api/resetpassword");
+                    string res = null;
+
+                    Req.addHeader("application/x-www-form-urlencoded");
+                    Req.addAuthorization("Bearer", App.Token);
+
+                    res = await Req.PostRequest(requestContent, "application/x-www-form-urlencoded");
+                    JsonObject jsonRes;
+                    JsonObject.TryParse(res, out jsonRes);
+                    //if (!jsonRes.ContainsKey("errors"))
+                    if (jsonRes["errors"].ToString() == "null")
+                    {
+                        cdEnterPsswd pssWord = new cdEnterPsswd();
+                        ContentDialogResult result2 = await pssWord.ShowAsync();
+                        if (result2 == ContentDialogResult.Primary)
+                        {
+                            clRequestAPI Req2 = new clRequestAPI("/api/resetpassword/" + pssWord.Passwd);
+                            string res2 = null;
+
+                            Req2.addAuthorization("Bearer", App.Token);
+                            res2 = await Req2.GetRequest();
+                        }
+                    }
+                    else
+                    {
+                        JsonObject msg = jsonRes["errors"].GetObject();
+                        ValueType s =  msg["email"].ValueType;
+                        Windows.UI.Popups.MessageDialog dial = new Windows.UI.Popups.MessageDialog(msg["email"].GetArray().GetStringAt(0));
+                        await dial.ShowAsync();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                clErrorHandling.ErrorMessage("btForgotPwd_Click(object sender, RoutedEventArgs e)", ex);
+            }
         }
 
         private async void btGoogle_Click(object sender, RoutedEventArgs e)
