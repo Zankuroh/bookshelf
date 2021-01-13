@@ -7,7 +7,6 @@ Membres :
 - Nicolas JOLY
 - Victorien RAMAGET
 - Geoffrey OLEJNICZAK
-- Sergen TANGUC
 
 Quel est l'objectif principal du projet ?
 
